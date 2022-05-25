@@ -5,6 +5,10 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresConfigModule } from './config/database/config.module';
 import { PostgresConfigService } from './config/database/config.service';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
+import { QuestionsModule } from './questions/questions.module';
+import { AnswersModule } from './answers/answers.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -31,6 +35,10 @@ import * as Joi from 'joi';
       useClass: PostgresConfigService,
       inject: [PostgresConfigService],
     }),
+    UsersModule,
+    CommonModule,
+    QuestionsModule,
+    AnswersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
