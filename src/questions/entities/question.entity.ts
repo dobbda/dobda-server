@@ -1,3 +1,4 @@
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -14,19 +15,22 @@ import { QuestionTag } from './questionTag.entity';
 @Entity()
 export class Question extends CoreEntity {
   @Column()
+  @IsString()
   title: string;
 
   @Column()
+  @IsString()
   content: string;
 
   @Column({ default: 0 })
   watch: number;
 
-  @Column({ nullable: true })
-  coin?: number;
+  @Column({ nullable: true, default: 0 })
+  @IsNumber()
+  coin: number;
 
-  @ManyToOne((type) => User, (user) => user.questions)
-  author: User;
+  // @ManyToOne((type) => User, (user) => user.questions)
+  // author: User;
 
   @OneToMany((type) => Answer, (answer) => answer.question)
   answers: Answer[];
@@ -36,5 +40,5 @@ export class Question extends CoreEntity {
 
   @OneToOne((type) => Answer)
   @JoinColumn()
-  accepted_answer: Answer;
+  accepteAnswer: Answer;
 }
