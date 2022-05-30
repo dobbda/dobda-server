@@ -13,6 +13,30 @@ export class QuestionsService {
     private readonly questionTagsRepository: QuestionTagsRepository,
   ) {}
 
+  async getQuestion(questionId: number) {
+    const question = await this.questionsRepository.getQuestionWithId(
+      questionId,
+    );
+    if (!question) {
+      return {
+        success: false,
+        response: null,
+        error: {
+          message: 'id에 해당하는 question이 없습니다.',
+          status: 404,
+        },
+      };
+    }
+    const tags = await this.tagsRepository.allTagsWithQuestionId(questionId);
+    return {
+      success: true,
+      response: {
+        question: { ...question, tags },
+      },
+      error: null,
+    };
+  }
+
   async createQuestion(
     createQuestionDto: CreateQuestionDto,
     createTagsDto: CreateTagsDto,
@@ -25,5 +49,6 @@ export class QuestionsService {
     const tags = await this.tagsRepository.createTags(createTagsDto);
     //2.QuestionTag create
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
+    return { success: true, response: null, error: null };
   }
 }

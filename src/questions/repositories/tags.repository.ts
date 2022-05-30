@@ -32,4 +32,12 @@ export class TagsRepository extends Repository<Tag> {
       .where('tag.name IN(:...tags)', { tags })
       .getMany();
   }
+
+  async allTagsWithQuestionId(questionId: number) {
+    return this.createQueryBuilder('tag')
+      .select(['tag.name'])
+      .leftJoin('tag.questionTags', 'questionTags')
+      .where('questionTags.questionId = :questionId', { questionId })
+      .getMany();
+  }
 }
