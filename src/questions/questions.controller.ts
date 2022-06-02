@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
 import { QuestionsService } from './questions.service';
@@ -34,11 +42,20 @@ export class QuestionController {
     질문 수정 API
     url: questions/detail/:id (PATCH)
   */
-  @Patch('/detail/:questionId')
+  @Patch('/detail/:id')
   async editQuestion(
-    @Param('questionId') questionId: number,
+    @Param('id') questionId: number,
     @Body('question') editQuestionDto: EditQuestionDto,
   ) {
     return this.questionsService.editQuestion(questionId, editQuestionDto);
+  }
+
+  /* 
+    질문 수정 API
+    url: questions/detail/:id (DELETE)
+  */
+  @Delete('/detail/:id')
+  async deleteQuestion(@Param('id') questionId: number) {
+    return this.questionsService.deleteQuestion(questionId);
   }
 }
