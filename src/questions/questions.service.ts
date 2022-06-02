@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateQuestionDto } from './dtos/create-question.dto';
-import { CreateTagsDto } from './dtos/create-tags.dto';
+import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
+import { EditQuestionDto } from './dtos/edit-question.dto';
+import { Tag } from './entities/tag.entity';
 import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
@@ -27,7 +28,7 @@ export class QuestionsService {
         },
       };
     }
-    const tags = await this.tagsRepository.allTagsWithQuestionId(questionId);
+    const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     return {
       success: true,
       response: {
@@ -46,9 +47,53 @@ export class QuestionsService {
       createQuestionDto,
     );
     //tag생성
-    const tags = await this.tagsRepository.createTags(createTagsDto);
+    const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
     //2.QuestionTag create
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
-    return { success: true, response: null, error: null };
+    return {
+      success: true,
+      response: {
+        result: true,
+      },
+      error: null,
+    };
+  }
+
+  async editQuestion(
+    questionId: number,
+    { tagNames, ...editQuestion }: EditQuestionDto,
+  ) {
+    const question = await this.questionsRepository.getQuestionWithId(
+      questionId,
+    );
+    if (!question) {
+      return {
+        success: false,
+        response: null,
+        error: {
+          message: 'id에 해당하는 question이 없습니다.',
+          status: 404,
+        },
+      };
+    }
+    //TODO: question을 user가 만든게 맞는지 check
+    await this.questionsRepository.save([
+      {
+        id: question.id,
+        ...editQuestion,
+      },
+    ]);
+    if (tagNames) {
+      await this.questionTagsRepository.delete({ questionId });
+      const tags = await this.tagsRepository.createNonExistTags({ tagNames });
+      await this.questionTagsRepository.createQuestionTags(question.id, tags);
+    }
+    return {
+      success: true,
+      response: {
+        result: true,
+      },
+      error: null,
+    };
   }
 }

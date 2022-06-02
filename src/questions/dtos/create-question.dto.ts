@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateQuestionDto {
   @IsString()
@@ -12,4 +19,12 @@ export class CreateQuestionDto {
   @IsOptional()
   @IsNumber()
   readonly coin: number;
+}
+
+export class CreateTagsDto {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMaxSize(10)
+  @IsString({ each: true })
+  tagNames: string[];
 }
