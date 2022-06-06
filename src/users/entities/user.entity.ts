@@ -27,8 +27,8 @@ export class User extends CoreEntity {
   @Column({ default: 0 })
   score: number;
 
-  @OneToMany((type) => Question, (question) => question.author)
-  questions: Question[];
+  // @OneToMany((type) => Question, (question) => question.author)
+  // questions: Question[];
 
   @OneToMany((type) => Answer, (answer) => answer.author)
   answers: Answer[];
