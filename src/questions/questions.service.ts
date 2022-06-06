@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
+import { GetQuestionsDto } from './dtos/get-questions.dto';
 import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
@@ -14,7 +15,7 @@ export class QuestionsService {
   ) {}
 
   async findQuestionOrError(questionId: number) {
-    const question = await this.questionsRepository.getQuestionWithId(
+    const question = await this.questionsRepository.findOneQuestionWithId(
       questionId,
     );
     if (!question) {
@@ -30,7 +31,24 @@ export class QuestionsService {
     return question;
   }
 
-  async getQuestion(questionId: number) {
+  async getQuestion({ page, title, tag }: GetQuestionsDto) {
+    const { total, questions } = await this.questionsRepository.findAll(
+      page,
+      title,
+    );
+    const result = await Promise.all(
+      questions.map(async (question) => {
+        const tags = await this.tagsRepository.allTagsInQuestion(question.id);
+        return { ...question, tags };
+      }),
+    );
+    return {
+      result,
+      totalPages: Math.ceil(total / 20),
+    };
+  }
+
+  async getQuestions(questionId: number) {
     const result = await this.findQuestionOrError(questionId);
     if ('error' in result) {
       return result;

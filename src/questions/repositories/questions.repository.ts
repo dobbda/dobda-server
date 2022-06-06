@@ -8,9 +8,25 @@ export class QuestionsRepository extends Repository<Question> {
     return this.save(this.create(createQuestion));
   }
 
-  async getQuestionWithId(questionId: number) {
+  async findOneQuestionWithId(questionId: number) {
     return this.createQueryBuilder('question')
       .where('question.id = :questionId', { questionId })
       .getOne();
+  }
+
+  async findAll(page: number, title?: string) {
+    const questionQuery = this.createQueryBuilder('question');
+    if (title) {
+      questionQuery.where('question.title like :title', {
+        title: `%${title}%`,
+      });
+    }
+    return {
+      total: await questionQuery.getCount(),
+      questions: await questionQuery
+        .take(20)
+        .skip((page - 1) * 20)
+        .getMany(),
+    };
   }
 }
