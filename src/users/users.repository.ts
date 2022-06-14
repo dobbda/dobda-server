@@ -5,6 +5,7 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
+  //이메일로 회원가입
   async createUser(userRegisterDto: UserRegisterDTO): Promise<void> {
     const { email } = userRegisterDto;
 
@@ -20,10 +21,6 @@ export class UsersRepository extends Repository<User> {
     }
   }
 
-  async list() {
-    return await this.find();
-  }
-
   async findUserByEmail(email: string) {
     try {
       const user = await this.findOne({ email });
@@ -32,5 +29,10 @@ export class UsersRepository extends Repository<User> {
     } catch (error) {
       throw new BadRequestException('사용자를 찾지 못했습니다.');
     }
+  }
+
+  //개발용 모든 유저 목록
+  async list() {
+    return await this.find();
   }
 }

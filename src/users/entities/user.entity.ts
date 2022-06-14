@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
@@ -35,6 +36,10 @@ export class User extends CoreEntity {
   @IsNumber()
   @Column({ default: 0 })
   score: number;
+
+  @Column({ nullable: true })
+  @Exclude() //노출을 원하지 않는 멤버
+  refreshToken?: string;
 
   @OneToMany((type) => Question, (question: Question) => question.author)
   questions: Question[];

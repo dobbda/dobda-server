@@ -1,15 +1,17 @@
+import { UsersRepository } from './../../users/users.repository';
 import { JwtPayload } from './jwt.payload';
-import { UsersService } from '../users.service';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { jwtExtractorFromCookies } from '../../common/utils/jwtExtractorFromCookies';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '../../users/users.service';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly configService: ConfigService,
   ) {
     super({
@@ -18,17 +20,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         process.env.NODE_ENV === 'dev'
           ? ExtractJwt.fromAuthHeaderAsBearerToken()
           : ExtractJwt.fromExtractors([jwtExtractorFromCookies]),
-      secretOrKey: configService.get<string>('SECRET_KEY'),
-      //토큰 만료 검사
-      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('REFRESH_TOKEN_SECRET_KEY'),
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(req: Request, payload: JwtPayload) {
     try {
-      const user = await this.usersService.findUser(payload.email);
+      const refreshToken = req.get('authorization').replace('Bearer ', '');
+
+      const user = await this.usersRepository.findUserByEmail(payload.email);
       if (user) {
-        return user;
+        return { user, refreshToken };
       } else {
         throw new Error('해당하는 유저는 없습니다.');
       }
