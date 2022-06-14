@@ -1,8 +1,20 @@
+import { AccessTokenGuard } from './../common/guards/access-token.guard';
+import { RefreshTokenGuard } from './../common/guards/refresh-token.guard';
 import { UserLogInDTO } from './../users/dtos/user-login.dto';
 import { AuthService } from './auth.service';
 import { UserRegisterDTO } from './../users/dtos/user-register.dto';
-import { Body, Controller, Delete, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Delete,
+  Logger,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -30,9 +42,21 @@ export class AuthController {
     return tokens;
   }
 
+  //리프레시 토큰 재발급
+  @UseGuards(RefreshTokenGuard)
+  @Post('local/refresh')
+  async refreshToken(
+    @CurrentUser('email') email: string,
+    @CurrentUser('refreshToken') refreshToken: string,
+  ) {
+    return await this.authService.refreshTokens(email, refreshToken);
+  }
+
+  //로그아웃 (DB의 refreshToken 삭제)
+  @UseGuards(AccessTokenGuard)
   @Delete('local')
-  async logout(@Body() userLogInDTO: UserLogInDTO) {
-    return await this.authService.deleteRefreshToken(userLogInDTO.email);
+  async logout(@CurrentUser('email') email: string) {
+    return await this.authService.deleteRefreshToken(email);
   }
 
   /* 깃헙 로그인 관련 부분 : 뷰에게서 코드를 받아와서 테스트 해보지 않았기 때문에 프론트랑 연결할때 새로 개발 예정

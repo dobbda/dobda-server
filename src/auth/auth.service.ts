@@ -1,9 +1,14 @@
 import { UserRegisterDTO } from './../users/dtos/user-register.dto';
-import { Tokens } from './jwt/jwt.token';
+import { Tokens } from './jwt/types/jwt.token';
 import { UserLogInDTO } from './../users/dtos/user-login.dto';
 import { ConfigService } from '@nestjs/config';
 import { UsersRepository } from './../users/users.repository';
-import { Injectable, BadRequestException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  Logger,
+  HttpException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -62,8 +67,22 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  //DB에 RefreshToken을 업데이트
   async updateRefreshToken(email: UserLogInDTO['email'], refreshToken: string) {
     await this.usersRepository.update({ email }, { refreshToken });
+  }
+
+  //유저 정보와 DB의 refreshToken을 비교해 유효한 토큰이라면 토큰 재발급
+  async refreshTokens(email: UserLogInDTO['email'], refreshToken: string) {
+    const user = await this.usersRepository.findUserByEmail(email);
+
+    if (user.refreshToken !== refreshToken)
+      throw new HttpException('잘못된 토큰입니다.', 401);
+
+    const tokens = await this.createJWT(user.email);
+    await this.updateRefreshToken(user.email, tokens.refreshToken);
+
+    return tokens;
   }
 
   async deleteRefreshToken(email: UserLogInDTO['email']) {

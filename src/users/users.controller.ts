@@ -1,6 +1,6 @@
+import { RefreshTokenGuard } from './../common/guards/refresh-token.guard';
 import { AuthService } from './../auth/auth.service';
 import { User } from './entities/user.entity';
-import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { UsersService } from './users.service';
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -11,7 +11,7 @@ export class UsersController {
 
   //로그인 되어있는 유저 정보 조회
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RefreshTokenGuard)
   async getCurrentUser(@CurrentUser() currentUser: User) {
     return currentUser;
   }

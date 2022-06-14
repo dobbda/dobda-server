@@ -1,15 +1,19 @@
-import { UsersRepository } from './../../users/users.repository';
-import { JwtPayload } from './jwt.payload';
+import { UsersRepository } from '../../users/users.repository';
+import { JwtPayload } from './types/jwt.payload';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { jwtExtractorFromCookies } from '../../common/utils/jwtExtractorFromCookies';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 import { Request } from 'express';
 
+// guard -> strategy -> validate
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class RefreshTokenStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly configService: ConfigService,
@@ -27,11 +31,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(req: Request, payload: JwtPayload) {
     try {
+      //토큰을 req에서 추출
       const refreshToken = req.get('authorization').replace('Bearer ', '');
 
+      //전달받은 유저가 존재하는지 확인
       const user = await this.usersRepository.findUserByEmail(payload.email);
       if (user) {
-        return { user, refreshToken };
+        //리프레시 토큰을 붙여서 리턴
+        user.refreshToken = refreshToken;
+        return user;
       } else {
         throw new Error('해당하는 유저는 없습니다.');
       }

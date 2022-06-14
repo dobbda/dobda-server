@@ -1,12 +1,13 @@
 import {
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class AccessTokenGuard extends AuthGuard('jwt-access') {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context);
   }
