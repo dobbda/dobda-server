@@ -1,5 +1,5 @@
-import { AccessTokenGuard } from './../common/guards/access-token.guard';
-import { RefreshTokenGuard } from './../common/guards/refresh-token.guard';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { UserLogInDTO } from './../users/dtos/user-login.dto';
 import { AuthService } from './auth.service';
 import { UserRegisterDTO } from './../users/dtos/user-register.dto';
@@ -37,7 +37,7 @@ export class AuthController {
       userLoginDTO.email,
     );
 
-    response.cookie('jwt', tokens, { httpOnly: true });
+    response.cookie('jwt', tokens.accessToken, { httpOnly: true });
 
     return tokens;
   }

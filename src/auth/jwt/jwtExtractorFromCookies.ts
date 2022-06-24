@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtFromRequestFunction } from 'passport-jwt';
 
@@ -8,6 +9,7 @@ export const jwtExtractorFromCookies: JwtFromRequestFunction = (
     const jwt = request.cookies['jwt'];
     return jwt;
   } catch (error) {
+    Logger.log('처리되지 않은 에러', jwtExtractorFromCookies);
     return null;
   }
 };

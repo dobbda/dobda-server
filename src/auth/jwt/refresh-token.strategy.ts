@@ -3,7 +3,7 @@ import { JwtPayload } from './types/jwt.payload';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { jwtExtractorFromCookies } from '../../common/utils/jwtExtractorFromCookies';
+import { jwtExtractorFromCookies } from './jwtExtractorFromCookies';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 import { Request } from 'express';
