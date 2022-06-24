@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
+import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -29,6 +30,8 @@ import * as Joi from 'joi';
         DB_USER: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        ACCESS_TOKEN_SECRET_KEY: Joi.string().required(),
+        REFRESH_TOKEN_SECRET_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -40,6 +43,7 @@ import * as Joi from 'joi';
     CommonModule,
     QuestionsModule,
     AnswersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

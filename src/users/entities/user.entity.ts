@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Question } from 'src/questions/entities/question.entity';
@@ -9,27 +11,39 @@ export class SkillName {
 
 @Entity()
 export class User extends CoreEntity {
+  @IsEmail({}, { message: '이메일 형식이 아닙니다.' })
+  @IsNotEmpty({ message: '이메일은 비어있을 수 없습니다.' })
   @Column({ unique: true })
   email: string;
 
+  @IsString({ message: '이름은 문자열이어야 합니다.' })
+  @IsNotEmpty({ message: '이름은 비어있을 수 없습니다.' })
   @Column()
   name: string;
 
+  @IsString({ message: '닉네임은 문자열이어야 합니다.' })
+  @IsNotEmpty({ message: '닉네임은 비어있을 수 없습니다.' })
   @Column()
   nickname: string;
 
   @Column({ type: 'json' })
   skill: SkillName[];
 
+  @IsNumber()
   @Column({ default: 0 })
   coin: number;
 
+  @IsNumber()
   @Column({ default: 0 })
   score: number;
 
-  // @OneToMany((type) => Question, (question) => question.author)
-  // questions: Question[];
+  @Column({ nullable: true })
+  @Exclude() //노출을 원하지 않는 멤버
+  refreshToken?: string;
 
-  @OneToMany((type) => Answer, (answer) => answer.author)
+  @OneToMany((type) => Question, (question: Question) => question.author)
+  questions: Question[];
+
+  @OneToMany((type) => Answer, (answer: Answer) => answer.author)
   answers: Answer[];
 }
