@@ -21,7 +21,7 @@ export class UsersRepository extends Repository<User> {
     }
   }
 
-  async findUserByEmail(email: string) {
+  async findUserByEmail(email: string): Promise<User> {
     try {
       const user = await this.findOne({ email });
       if (!user) throw new Error('처리되지 않은 오류 : findUserByEmail');
@@ -32,7 +32,7 @@ export class UsersRepository extends Repository<User> {
   }
 
   //개발용 모든 유저 목록
-  async list() {
+  async list(): Promise<User[]> {
     return await this.find();
   }
 }
