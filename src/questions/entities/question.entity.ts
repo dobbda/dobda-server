@@ -29,8 +29,8 @@ export class Question extends CoreEntity {
   @IsNumber()
   coin: number;
 
-  // @ManyToOne((type) => User, (user) => user.questions)
-  // author: User;
+  @ManyToOne((type) => User, (user) => user.questions)
+  author: User;
 
   @OneToMany((type) => Answer, (answer) => answer.question)
   answers: Answer[];
