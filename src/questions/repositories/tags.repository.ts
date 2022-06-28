@@ -21,11 +21,14 @@ export class TagsRepository extends Repository<Tag> {
     }
     //존재하지 않는 tagName이 있다면 insert
     if (newTageNames.length > 0) {
-      await Promise.allSettled(
-        newTageNames.map((newTageName) =>
-          this.save(this.create({ name: newTageName })),
-        ),
+      const values = newTageNames.map((newTageName) =>
+        this.create({ name: newTageName }),
       );
+      await this.createQueryBuilder()
+        .insert()
+        .into(Tag)
+        .values([...values])
+        .execute();
     }
     return this.existTags(tagNames);
   }
