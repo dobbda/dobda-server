@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
 import { GetQuestionsDto } from './dtos/get-questions.dto';
@@ -19,14 +19,7 @@ export class QuestionsService {
       questionId,
     );
     if (!question) {
-      return {
-        success: false,
-        response: null,
-        error: {
-          message: 'id에 해당하는 question이 없습니다.',
-          status: 404,
-        },
-      };
+      throw new NotFoundException('id에 해당하는 question이 없습니다.');
     }
     return question;
   }
@@ -55,11 +48,7 @@ export class QuestionsService {
     }
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     return {
-      success: true,
-      response: {
-        question: { ...result, tags },
-      },
-      error: null,
+      question: { ...result, tags },
     };
   }
 
@@ -80,11 +69,7 @@ export class QuestionsService {
     //QuestionTag 생성
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
     return {
-      success: true,
-      response: {
-        result: true,
-      },
-      error: null,
+      result: true,
     };
   }
 
@@ -111,11 +96,7 @@ export class QuestionsService {
       await this.questionTagsRepository.createQuestionTags(result.id, tags);
     }
     return {
-      success: true,
-      response: {
-        result: true,
-      },
-      error: null,
+      result: true,
     };
   }
 
@@ -129,11 +110,7 @@ export class QuestionsService {
     }
     await this.questionsRepository.delete({ id: questionId });
     return {
-      success: true,
-      response: {
-        result: true,
-      },
-      error: null,
+      result: true,
     };
   }
 }
