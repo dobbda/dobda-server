@@ -68,9 +68,7 @@ export class QuestionsService {
     const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
     //QuestionTag 생성
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
-    return {
-      result: true,
-    };
+    return true;
   }
 
   async editQuestion(
@@ -95,9 +93,7 @@ export class QuestionsService {
       const tags = await this.tagsRepository.createNonExistTags({ tagNames });
       await this.questionTagsRepository.createQuestionTags(result.id, tags);
     }
-    return {
-      result: true,
-    };
+    return true;
   }
 
   async deleteQuestion(questionId: number) {
@@ -109,8 +105,6 @@ export class QuestionsService {
       return result;
     }
     await this.questionsRepository.delete({ id: questionId });
-    return {
-      result: true,
-    };
+    return true;
   }
 }

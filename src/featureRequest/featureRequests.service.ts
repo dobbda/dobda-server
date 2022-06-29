@@ -58,4 +58,15 @@ export class FeatureRequestService {
     );
     return { featureRequest: { ...result, tags } };
   }
+
+  async deleteFeatureRequest(featureRequestId: number) {
+    const featureRequest = await this.findFeatureRequestOrError(
+      featureRequestId,
+    );
+    /*
+      TODO: featureRequest을 로그인한 user가 만든게 맞는지 check
+    */
+    await this.featureRequestRepository.delete({ id: featureRequest.id });
+    return true;
+  }
 }

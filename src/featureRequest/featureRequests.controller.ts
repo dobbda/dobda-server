@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestService } from './featureRequests.service';
@@ -30,5 +30,10 @@ export class FeatureRequestController {
   @Get('/:id')
   async getFeatureRequest(@Param('id') featureRequestId: number) {
     return this.featureRequestService.getFeatureRequest(featureRequestId);
+  }
+
+  @Delete('/:id')
+  async deleteFeatureRequest(@Param('id') featureRequestId: number) {
+    return this.featureRequestService.deleteFeatureRequest(featureRequestId);
   }
 }

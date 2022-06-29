@@ -5,11 +5,13 @@ import { Tag } from './tag.entity';
 
 @Entity()
 export class QuestionTag extends CoreEntity {
-  @ManyToOne((type) => Question, (question) => question.questionTags)
+  @ManyToOne((type) => Question, (question) => question.questionTags, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'questionId' })
   questionId: number;
 
-  @ManyToOne((type) => Tag, (tag) => tag.questionTags)
+  @ManyToOne((type) => Tag, (tag) => tag.questionTags, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tagId' })
   tagId: number;
 }
