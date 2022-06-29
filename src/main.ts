@@ -1,11 +1,11 @@
 import { QueryFailedExceptionFilter } from './common/exceptions/query-exception.filter';
-import { QueryFailedError } from 'typeorm';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from './common/interceptors/success.interceptor';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import { setupSwagger } from './common/utils/setupSwagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +16,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   app.useGlobalInterceptors(new SuccessInterceptor());
   app.useGlobalFilters(
     new HttpExceptionFilter(),
@@ -23,6 +24,9 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
+
+  //Swagger 관련 셋업
+  setupSwagger(app);
 
   await app.listen(3000);
 }
