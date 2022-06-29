@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -37,15 +37,14 @@ export class FeatureRequest extends CoreEntity {
   @IsNumber()
   coin: number;
 
+  @Column({ type: 'date' })
+  deadline: Date;
+
   @Column({ type: 'enum', enum: Progress, default: Progress.Pending })
   progress: Progress;
 
-  @Column({ nullable: true })
-  @IsDate()
-  deadline: Date;
-
   /* 작성자 */
-  @ManyToOne((type) => User, (user) => user.questions)
+  @ManyToOne((type) => User, (user) => user.featureRequests)
   author: User;
 
   /* 채택답변 */

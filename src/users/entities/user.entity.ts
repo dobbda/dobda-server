@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
+import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -43,6 +44,12 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Question, (question: Question) => question.author)
   questions: Question[];
+
+  @OneToMany(
+    (type) => FeatureRequest,
+    (featureRequest: FeatureRequest) => featureRequest.author,
+  )
+  featureRequests: FeatureRequest[];
 
   @OneToMany((type) => Answer, (answer: Answer) => answer.author)
   answers: Answer[];

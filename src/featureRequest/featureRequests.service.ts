@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { TagsRepository } from 'src/questions/repositories/tags.repository';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestRepository } from './repositiories/featureRequest.repository';
 import { FeatureRequestTagRepository } from './repositiories/featureRequestTag.repository';
-
+import { Progress } from './entities/featureRequest.entity';
 @Injectable()
 export class FeatureRequestService {
   constructor(
@@ -12,6 +12,17 @@ export class FeatureRequestService {
     private readonly featureRequestTagRepository: FeatureRequestTagRepository,
     private readonly tagsRepository: TagsRepository,
   ) {}
+
+  async findFeatureRequestOrError(featureRequestId: number) {
+    const featureRequest =
+      await this.featureRequestRepository.findOneFeatureRequestWithId(
+        featureRequestId,
+      );
+    if (!featureRequest) {
+      throw new NotFoundException('id에 해당하는 feature-request가 없습니다.');
+    }
+    return featureRequest;
+  }
 
   async createFeatureRequest(
     createFeatureRequestDto: CreateFeatureRequestDto,
@@ -26,6 +37,7 @@ export class FeatureRequestService {
       await this.featureRequestRepository.createFeatureRequest(
         createFeatureRequestDto,
       );
+
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
 
@@ -37,5 +49,13 @@ export class FeatureRequestService {
     return {
       result: true,
     };
+  }
+
+  async getFeatureRequest(featureRequestId: number) {
+    const result = await this.findFeatureRequestOrError(featureRequestId);
+    const tags = await this.tagsRepository.allTagsInFeatureRequest(
+      featureRequestId,
+    );
+    return { featureRequest: { ...result, tags } };
   }
 }

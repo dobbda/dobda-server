@@ -1,5 +1,5 @@
 import { Tag } from 'src/questions/entities/tag.entity';
-import { EntityRepository, getConnection, Repository } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { FeatureRequestTag } from '../entities/featureRequestTag.entity';
 
 @EntityRepository(FeatureRequestTag)

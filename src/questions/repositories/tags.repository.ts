@@ -46,4 +46,14 @@ export class TagsRepository extends Repository<Tag> {
       .where('questionTags.questionId = :questionId', { questionId })
       .getMany();
   }
+
+  async allTagsInFeatureRequest(featureRequestId: number) {
+    return this.createQueryBuilder('tag')
+      .select(['tag.name'])
+      .leftJoin('tag.featureRequestTags', 'featureRequestTags')
+      .where('featureRequestTags.featureRequestId = :featureRequestId', {
+        featureRequestId,
+      })
+      .getMany();
+  }
 }

@@ -24,7 +24,7 @@ export class QuestionsService {
     return question;
   }
 
-  async getQuestion({ page, title, tag }: GetQuestionsDto) {
+  async getQuestions({ page, title, tag }: GetQuestionsDto) {
     const { total, questions } = await this.questionsRepository.findAll(
       page,
       title,
@@ -41,7 +41,7 @@ export class QuestionsService {
     };
   }
 
-  async getQuestions(questionId: number) {
+  async getQuestion(questionId: number) {
     const result = await this.findQuestionOrError(questionId);
     if ('error' in result) {
       return result;

@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreateFeatureRequestDto {
   @IsString()
@@ -14,8 +20,7 @@ export class CreateFeatureRequestDto {
   @IsNotEmpty()
   readonly coin: number;
 
-  @Type(() => Date)
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   readonly deadline: Date;
 }

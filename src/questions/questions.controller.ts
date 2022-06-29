@@ -25,17 +25,8 @@ export class QuestionController {
     url: questions?page=${page}&tag=${tag}
   */
   @Get()
-  async getQuestion(@Query() getQuestionsDto: GetQuestionsDto) {
-    return this.questionsService.getQuestion(getQuestionsDto);
-  }
-
-  /* 
-    질문 상세 목록 API
-    url: questions/detail/:questionId (GET)
-  */
-  @Get('/detail/:questionId')
-  async getQuestions(@Param('questionId') questionId: number) {
-    return this.questionsService.getQuestions(questionId);
+  async getQuestions(@Query() getQuestionsDto: GetQuestionsDto) {
+    return this.questionsService.getQuestions(getQuestionsDto);
   }
 
   /* 
@@ -54,10 +45,19 @@ export class QuestionController {
   }
 
   /* 
-    질문 수정 API
-    url: questions/detail/:id (PATCH)
+    질문 상세 목록 API
+    url: questions/:questionId (GET)
   */
-  @Patch('/detail/:id')
+  @Get('/:id')
+  async getQuestion(@Param('id') questionId: number) {
+    return this.questionsService.getQuestion(questionId);
+  }
+
+  /* 
+    질문 수정 API
+    url: questions/:id (PATCH)
+  */
+  @Patch('/:id')
   async editQuestion(
     @Param('id') questionId: number,
     @Body('question') editQuestionDto: EditQuestionDto,
@@ -67,9 +67,9 @@ export class QuestionController {
 
   /* 
     질문 수정 API
-    url: questions/detail/:id (DELETE)
+    url: questions/:id (DELETE)
   */
-  @Delete('/detail/:id')
+  @Delete('/:id')
   async deleteQuestion(@Param('id') questionId: number) {
     return this.questionsService.deleteQuestion(questionId);
   }

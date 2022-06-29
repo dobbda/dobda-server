@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestService } from './featureRequests.service';
@@ -13,12 +13,22 @@ export class FeatureRequestController {
   */
   @Post()
   async createFeatureRequest(
-    @Body('question') createFeatureRequestDto: CreateFeatureRequestDto,
+    @Body('featureRequest') createFeatureRequestDto: CreateFeatureRequestDto,
     @Body('tag') createTagsDto: CreateTagsDto,
   ) {
+    console.log(createFeatureRequestDto);
     return this.featureRequestService.createFeatureRequest(
       createFeatureRequestDto,
       createTagsDto,
     );
+  }
+
+  /* 
+    기능요청 상세 API
+    url: feature-request/:id (GET)
+  */
+  @Get('/:id')
+  async getFeatureRequest(@Param('id') featureRequestId: number) {
+    return this.featureRequestService.getFeatureRequest(featureRequestId);
   }
 }
