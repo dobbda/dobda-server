@@ -14,19 +14,24 @@ export class QuestionsRepository extends Repository<Question> {
       .getOne();
   }
 
-  async findAll(page: number, title?: string) {
-    const questionQuery = this.createQueryBuilder('question');
+  async findAll(page: number, title?: string, tagId?: number) {
+    const questionQuery = this.createQueryBuilder('question')
+      .take(20)
+      .skip((page - 1) * 20);
     if (title) {
       questionQuery.where('question.title like :title', {
         title: `%${title}%`,
       });
     }
+    if (tagId) {
+      questionQuery
+        .leftJoin('question.questionTags', 'questionTag')
+        .andWhere('questionTag.tagId = :tagId', { tagId });
+    }
+    const [questions, total] = await questionQuery.getManyAndCount();
     return {
-      total: await questionQuery.getCount(),
-      questions: await questionQuery
-        .take(20)
-        .skip((page - 1) * 20)
-        .getMany(),
+      total,
+      questions,
     };
   }
 }

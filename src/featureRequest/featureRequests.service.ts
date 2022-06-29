@@ -4,8 +4,8 @@ import { TagsRepository } from 'src/questions/repositories/tags.repository';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestRepository } from './repositiories/featureRequest.repository';
 import { FeatureRequestTagRepository } from './repositiories/featureRequestTag.repository';
-import { Progress } from './entities/featureRequest.entity';
 import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
+import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
 @Injectable()
 export class FeatureRequestService {
   constructor(
@@ -23,6 +23,26 @@ export class FeatureRequestService {
       throw new NotFoundException('id에 해당하는 feature-request가 없습니다.');
     }
     return featureRequest;
+  }
+
+  async getFeatureRequests({ page, title, tagId }: GetFeatureRequestsDto) {
+    const { total, featureRequests } =
+      await this.featureRequestRepository.findAll(page, title, tagId);
+
+    /* featureRequest이 가지고있는 tag 넣기 */
+    const result = await Promise.all(
+      featureRequests.map(async (featureRequest) => {
+        const tags = await this.tagsRepository.allTagsInFeatureRequest(
+          featureRequest.id,
+        );
+        return { ...featureRequest, tags };
+      }),
+    );
+
+    return {
+      result,
+      totalPages: Math.ceil(total / 20),
+    };
   }
 
   async createFeatureRequest(

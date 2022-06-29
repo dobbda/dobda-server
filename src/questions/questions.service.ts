@@ -24,10 +24,11 @@ export class QuestionsService {
     return question;
   }
 
-  async getQuestions({ page, title, tag }: GetQuestionsDto) {
+  async getQuestions({ page, title, tagId }: GetQuestionsDto) {
     const { total, questions } = await this.questionsRepository.findAll(
       page,
       title,
+      tagId,
     );
     const result = await Promise.all(
       questions.map(async (question) => {

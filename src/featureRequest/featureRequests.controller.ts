@@ -6,15 +6,31 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
+import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
 import { FeatureRequestService } from './featureRequests.service';
 
 @Controller('feature-request')
 export class FeatureRequestController {
   constructor(private readonly featureRequestService: FeatureRequestService) {}
+  /* 
+    기능요청 목록 API  (default page 1) (GET)
+    url: questions 
+    url: questions?title=${title} 
+    url: questions?tag=${tag} 
+    url: questions?page=${page}&title=${title} 
+    url: questions?page=${page}&tag=${tag}
+  */
+  @Get()
+  async getFeatureRequests(
+    @Query() getFeatureRequestsDto: GetFeatureRequestsDto,
+  ) {
+    return this.featureRequestService.getFeatureRequests(getFeatureRequestsDto);
+  }
 
   /* 
     기능요청 등록 API
@@ -25,7 +41,6 @@ export class FeatureRequestController {
     @Body('featureRequest') createFeatureRequestDto: CreateFeatureRequestDto,
     @Body('tag') createTagsDto: CreateTagsDto,
   ) {
-    console.log(createFeatureRequestDto);
     return this.featureRequestService.createFeatureRequest(
       createFeatureRequestDto,
       createTagsDto,
