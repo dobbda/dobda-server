@@ -5,6 +5,7 @@ import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestRepository } from './repositiories/featureRequest.repository';
 import { FeatureRequestTagRepository } from './repositiories/featureRequestTag.repository';
 import { Progress } from './entities/featureRequest.entity';
+import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
 @Injectable()
 export class FeatureRequestService {
   constructor(
@@ -57,6 +58,32 @@ export class FeatureRequestService {
       featureRequestId,
     );
     return { featureRequest: { ...result, tags } };
+  }
+
+  async editFeatureRequest(
+    featureRequestId: number,
+    { tagNames, ...editFeatureRequest }: EditFeatureRequestDto,
+  ) {
+    const featureRequest = await this.findFeatureRequestOrError(
+      featureRequestId,
+    );
+    /*
+      TODO: featureRequest을 로그인한 user가 만든게 맞는지 check
+    */
+    await this.featureRequestRepository.save([
+      { id: featureRequestId, ...editFeatureRequest },
+    ]);
+    if (tagNames) {
+      await this.featureRequestTagRepository.delete({
+        featureRequestId: featureRequest.id,
+      });
+      const tags = await this.tagsRepository.createNonExistTags({ tagNames });
+      await this.featureRequestTagRepository.createFeatureRequestTags(
+        featureRequest.id,
+        tags,
+      );
+    }
+    return true;
   }
 
   async deleteFeatureRequest(featureRequestId: number) {

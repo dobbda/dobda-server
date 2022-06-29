@@ -1,6 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
+import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
 import { FeatureRequestService } from './featureRequests.service';
 
 @Controller('feature-request')
@@ -32,6 +41,25 @@ export class FeatureRequestController {
     return this.featureRequestService.getFeatureRequest(featureRequestId);
   }
 
+  /* 
+    기능요청 수정 API
+    url: feature-request/:id (PATCH)
+  */
+  @Patch('/:id')
+  async editFeatureRequest(
+    @Param('id') featureRequestId: number,
+    @Body('featureRequest') editFeatureRequestDto: EditFeatureRequestDto,
+  ) {
+    return this.featureRequestService.editFeatureRequest(
+      featureRequestId,
+      editFeatureRequestDto,
+    );
+  }
+
+  /* 
+    기능요청 삭제 API
+    url: feature-request/:id (DELETE)
+  */
   @Delete('/:id')
   async deleteFeatureRequest(@Param('id') featureRequestId: number) {
     return this.featureRequestService.deleteFeatureRequest(featureRequestId);
