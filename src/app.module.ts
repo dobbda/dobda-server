@@ -11,6 +11,7 @@ import { CommonModule } from './common/common.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
 import { AuthModule } from './auth/auth.module';
+import { FeatureRequestModule } from './featureRequest/featureRequests.module';
 import * as Joi from 'joi';
 
 @Module({
@@ -44,6 +45,7 @@ import * as Joi from 'joi';
     QuestionsModule,
     AnswersModule,
     AuthModule,
+    FeatureRequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

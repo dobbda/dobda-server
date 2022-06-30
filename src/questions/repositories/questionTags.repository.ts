@@ -5,9 +5,14 @@ import { Tag } from '../entities/tag.entity';
 @EntityRepository(QuestionTag)
 export class QuestionTagsRepository extends Repository<QuestionTag> {
   async createQuestionTags(questionId: number, tags: Tag[]) {
-    await Promise.allSettled(
-      tags.map((tag) => this.save(this.create({ questionId, tagId: tag.id }))),
+    const values = tags.map((tag) =>
+      this.create({ questionId, tagId: tag.id }),
     );
+    await this.createQueryBuilder()
+      .insert()
+      .into(QuestionTag)
+      .values([...values])
+      .execute();
     return true;
   }
 }

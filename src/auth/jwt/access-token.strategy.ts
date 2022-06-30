@@ -30,7 +30,7 @@ export class AccessTokenStrategy extends PassportStrategy(
     try {
       const user = await this.usersRepository.findUserByEmail(payload.email);
       if (user) {
-        return { user };
+        return user;
       } else {
         throw new Error('해당하는 유저는 없습니다.');
       }

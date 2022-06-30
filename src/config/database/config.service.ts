@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
+import { Answer } from 'src/answers/entities/answer.entity';
+import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
+import { FeatureRequestTag } from 'src/featureRequest/entities/featureRequestTag.entity';
+import { Question } from 'src/questions/entities/question.entity';
+import { QuestionTag } from 'src/questions/entities/questionTag.entity';
+import { Tag } from 'src/questions/entities/tag.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
@@ -16,7 +23,15 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       database: this.configService.get<string>('DB_NAME'),
       synchronize: true,
       logging: true,
-      entities: ['dist/**/**/*.entity{.ts,.js}'],
+      entities: [
+        User,
+        FeatureRequest,
+        FeatureRequestTag,
+        Tag,
+        Question,
+        QuestionTag,
+        Answer,
+      ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],
       cli: {
