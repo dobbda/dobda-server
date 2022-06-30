@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 import { QuestionTag } from './questionTag.entity';
 
@@ -41,4 +42,7 @@ export class Question extends CoreEntity {
   @OneToOne((type) => Answer)
   @JoinColumn()
   accepteAnswer: Answer;
+
+  @RelationId((question: Question) => question.author)
+  authorId: number;
 }

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
 import { GetQuestionsDto } from './dtos/get-questions.dto';
@@ -14,9 +19,10 @@ export class QuestionsService {
     private readonly questionTagsRepository: QuestionTagsRepository,
   ) {}
 
-  async findQuestionOrError(questionId: number) {
+  async findQuestionOrError(questionId: number, getAuthor?: boolean) {
     const question = await this.questionsRepository.findOneQuestionWithId(
       questionId,
+      getAuthor,
     );
     if (!question) {
       throw new NotFoundException('id에 해당하는 question이 없습니다.');
@@ -44,9 +50,6 @@ export class QuestionsService {
 
   async getQuestion(questionId: number) {
     const result = await this.findQuestionOrError(questionId);
-    if ('error' in result) {
-      return result;
-    }
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     return {
       question: { ...result, tags },
@@ -56,18 +59,18 @@ export class QuestionsService {
   async createQuestion(
     createQuestionDto: CreateQuestionDto,
     createTagsDto: CreateTagsDto,
+    user: User,
   ) {
-    /*
-      TODO: question과 user 관계 맺기
-    */
-
-    //question생성
+    /* question생성 */
     const question = await this.questionsRepository.createQuestion(
       createQuestionDto,
+      user,
     );
-    //tag생성
+
+    /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
-    //QuestionTag 생성
+
+    /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
     return true;
   }
@@ -75,14 +78,13 @@ export class QuestionsService {
   async editQuestion(
     questionId: number,
     { tagNames, ...editQuestion }: EditQuestionDto,
+    user: User,
   ) {
     const result = await this.findQuestionOrError(questionId);
-    if ('error' in result) {
-      return result;
+    /*  question을 user가 만든게 맞는지 check */
+    if (result.authorId !== user.id) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    /*
-      TODO: question을 user가 만든게 맞는지 check
-    */
     await this.questionsRepository.save([
       {
         id: result.id,
@@ -97,13 +99,11 @@ export class QuestionsService {
     return true;
   }
 
-  async deleteQuestion(questionId: number) {
-    /*
-      TODO: question을 user가 만든게 맞는지 check
-    */
+  async deleteQuestion(questionId: number, user: User) {
     const result = await this.findQuestionOrError(questionId);
-    if ('error' in result) {
-      return result;
+    /*  question을 user가 만든게 맞는지 check */
+    if (result.authorId !== user.id) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
     }
     await this.questionsRepository.delete({ id: questionId });
     return true;

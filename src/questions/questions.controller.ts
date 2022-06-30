@@ -7,7 +7,11 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
 import { GetQuestionsDto } from './dtos/get-questions.dto';
@@ -34,13 +38,16 @@ export class QuestionController {
     url: questions (POST)
   */
   @Post()
+  @UseGuards(AccessTokenGuard)
   async createQuestion(
     @Body('question') createQuestionDto: CreateQuestionDto,
     @Body('tag') createTagsDto: CreateTagsDto,
+    @CurrentUser() user: User,
   ) {
     return this.questionsService.createQuestion(
       createQuestionDto,
       createTagsDto,
+      user,
     );
   }
 
@@ -58,11 +65,17 @@ export class QuestionController {
     url: questions/:id (PATCH)
   */
   @Patch('/:id')
+  @UseGuards(AccessTokenGuard)
   async editQuestion(
     @Param('id') questionId: number,
     @Body('question') editQuestionDto: EditQuestionDto,
+    @CurrentUser() user: User,
   ) {
-    return this.questionsService.editQuestion(questionId, editQuestionDto);
+    return this.questionsService.editQuestion(
+      questionId,
+      editQuestionDto,
+      user,
+    );
   }
 
   /* 
@@ -70,7 +83,11 @@ export class QuestionController {
     url: questions/:id (DELETE)
   */
   @Delete('/:id')
-  async deleteQuestion(@Param('id') questionId: number) {
-    return this.questionsService.deleteQuestion(questionId);
+  @UseGuards(AccessTokenGuard)
+  async deleteQuestion(
+    @Param('id') questionId: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.questionsService.deleteQuestion(questionId, user);
   }
 }

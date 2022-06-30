@@ -1,17 +1,28 @@
+import { User } from 'src/users/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateQuestionDto } from '../dtos/create-question.dto';
 import { Question } from '../entities/question.entity';
 
 @EntityRepository(Question)
 export class QuestionsRepository extends Repository<Question> {
-  async createQuestion(createQuestion: CreateQuestionDto): Promise<Question> {
-    return this.save(this.create(createQuestion));
+  async createQuestion(
+    createQuestion: CreateQuestionDto,
+    author: User,
+  ): Promise<Question> {
+    return this.save(this.create({ ...createQuestion, author }));
   }
 
-  async findOneQuestionWithId(questionId: number) {
-    return this.createQueryBuilder('question')
-      .where('question.id = :questionId', { questionId })
-      .getOne();
+  async findOneQuestionWithId(questionId: number, getAuthor?: boolean) {
+    const question = this.createQueryBuilder('question').where(
+      'question.id = :questionId',
+      { questionId },
+    );
+    if (getAuthor) {
+      question
+        .leftJoin('question.author', 'author')
+        .addSelect(['author.email', 'author.nickname', 'author.id']);
+    }
+    return question.getOne();
   }
 
   async findAll(page: number, title?: string, tagId?: number) {

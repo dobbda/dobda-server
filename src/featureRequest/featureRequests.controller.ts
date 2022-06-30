@@ -7,8 +7,12 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
+import { User } from 'src/users/entities/user.entity';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
 import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
@@ -37,13 +41,16 @@ export class FeatureRequestController {
     url: feature-request (POST)
   */
   @Post()
+  @UseGuards(AccessTokenGuard)
   async createFeatureRequest(
     @Body('featureRequest') createFeatureRequestDto: CreateFeatureRequestDto,
     @Body('tag') createTagsDto: CreateTagsDto,
+    @CurrentUser() user: User,
   ) {
     return this.featureRequestService.createFeatureRequest(
       createFeatureRequestDto,
       createTagsDto,
+      user,
     );
   }
 
@@ -61,13 +68,16 @@ export class FeatureRequestController {
     url: feature-request/:id (PATCH)
   */
   @Patch('/:id')
+  @UseGuards(AccessTokenGuard)
   async editFeatureRequest(
     @Param('id') featureRequestId: number,
     @Body('featureRequest') editFeatureRequestDto: EditFeatureRequestDto,
+    @CurrentUser() user: User,
   ) {
     return this.featureRequestService.editFeatureRequest(
       featureRequestId,
       editFeatureRequestDto,
+      user,
     );
   }
 
@@ -76,7 +86,14 @@ export class FeatureRequestController {
     url: feature-request/:id (DELETE)
   */
   @Delete('/:id')
-  async deleteFeatureRequest(@Param('id') featureRequestId: number) {
-    return this.featureRequestService.deleteFeatureRequest(featureRequestId);
+  @UseGuards(AccessTokenGuard)
+  async deleteFeatureRequest(
+    @Param('id') featureRequestId: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.featureRequestService.deleteFeatureRequest(
+      featureRequestId,
+      user,
+    );
   }
 }

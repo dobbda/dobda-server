@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { TagsRepository } from 'src/questions/repositories/tags.repository';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
@@ -6,6 +10,7 @@ import { FeatureRequestRepository } from './repositiories/featureRequest.reposit
 import { FeatureRequestTagRepository } from './repositiories/featureRequestTag.repository';
 import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
 import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
+import { User } from 'src/users/entities/user.entity';
 @Injectable()
 export class FeatureRequestService {
   constructor(
@@ -14,10 +19,14 @@ export class FeatureRequestService {
     private readonly tagsRepository: TagsRepository,
   ) {}
 
-  async findFeatureRequestOrError(featureRequestId: number) {
+  async findFeatureRequestOrError(
+    featureRequestId: number,
+    getAuthor?: boolean,
+  ) {
     const featureRequest =
       await this.featureRequestRepository.findOneFeatureRequestWithId(
         featureRequestId,
+        getAuthor,
       );
     if (!featureRequest) {
       throw new NotFoundException('id에 해당하는 feature-request가 없습니다.');
@@ -48,15 +57,13 @@ export class FeatureRequestService {
   async createFeatureRequest(
     createFeatureRequestDto: CreateFeatureRequestDto,
     createTagsDto: CreateTagsDto,
+    user: User,
   ) {
-    /*
-      TODO: featureRequest와 user 관계 맺기
-    */
-
     /* featureRequest생성 */
     const featureRequest =
       await this.featureRequestRepository.createFeatureRequest(
         createFeatureRequestDto,
+        user,
       );
 
     /* tag생성 */
@@ -73,7 +80,7 @@ export class FeatureRequestService {
   }
 
   async getFeatureRequest(featureRequestId: number) {
-    const result = await this.findFeatureRequestOrError(featureRequestId);
+    const result = await this.findFeatureRequestOrError(featureRequestId, true);
     const tags = await this.tagsRepository.allTagsInFeatureRequest(
       featureRequestId,
     );
@@ -83,13 +90,15 @@ export class FeatureRequestService {
   async editFeatureRequest(
     featureRequestId: number,
     { tagNames, ...editFeatureRequest }: EditFeatureRequestDto,
+    user: User,
   ) {
     const featureRequest = await this.findFeatureRequestOrError(
       featureRequestId,
     );
-    /*
-      TODO: featureRequest을 로그인한 user가 만든게 맞는지 check
-    */
+    /* featureRequest을 로그인한 user가 만든게 맞는지 check */
+    if (featureRequest.authorId !== user.id) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
+    }
     await this.featureRequestRepository.save([
       { id: featureRequestId, ...editFeatureRequest },
     ]);
@@ -106,13 +115,14 @@ export class FeatureRequestService {
     return true;
   }
 
-  async deleteFeatureRequest(featureRequestId: number) {
+  async deleteFeatureRequest(featureRequestId: number, user: User) {
     const featureRequest = await this.findFeatureRequestOrError(
       featureRequestId,
     );
-    /*
-      TODO: featureRequest을 로그인한 user가 만든게 맞는지 check
-    */
+    /* featureRequest을 로그인한 user가 만든게 맞는지 check */
+    if (featureRequest.authorId !== user.id) {
+      throw new BadRequestException('작성자만 삭제가 가능합니다');
+    }
     await this.featureRequestRepository.delete({ id: featureRequest.id });
     return true;
   }

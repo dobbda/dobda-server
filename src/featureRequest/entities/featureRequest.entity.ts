@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 import { FeatureRequestTag } from './featureRequestTag.entity';
 
@@ -61,4 +62,7 @@ export class FeatureRequest extends CoreEntity {
     (featureRequestTag) => featureRequestTag.featureRequestId,
   )
   featureRequestTags: FeatureRequestTag[];
+
+  @RelationId((featureRequest: FeatureRequest) => featureRequest.author)
+  authorId: number;
 }

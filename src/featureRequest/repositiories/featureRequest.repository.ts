@@ -1,19 +1,31 @@
+import { User } from 'src/users/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateFeatureRequestDto } from '../dtos/create-featureRequest.dto';
 import { FeatureRequest } from '../entities/featureRequest.entity';
 
 @EntityRepository(FeatureRequest)
 export class FeatureRequestRepository extends Repository<FeatureRequest> {
-  async createFeatureRequest(createFeatureRequestDto: CreateFeatureRequestDto) {
-    return this.save(this.create({ ...createFeatureRequestDto }));
+  async createFeatureRequest(
+    createFeatureRequestDto: CreateFeatureRequestDto,
+    author: User,
+  ) {
+    return this.save(this.create({ ...createFeatureRequestDto, author }));
   }
 
-  async findOneFeatureRequestWithId(featureRequestId: number) {
-    return this.createQueryBuilder('featureRequest')
-      .where('featureRequest.id = :featureRequestId', { featureRequestId })
-      .leftJoin('featureRequest.author', 'author')
-      .addSelect(['author.email', 'author.nickname'])
-      .getOne();
+  async findOneFeatureRequestWithId(
+    featureRequestId: number,
+    getAuthor?: boolean,
+  ) {
+    const featureRequest = this.createQueryBuilder('featureRequest').where(
+      'featureRequest.id = :featureRequestId',
+      { featureRequestId },
+    );
+    if (getAuthor) {
+      featureRequest
+        .leftJoin('featureRequest.author', 'author')
+        .addSelect(['author.email', 'author.nickname', 'author.id']);
+    }
+    return featureRequest.getOne();
   }
 
   async findAll(page: number, title?: string, tagId?: number) {
