@@ -8,7 +8,16 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreateQuestionDto {
+export class CreateTagsDto {
+  @IsNotEmpty()
+  @IsArray()
+  @ArrayMaxSize(10)
+  @IsString({ each: true })
+  @ApiProperty({ description: 'tagNames' })
+  tagNames: string[];
+}
+
+export class CreateQuestionDto extends CreateTagsDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: '제목' })
@@ -23,20 +32,4 @@ export class CreateQuestionDto {
   @IsNumber()
   @ApiProperty({ description: '코인' })
   readonly coin: number;
-
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  @ApiProperty({ description: 'tagNames' })
-  readonly tagNames: string[];
-}
-
-export class CreateTagsDto {
-  @IsNotEmpty()
-  @IsArray()
-  @ArrayMaxSize(10)
-  @IsString({ each: true })
-  @ApiProperty({ description: 'tagNames' })
-  tagNames: string[];
 }

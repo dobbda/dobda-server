@@ -19,7 +19,7 @@ export class GetQuestionsDto extends PaginationDto {
 }
 
 export class GetQuestionsOutput extends PaginationOuput {
-  @ApiProperty({ description: 'dd' })
+  @ApiProperty({ description: 'result' })
   result: QuestionWithTag[];
 }
 

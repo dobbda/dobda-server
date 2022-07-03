@@ -9,6 +9,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  PartialType,
+  PickType,
+} from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
@@ -19,6 +28,7 @@ import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
 import { FeatureRequestService } from './featureRequests.service';
 
 @Controller('feature-request')
+@ApiTags('기능요청 API')
 export class FeatureRequestController {
   constructor(private readonly featureRequestService: FeatureRequestService) {}
   /* 
@@ -30,6 +40,8 @@ export class FeatureRequestController {
     url: questions?page=${page}&tag=${tag}
   */
   @Get()
+  @ApiOperation({ summary: '기능요청 조회' })
+  @ApiCreatedResponse({ description: '기능요청여러개를 조회한다' })
   async getFeatureRequests(
     @Query() getFeatureRequestsDto: GetFeatureRequestsDto,
   ) {
@@ -41,6 +53,9 @@ export class FeatureRequestController {
     url: feature-request (POST)
   */
   @Post()
+  @ApiOperation({ summary: '기능 요청 등록' })
+  @ApiCreatedResponse({ description: '가능요청을 등록한다' })
+  @ApiBody({ type: CreateFeatureRequestDto })
   @UseGuards(AccessTokenGuard)
   async createFeatureRequest(
     @Body() createFeatureRequestDto: CreateFeatureRequestDto,
@@ -57,6 +72,9 @@ export class FeatureRequestController {
     url: feature-request/:id (GET)
   */
   @Get('/:id')
+  @ApiOperation({ summary: '기능 요청 상세 조회' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 기능요청을 조회한다' })
+  @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
   async getFeatureRequest(@Param('id') featureRequestId: number) {
     return this.featureRequestService.getFeatureRequest(featureRequestId);
   }
@@ -66,6 +84,19 @@ export class FeatureRequestController {
     url: feature-request/:id (PATCH)
   */
   @Patch('/:id')
+  @ApiOperation({ summary: '기능요청 수정' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 기능요청을 수정한다' })
+  @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
+  @ApiBody({
+    type: PartialType(
+      PickType(CreateFeatureRequestDto, [
+        'title',
+        'content',
+        'deadline',
+        'tagNames',
+      ]),
+    ),
+  })
   @UseGuards(AccessTokenGuard)
   async editFeatureRequest(
     @Param('id') featureRequestId: number,
@@ -84,6 +115,9 @@ export class FeatureRequestController {
     url: feature-request/:id (DELETE)
   */
   @Delete('/:id')
+  @ApiOperation({ summary: '기능요청 삭제' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 기능요청을 삭제한다' })
+  @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
   @UseGuards(AccessTokenGuard)
   async deleteFeatureRequest(
     @Param('id') featureRequestId: number,
