@@ -1,6 +1,7 @@
 import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 
-export class CreateFeatureRequestDto {
+export class CreateFeatureRequestDto extends CreateTagsDto {
   @IsString()
   @IsNotEmpty()
   readonly title: string;

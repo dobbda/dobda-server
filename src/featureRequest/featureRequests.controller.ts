@@ -43,13 +43,11 @@ export class FeatureRequestController {
   @Post()
   @UseGuards(AccessTokenGuard)
   async createFeatureRequest(
-    @Body('featureRequest') createFeatureRequestDto: CreateFeatureRequestDto,
-    @Body('tag') createTagsDto: CreateTagsDto,
+    @Body() createFeatureRequestDto: CreateFeatureRequestDto,
     @CurrentUser() user: User,
   ) {
     return this.featureRequestService.createFeatureRequest(
       createFeatureRequestDto,
-      createTagsDto,
       user,
     );
   }

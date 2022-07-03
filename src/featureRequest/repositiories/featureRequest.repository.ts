@@ -6,7 +6,12 @@ import { FeatureRequest } from '../entities/featureRequest.entity';
 @EntityRepository(FeatureRequest)
 export class FeatureRequestRepository extends Repository<FeatureRequest> {
   async createFeatureRequest(
-    createFeatureRequestDto: CreateFeatureRequestDto,
+    createFeatureRequestDto: {
+      title: string;
+      content: string;
+      coin: number;
+      deadline: Date;
+    },
     author: User,
   ) {
     return this.save(this.create({ ...createFeatureRequestDto, author }));

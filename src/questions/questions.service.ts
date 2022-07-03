@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
-import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
+import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
 import { GetQuestionsDto } from './dtos/get-questions.dto';
 import { QuestionsRepository } from './repositories/questions.repository';
@@ -56,19 +56,12 @@ export class QuestionsService {
     };
   }
 
-  async createQuestion(
-    createQuestionDto: CreateQuestionDto,
-    createTagsDto: CreateTagsDto,
-    user: User,
-  ) {
+  async createQuestion({ tagNames, ...rest }: CreateQuestionDto, user: User) {
     /* question생성 */
-    const question = await this.questionsRepository.createQuestion(
-      createQuestionDto,
-      user,
-    );
+    const question = await this.questionsRepository.createQuestion(rest, user);
 
     /* tag생성 */
-    const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
+    const tags = await this.tagsRepository.createNonExistTags(tagNames);
 
     /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
@@ -93,7 +86,7 @@ export class QuestionsService {
     ]);
     if (tagNames) {
       await this.questionTagsRepository.delete({ questionId });
-      const tags = await this.tagsRepository.createNonExistTags({ tagNames });
+      const tags = await this.tagsRepository.createNonExistTags(tagNames);
       await this.questionTagsRepository.createQuestionTags(result.id, tags);
     }
     return true;

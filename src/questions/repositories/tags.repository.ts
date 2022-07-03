@@ -4,7 +4,7 @@ import { Tag } from '../entities/tag.entity';
 
 @EntityRepository(Tag)
 export class TagsRepository extends Repository<Tag> {
-  async createNonExistTags({ tagNames }: CreateTagsDto) {
+  async createNonExistTags(tagNames: string[]) {
     //현재 존재하는 tags 찾기
     const existTags = await this.existTags(tagNames);
     //parameter로 받은 names중 존재하지 않는 tag name 찾기
