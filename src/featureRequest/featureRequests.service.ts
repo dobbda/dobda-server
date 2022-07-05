@@ -135,6 +135,16 @@ export class FeatureRequestService {
     return true;
   }
 
+  async updateFeatureRequestWatch(featureRequestId: number) {
+    const featureRequest = await this.findFeatureRequestOrError(
+      featureRequestId,
+    );
+    await this.featureRequestRepository.save([
+      { id: featureRequestId, watch: featureRequest.watch + 1 },
+    ]);
+    return true;
+  }
+
   canUpdateAndDelete(progress: Progress) {
     return progress == Progress.Pending;
   }

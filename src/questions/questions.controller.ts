@@ -114,4 +114,17 @@ export class QuestionController {
   ) {
     return this.questionsService.deleteQuestion(questionId, user);
   }
+
+  /* 
+    질문 조회수 수정 API
+    url: questions/:id/watch (PATCH)
+  */
+  @Patch('/:id/watch')
+  @ApiOperation({ summary: '질문 조회수 업데이트 API' })
+  @ApiParam({ name: 'id', required: true, description: '질문 Id' })
+  @ApiCreatedResponse({ description: '질문 게시글의 조회수를 1 올려준다.' })
+  @UseGuards(AccessTokenGuard)
+  async updateQuestionWatch(@Param('id') questionId: number) {
+    return this.questionsService.updateQuestionWatch(questionId);
+  }
 }

@@ -101,4 +101,12 @@ export class QuestionsService {
     await this.questionsRepository.delete({ id: questionId });
     return true;
   }
+
+  async updateQuestionWatch(questionId: number) {
+    const question = await this.findQuestionOrError(questionId);
+    await this.questionsRepository.save([
+      { id: questionId, watch: question.watch + 1 },
+    ]);
+    return true;
+  }
 }
