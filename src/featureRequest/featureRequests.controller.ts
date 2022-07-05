@@ -93,7 +93,7 @@ export class FeatureRequestController {
   @UseGuards(AccessTokenGuard)
   async editFeatureRequest(
     @Param('id') featureRequestId: number,
-    @Body('featureRequest') editFeatureRequestDto: EditFeatureRequestDto,
+    @Body() editFeatureRequestDto: EditFeatureRequestDto,
     @CurrentUser() user: User,
   ) {
     return this.featureRequestService.editFeatureRequest(
