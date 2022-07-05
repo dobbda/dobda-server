@@ -88,14 +88,7 @@ export class FeatureRequestController {
   @ApiCreatedResponse({ description: 'id에 해당하는 기능요청을 수정한다' })
   @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
   @ApiBody({
-    type: PartialType(
-      PickType(CreateFeatureRequestDto, [
-        'title',
-        'content',
-        'deadline',
-        'tagNames',
-      ]),
-    ),
+    type: PartialType(CreateFeatureRequestDto),
   })
   @UseGuards(AccessTokenGuard)
   async editFeatureRequest(
