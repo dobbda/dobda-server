@@ -24,5 +24,6 @@ export class GetQuestionsOutput extends PaginationOuput {
 }
 
 class QuestionWithTag extends Question {
+  @ApiProperty({ description: 'tags' })
   tags: Tag[];
 }

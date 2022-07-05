@@ -39,7 +39,10 @@ export class QuestionController {
   */
   @Get()
   @ApiOperation({ summary: '질문 조회' })
-  @ApiCreatedResponse({ description: '질문여러개를 조회한다' })
+  @ApiCreatedResponse({
+    description: '질문여러개를 조회한다',
+    type: GetQuestionsOutput,
+  })
   async getQuestions(
     @Query() getQuestionsDto: GetQuestionsDto,
   ): Promise<GetQuestionsOutput> {
@@ -52,8 +55,8 @@ export class QuestionController {
   */
   @Post()
   @ApiOperation({ summary: '질문 등록' })
-  @ApiCreatedResponse({ description: '질문을 등록한다' })
   @ApiBody({ type: CreateQuestionDto })
+  @ApiCreatedResponse({ description: '질문을 등록한다' })
   @UseGuards(AccessTokenGuard)
   async createQuestion(
     @Body() createQuestionDto: CreateQuestionDto,
@@ -68,8 +71,8 @@ export class QuestionController {
   */
   @Get('/:id')
   @ApiOperation({ summary: '질문 상세 조희' })
-  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 조회한다' })
   @ApiParam({ name: 'id', required: true, description: 'Question Id' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 조회한다' })
   async getQuestion(@Param('id') questionId: number) {
     return this.questionsService.getQuestion(questionId);
   }
@@ -80,9 +83,9 @@ export class QuestionController {
   */
   @Patch('/:id')
   @ApiOperation({ summary: '질문 수정' })
-  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 수정한다' })
   @ApiParam({ name: 'id', required: true, description: 'Question Id' })
   @ApiBody({ type: PartialType(CreateQuestionDto) })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 수정한다' })
   @UseGuards(AccessTokenGuard)
   async editQuestion(
     @Param('id') questionId: number,
@@ -102,8 +105,8 @@ export class QuestionController {
   */
   @Delete('/:id')
   @ApiOperation({ summary: '질문 삭제' })
-  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 삭제한다' })
   @ApiParam({ name: 'id', required: true, description: 'Question Id' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 삭제한다' })
   @UseGuards(AccessTokenGuard)
   async deleteQuestion(
     @Param('id') questionId: number,
