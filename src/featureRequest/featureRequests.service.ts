@@ -55,19 +55,15 @@ export class FeatureRequestService {
   }
 
   async createFeatureRequest(
-    createFeatureRequestDto: CreateFeatureRequestDto,
-    createTagsDto: CreateTagsDto,
+    { tagNames, ...rest }: CreateFeatureRequestDto,
     user: User,
   ) {
     /* featureRequest생성 */
     const featureRequest =
-      await this.featureRequestRepository.createFeatureRequest(
-        createFeatureRequestDto,
-        user,
-      );
+      await this.featureRequestRepository.createFeatureRequest(rest, user);
 
     /* tag생성 */
-    const tags = await this.tagsRepository.createNonExistTags(createTagsDto);
+    const tags = await this.tagsRepository.createNonExistTags(tagNames);
 
     /* featureRequestTag 생성 */
     await this.featureRequestTagRepository.createFeatureRequestTags(
@@ -106,7 +102,7 @@ export class FeatureRequestService {
       await this.featureRequestTagRepository.delete({
         featureRequestId: featureRequest.id,
       });
-      const tags = await this.tagsRepository.createNonExistTags({ tagNames });
+      const tags = await this.tagsRepository.createNonExistTags(tagNames);
       await this.featureRequestTagRepository.createFeatureRequestTags(
         featureRequest.id,
         tags,

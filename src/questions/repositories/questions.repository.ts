@@ -6,7 +6,7 @@ import { Question } from '../entities/question.entity';
 @EntityRepository(Question)
 export class QuestionsRepository extends Repository<Question> {
   async createQuestion(
-    createQuestion: CreateQuestionDto,
+    createQuestion: { title: string; content: string; coin: number },
     author: User,
   ): Promise<Question> {
     return this.save(this.create({ ...createQuestion, author }));

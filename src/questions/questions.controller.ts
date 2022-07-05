@@ -9,15 +9,24 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  PartialType,
+} from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { CreateQuestionDto, CreateTagsDto } from './dtos/create-question.dto';
+import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
-import { GetQuestionsDto } from './dtos/get-questions.dto';
+import { GetQuestionsDto, GetQuestionsOutput } from './dtos/get-questions.dto';
 import { QuestionsService } from './questions.service';
 
 @Controller('questions')
+@ApiTags('질문 API')
 export class QuestionController {
   constructor(private readonly questionsService: QuestionsService) {}
   /* 
@@ -29,7 +38,14 @@ export class QuestionController {
     url: questions?page=${page}&tag=${tag}
   */
   @Get()
-  async getQuestions(@Query() getQuestionsDto: GetQuestionsDto) {
+  @ApiOperation({ summary: '질문 조회' })
+  @ApiCreatedResponse({
+    description: '질문여러개를 조회한다',
+    type: GetQuestionsOutput,
+  })
+  async getQuestions(
+    @Query() getQuestionsDto: GetQuestionsDto,
+  ): Promise<GetQuestionsOutput> {
     return this.questionsService.getQuestions(getQuestionsDto);
   }
 
@@ -38,24 +54,25 @@ export class QuestionController {
     url: questions (POST)
   */
   @Post()
+  @ApiOperation({ summary: '질문 등록' })
+  @ApiBody({ type: CreateQuestionDto })
+  @ApiCreatedResponse({ description: '질문을 등록한다' })
   @UseGuards(AccessTokenGuard)
   async createQuestion(
-    @Body('question') createQuestionDto: CreateQuestionDto,
-    @Body('tag') createTagsDto: CreateTagsDto,
+    @Body() createQuestionDto: CreateQuestionDto,
     @CurrentUser() user: User,
   ) {
-    return this.questionsService.createQuestion(
-      createQuestionDto,
-      createTagsDto,
-      user,
-    );
+    return this.questionsService.createQuestion(createQuestionDto, user);
   }
 
   /* 
-    질문 상세 목록 API
+    질문 상세 조희 API
     url: questions/:questionId (GET)
   */
   @Get('/:id')
+  @ApiOperation({ summary: '질문 상세 조희' })
+  @ApiParam({ name: 'id', required: true, description: 'Question Id' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 조회한다' })
   async getQuestion(@Param('id') questionId: number) {
     return this.questionsService.getQuestion(questionId);
   }
@@ -65,10 +82,14 @@ export class QuestionController {
     url: questions/:id (PATCH)
   */
   @Patch('/:id')
+  @ApiOperation({ summary: '질문 수정' })
+  @ApiParam({ name: 'id', required: true, description: 'Question Id' })
+  @ApiBody({ type: PartialType(CreateQuestionDto) })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 수정한다' })
   @UseGuards(AccessTokenGuard)
   async editQuestion(
     @Param('id') questionId: number,
-    @Body('question') editQuestionDto: EditQuestionDto,
+    @Body() editQuestionDto: EditQuestionDto,
     @CurrentUser() user: User,
   ) {
     return this.questionsService.editQuestion(
@@ -79,10 +100,13 @@ export class QuestionController {
   }
 
   /* 
-    질문 수정 API
+    질문 삭제 API
     url: questions/:id (DELETE)
   */
   @Delete('/:id')
+  @ApiOperation({ summary: '질문 삭제' })
+  @ApiParam({ name: 'id', required: true, description: 'Question Id' })
+  @ApiCreatedResponse({ description: 'id에 해당하는 질문을 삭제한다' })
   @UseGuards(AccessTokenGuard)
   async deleteQuestion(
     @Param('id') questionId: number,
