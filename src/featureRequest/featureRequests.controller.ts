@@ -104,6 +104,21 @@ export class FeatureRequestController {
   }
 
   /* 
+    기능요청 조회수 수정 API
+    url: feature-request/:id/watch (PATCH)
+  */
+  @Patch('/:id/watch')
+  @ApiOperation({ summary: '기능요청 조회수 업데이트 API' })
+  @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
+  @ApiCreatedResponse({ description: '기능요청 게시글의 조회수를 1 올려준다.' })
+  @UseGuards(AccessTokenGuard)
+  async updateFeatureRequestWatch(@Param('id') featureRequestId: number) {
+    return this.featureRequestService.updateFeatureRequestWatch(
+      featureRequestId,
+    );
+  }
+
+  /* 
     기능요청 삭제 API
     url: feature-request/:id (DELETE)
   */
@@ -119,21 +134,6 @@ export class FeatureRequestController {
     return this.featureRequestService.deleteFeatureRequest(
       featureRequestId,
       user,
-    );
-  }
-
-  /* 
-    기능요청 조회수 수정 API
-    url: feature-request/:id/watch (PATCH)
-  */
-  @Patch('/:id/watch')
-  @ApiOperation({ summary: '기능요청 조회수 업데이트 API' })
-  @ApiParam({ name: 'id', required: true, description: '기능요청 Id' })
-  @ApiCreatedResponse({ description: '기능요청 게시글의 조회수를 1 올려준다.' })
-  @UseGuards(AccessTokenGuard)
-  async updateFeatureRequestWatch(@Param('id') featureRequestId: number) {
-    return this.featureRequestService.updateFeatureRequestWatch(
-      featureRequestId,
     );
   }
 }

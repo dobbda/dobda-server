@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { TagsRepository } from 'src/questions/repositories/tags.repository';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestRepository } from './repositiories/featureRequest.repository';
