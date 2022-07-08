@@ -65,4 +65,10 @@ export class Question extends CoreEntity {
   })
   @RelationId((question: Question) => question.author)
   authorId: number;
+
+  @ApiProperty({
+    description: '채택답변 id',
+  })
+  @RelationId((question: Question) => question.accepteAnswer)
+  accepteAnswerId: number;
 }

@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 import { TagsRepository } from 'src/questions/repositories/tags.repository';
 import { CreateFeatureRequestDto } from './dtos/create-featureRequest.dto';
 import { FeatureRequestRepository } from './repositiories/featureRequest.repository';
@@ -11,6 +10,7 @@ import { FeatureRequestTagRepository } from './repositiories/featureRequestTag.r
 import { EditFeatureRequestDto } from './dtos/edit-featureRequest.dto';
 import { GetFeatureRequestsDto } from './dtos/get-featureRequests.dto';
 import { User } from 'src/users/entities/user.entity';
+import { Progress } from './types/progressType';
 @Injectable()
 export class FeatureRequestService {
   constructor(
@@ -95,6 +95,12 @@ export class FeatureRequestService {
     if (featureRequest.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
+    if (!this.canUpdateAndDelete(featureRequest.progress)) {
+      throw new BadRequestException(
+        '답변이 채택된 게시글은 수정이 불가능합니다.',
+      );
+    }
+    console.log(editFeatureRequest);
     await this.featureRequestRepository.save([
       { id: featureRequestId, ...editFeatureRequest },
     ]);
@@ -119,7 +125,26 @@ export class FeatureRequestService {
     if (featureRequest.authorId !== user.id) {
       throw new BadRequestException('작성자만 삭제가 가능합니다');
     }
+    if (!this.canUpdateAndDelete(featureRequest.progress)) {
+      throw new BadRequestException(
+        '답변이 채택된 게시글은 삭제가 불가능합니다.',
+      );
+    }
     await this.featureRequestRepository.delete({ id: featureRequest.id });
     return true;
+  }
+
+  async updateFeatureRequestWatch(featureRequestId: number) {
+    const featureRequest = await this.findFeatureRequestOrError(
+      featureRequestId,
+    );
+    await this.featureRequestRepository.save([
+      { id: featureRequestId, watch: featureRequest.watch + 1 },
+    ]);
+    return true;
+  }
+
+  canUpdateAndDelete(progress: Progress) {
+    return progress == Progress.Pending;
   }
 }
