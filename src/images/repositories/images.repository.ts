@@ -11,4 +11,16 @@ export class ImagesRepository extends Repository<Image> {
   ): Promise<Image> {
     return this.save(this.create({ ...createImage, question }));
   }
+
+  async createImages(images: string[], question: Question): Promise<boolean> {
+    const values = images.map((url) =>
+      this.create({ url, question: question }),
+    );
+    await this.createQueryBuilder()
+      .insert()
+      .into(Image)
+      .values([...values])
+      .execute();
+    return true;
+  }
 }

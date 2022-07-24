@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import parse from 'node-html-parser';
 import sanitizeHtml from 'sanitize-html';
+import { ImagesRepository } from 'src/images/repositories/images.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
@@ -19,6 +20,7 @@ export class QuestionsService {
     private readonly questionsRepository: QuestionsRepository,
     private readonly tagsRepository: TagsRepository,
     private readonly questionTagsRepository: QuestionTagsRepository,
+    private readonly imagesRepository: ImagesRepository,
   ) {}
 
   async findQuestionOrError(questionId: number, getAuthor?: boolean) {
@@ -74,14 +76,18 @@ export class QuestionsService {
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
 
+    /* questionTag 생성 */
+    await this.questionTagsRepository.createQuestionTags(question.id, tags);
+
     /* content에서 img 정보 추출 */
     const imgUrls = parse(cleanedContent)
       .querySelectorAll('img')
       .map((elem) => elem.attrs['src'])
       .filter((url) => url.includes('s3.amazonaws.com'));
 
-    /* questionTag 생성 */
-    await this.questionTagsRepository.createQuestionTags(question.id, tags);
+    /* image 생성 */
+    await this.imagesRepository.createImages(imgUrls, question);
+
     return true;
   }
 
