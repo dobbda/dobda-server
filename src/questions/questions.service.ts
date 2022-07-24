@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
@@ -56,9 +57,18 @@ export class QuestionsService {
     };
   }
 
-  async createQuestion({ tagNames, ...rest }: CreateQuestionDto, user: User) {
+  async createQuestion(
+    { tagNames, content, ...rest }: CreateQuestionDto,
+    user: User,
+  ) {
+    /* content 클린 */
+    const cleanedContent = sanitizeHtml(content);
+
     /* question생성 */
-    const question = await this.questionsRepository.createQuestion(rest, user);
+    const question = await this.questionsRepository.createQuestion(
+      { content: cleanedContent, ...rest },
+      user,
+    );
 
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
