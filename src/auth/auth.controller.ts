@@ -8,8 +8,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Logger,
+  Param,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -17,11 +20,23 @@ import {
 import { Request, Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GithubUserDto } from './dtos/social-user.dto';
+import { SocialCodeDto } from './dtos/social-code.dto';
+import { GoogleAuthService } from './social/google.auth.service';
+import { GithubAuthService } from './social/github.auth.service';
+import { KakaoAuthService } from './social/kakao.auth.service';
+import { NaverAuthService } from './social/naver.auth.service';
 
 @Controller('auth')
 @ApiTags('인증 API')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly githubAuthService: GithubAuthService,
+    private readonly googleAuthService: GoogleAuthService,
+    private readonly naverAuthService: NaverAuthService,
+    private readonly kakaoAuthService: KakaoAuthService,
+  ) {}
   //로컬 회원가입
   @Post('local/new')
   @ApiOperation({ summary: '로컬 회원가입' })
@@ -68,13 +83,18 @@ export class AuthController {
     return await this.authService.deleteRefreshToken(email);
   }
 
-  /* 깃헙 로그인 관련 부분 : 뷰에게서 코드를 받아와서 테스트 해보지 않았기 때문에 프론트랑 연결할때 새로 개발 예정
-    @Post('github-info')
-  async logInWithGithub(
-    @Body() githubCodeDto: GithubCodeDto,
-  ): Promise<GithubUserDto> {
-    const user = await this.usersService.getGithubInfo(githubCodeDto);
+  @Get('/github')
+  async logInWithGithub(@Query() socialCodeDto: SocialCodeDto) {
+    const user = await this.githubAuthService.getGithubInfo(socialCodeDto);
 
     return user;
-  } */
+  }
+
+  @Get('/google')
+  async loginWithGoogle(@Query() socialCodeDto: SocialCodeDto) {
+    console.log("code: ",socialCodeDto)
+    const user = await this.googleAuthService.getGoogleInfo(socialCodeDto);
+
+    return user;
+  }
 }
