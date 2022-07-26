@@ -4,7 +4,6 @@ import { JwtService } from "@nestjs/jwt";
 import axios, { AxiosResponse } from "axios";
 import { UsersRepository } from "src/users/users.repository";
 import { AuthService } from "../auth.service";
-import { GithubUserDto } from "../dtos/social-user.dto";
 
 @Injectable()
 export class KakaoAuthService {

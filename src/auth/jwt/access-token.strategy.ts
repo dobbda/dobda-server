@@ -29,10 +29,10 @@ export class AccessTokenStrategy extends PassportStrategy(
   async validate(req: Request, payload: JwtPayload) {
     try {
       const user = await this.usersRepository.findUserByEmail(payload.email);
-      if (user) {
+      if (user.refreshToken) {
         return user;
       } else {
-        throw new Error('해당하는 유저는 없습니다.');
+        throw new Error('인증이 만료 되었거나, 잘못된 접근입니다. 로그인후 재시도 바랍니다');
       }
     } catch (error) {
       throw new UnauthorizedException(error);

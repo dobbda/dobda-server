@@ -1,3 +1,4 @@
+import { User } from 'src/users/entities/user.entity';
 import { UserRegisterDTO } from './../users/dtos/user-register.dto';
 import { Tokens } from './jwt/types/jwt.token';
 import { UserLogInDTO } from './../users/dtos/user-login.dto';
@@ -10,8 +11,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SocialCodeDto } from './dtos/social-code.dto';
-import { GithubUserDto } from './dtos/social-user.dto';
+import { ResLoginUser } from './dtos/response-login-user';
 
 @Injectable()
 export class AuthService {
@@ -27,14 +27,17 @@ export class AuthService {
   }
 
   //DB에 유저가 존재하는지 확인 후 JWT(AccessToken)를 발급 (로그인 로직)
-  async verifyUserAndSignJWT(email: UserLogInDTO['email']): Promise<Tokens> {
-    const user = await this.usersRepository.findUserByEmail(email);
+  async verifyUserAndSignJWT(userRegisterDTO: UserRegisterDTO): Promise<ResLoginUser> {
 
+	const user = await this.usersRepository.findUserByEmail(userRegisterDTO.email) || await this.registerUser(userRegisterDTO)
+	if(!user){
+		throw new Error(`DB Error `);
+	}
     try {
       const tokens = await this.createJWT(user.email);
       await this.updateRefreshToken(user.email, tokens.refreshToken);
 
-      return tokens;
+      return {user,tokens};
     } catch (error) {
       Logger.log(error, 'AuthService');
       throw new BadRequestException(error.message);
@@ -52,7 +55,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('ACCESS_TOKEN_SECRET_KEY'),
-          expiresIn: '1h',
+          expiresIn: '1m',
         },
       ),
       this.jwtService.signAsync(
@@ -78,8 +81,11 @@ export class AuthService {
   async refreshTokens(email: UserLogInDTO['email'], refreshToken: string) {
     const user = await this.usersRepository.findUserByEmail(email);
 
-    if (user.refreshToken !== refreshToken)
-      throw new HttpException('잘못된 토큰입니다.', 401);
+    if (user.refreshToken !== refreshToken){
+		console.log('토큰확인: ', user.refreshToken ,"re:", refreshToken)
+		throw new HttpException('잘못된 토큰입니다.', 401);
+
+	}
 
     const tokens = await this.createJWT(user.email);
     await this.updateRefreshToken(user.email, tokens.refreshToken);
