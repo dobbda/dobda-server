@@ -3,6 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import parse from 'node-html-parser';
+import sanitizeHtml from 'sanitize-html';
+import { ImagesRepository } from 'src/images/repositories/images.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
@@ -17,6 +20,7 @@ export class QuestionsService {
     private readonly questionsRepository: QuestionsRepository,
     private readonly tagsRepository: TagsRepository,
     private readonly questionTagsRepository: QuestionTagsRepository,
+    private readonly imagesRepository: ImagesRepository,
   ) {}
 
   async findQuestionOrError(questionId: number, getAuthor?: boolean) {
@@ -56,15 +60,34 @@ export class QuestionsService {
     };
   }
 
-  async createQuestion({ tagNames, ...rest }: CreateQuestionDto, user: User) {
+  async createQuestion(
+    { tagNames, content, ...rest }: CreateQuestionDto,
+    user: User,
+  ) {
+    /* content 클린 */
+    const cleanedContent = sanitizeHtml(content);
+
     /* question생성 */
-    const question = await this.questionsRepository.createQuestion(rest, user);
+    const question = await this.questionsRepository.createQuestion(
+      { content: cleanedContent, ...rest },
+      user,
+    );
 
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
 
     /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
+
+    /* content에서 img 정보 추출 */
+    const imgUrls = parse(cleanedContent)
+      .querySelectorAll('img')
+      .map((elem) => elem.attrs['src'])
+      .filter((url) => url.includes('s3.amazonaws.com'));
+
+    /* image 생성 */
+    await this.imagesRepository.createImages(imgUrls, question);
+
     return true;
   }
 
