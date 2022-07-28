@@ -40,7 +40,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
       //전달받은 유저가 존재하는지 확인
 
       const user = await this.usersRepository.findUserByEmail(payload.email);
-      console.log('cookie: ', refreshToken, user)
       if (user) {
         //리프레시 토큰을 붙여서 리턴
         user.refreshToken = refreshToken;

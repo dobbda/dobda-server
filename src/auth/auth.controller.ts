@@ -45,7 +45,7 @@ export class AuthController {
     return await this.authService.registerUser(userRegisterDto);
   }
 
-  //로컬 환경 로그인 (테스트용)
+  //로컬 환경 로그인 (테스트용) postman ///////////////
   @Post('local')
   @ApiOperation({ summary: '로컬 로그인' })
   @ApiCreatedResponse({ description: 'JWT 토큰', type: Tokens })
@@ -55,66 +55,76 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     //로그인 처리, jwt 발급 (AccessToken, RefreshToken)
-    const {tokens, user} = await this.authService.verifyUserAndSignJWT(userRegisterDTO);
+    const { tokens, user } = await this.authService.verifyUserAndSignJWT(
+      userRegisterDTO,
+    );
 
     response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
     response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
   }
 
-  //리프레시 토큰 재발급
-  //   @UseGuards(RefreshTokenGuard)
-  @Post('local/refresh')
+  //리프레시 토큰 재발급  
+  @Get('refresh')
   @ApiOperation({ summary: '리프레시 토큰 재발급' })
   @ApiCreatedResponse({ description: 'JWT 토큰', type: Tokens })
   async refreshToken(
-    @Body('email') email: string,
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
-    const refreshToken = req.cookies['jwt-refresh'];
-    const tokens = await this.authService.refreshTokens(email, refreshToken);
-    response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
-    response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
-    return;
+
+    const tokens = await this.authService.refreshTokens(req.cookies['jwt-refresh']);
+		console.log("컨트롤러: ", tokens)
+		response.cookie('jwt-access', tokens.accessToken, {
+      expires: new Date(tokens.accessExpires),
+      httpOnly: true,
+    });
+    response.cookie('jwt-refresh', tokens.refreshToken, {
+      expires: new Date(tokens.refreshExpires),
+      httpOnly: true,  
+			// signed:true    //쿠키보안 적용시 postman에서  해석못함
+
+    });
   }
 
 
+  ///////////////////  로그아웃 (DB의 refreshToken 삭제) //////////////////////////////
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
+  @Delete('logout')
+  async logout(@CurrentUser('email') email: string, @Res() response: Response) {
+    await this.authService.deleteRefreshToken(email);
+    response.clearCookie('jwt-access');
+    response.clearCookie('jwt-refresh');
+    response.send({ successs: true });
+  }
 
-  @Get('/github')
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//  	                                     소셜로그인                                             //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  @Get('/:social')
   async logInWithGithub(
     @Query() socialCodeDto: SocialCodeDto,
     @Res({ passthrough: true }) response: Response,
-  ) : Promise<User>{ //
-    const {user, tokens} = await this.githubAuthService.getGithubInfo(socialCodeDto);
-	response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
-    response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
+    @Param('social') social: string): Promise<User> 
+	{
+    const { user, tokens } =
+      social == 'google' &&
+      (await this.googleAuthService.getGoogleInfo(socialCodeDto));
+    	social == 'github' &&
+      (await this.githubAuthService.getGithubInfo(socialCodeDto));
+
+    response.cookie('jwt-access', tokens.accessToken, {
+      expires: new Date(tokens.accessExpires),
+      httpOnly: true,
+			signed: true
+    });
+    response.cookie('jwt-refresh', tokens.refreshToken, {
+      expires: new Date(tokens.refreshExpires),
+      httpOnly: true,
+			signed:true
+    });
     return user;
   }
-
-  @Get('/google')
-  async loginWithGoogle(
-	@Query() socialCodeDto: SocialCodeDto,
-    @Res({ passthrough: true }) response: Response,
-  ) : Promise<User>{ //
-    const {user, tokens} = await this.googleAuthService.getGoogleInfo(socialCodeDto);
-	response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
-    response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
-    return user;
-  }
-
-
-    //로그아웃 (DB의 refreshToken 삭제)
-	@UseGuards(AccessTokenGuard)
-	@ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
-	@Delete('logout')
-	async logout(
-		@CurrentUser('email') email: string,
-		@Res() response: Response
-		) {
-			await this.authService.deleteRefreshToken(email)
-			// response.clearCookie("jwt-access")
-			// response.clearCookie("jwt-refresh")
-			response.send({successs:true})
-	}
 }
-

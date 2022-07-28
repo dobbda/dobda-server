@@ -6,8 +6,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { setupSwagger } from './common/utils/setupSwagger';
-
 async function bootstrap() {
+	
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -23,7 +23,7 @@ async function bootstrap() {
     new QueryFailedExceptionFilter(),
   );
 
-  app.use(cookieParser());
+  app.use(cookieParser(process.env.ACCESS_TOKEN_SECRET_KEY));
 
   //Swagger 관련 셋업
   setupSwagger(app);
