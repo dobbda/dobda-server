@@ -14,7 +14,7 @@ export class AccessTokenGuard extends AuthGuard('jwt-access') {
 
   handleRequest(err: any, user: any, info: any) {
     if (err || !user) {
-      throw err || new UnauthorizedException('인증 문제 발생.');
+      throw err || new UnauthorizedException('인증이 만료 되었거나, 잘못된 접근입니다. 로그인후 재시도 바랍니다');
     }
     return user;
   }

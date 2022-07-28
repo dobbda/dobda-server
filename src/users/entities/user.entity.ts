@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
@@ -8,7 +8,7 @@ import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 export class SkillName {
-  name?: string;
+  name: string;
 }
 
 @Entity()
@@ -31,6 +31,11 @@ export class User extends CoreEntity {
   @Column()
   name: string;
 
+  @IsUrl({ message: '아바타는 url문자열이어야 합니다.' })
+  @Column({nullable: true})
+  avatar: string;
+
+
   @ApiProperty({
     description: '닉네임',
     required: true,
@@ -41,8 +46,8 @@ export class User extends CoreEntity {
   nickname: string;
 
   @ApiProperty({ description: '스킬' })
-  @Column({ type: 'json' })
-  skill?: SkillName[];
+  @Column({ type: 'json',nullable:true })
+  skill: string[];
 
   @ApiProperty({ description: '코인' })
   @IsNumber()

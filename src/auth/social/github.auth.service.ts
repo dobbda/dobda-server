@@ -5,7 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import axios, { AxiosResponse } from 'axios';
 import { UsersRepository } from 'src/users/users.repository';
-import { GithubUserDto } from '../dtos/social-user.dto';
+import { ResLoginUser } from '../dtos/response-login-user';
+import { UserRegisterDTO } from 'src/users/dtos/user-register.dto';
 
 @Injectable()
 export class GithubAuthService {
@@ -16,14 +17,15 @@ export class GithubAuthService {
     private authService: AuthService,
   ) {}
 
-  async getGithubInfo(socialCodeDto:SocialCodeDto): Promise<GithubUserDto> {
+  async getGithubInfo(socialCodeDto: SocialCodeDto): Promise<ResLoginUser> {
     // 웹에서 query string으로 받은 code를 서버로 넘겨 받습니다.
     try {
       const getTokenUrl: string = 'https://github.com/login/oauth/access_token'; // 깃허브 access token을 얻기위한 요청 API 주소
       const getUserUrl: string = 'https://api.github.com/user'; // 깃허브 유저 조회 API 주소
+      const getUserMail: string = 'https://api.github.com/user/emails';
 
       const request = {
-        code:socialCodeDto.code,
+        code: socialCodeDto.code,
         client_id: this.configService.get<string>('GITHUB_CLIENT_ID'),
         client_secret: this.configService.get<string>('GITHUB_CLIENT_SECRET'),
       };
@@ -39,32 +41,31 @@ export class GithubAuthService {
         headers: {
           Authorization: `token ${access_token}`,
         },
-        // 헤더에는 `token ${access_token} 형식으로 넣어주어야 합니다.`
       });
       // 메일
-      const getUserMail: string = 'https://api.github.com/user/emails';
       const { data: emailDataArr } = await axios.get(getUserMail, {
         headers: {
           Authorization: `token ${access_token}`,
         },
-        // 헤더에는 `token ${access_token} 형식으로 넣어주어야 합니다.`
       });
 
-      const { email } = emailDataArr.find(
+      const { email } = await emailDataArr.find(
         (emailObj) => emailObj.primary === true && emailObj.verified === true,
       );
 
       const { avatar_url, name, bio } = data;
-      const githubInfo: GithubUserDto = {
+      const githubInfo: UserRegisterDTO = {
         avatar: avatar_url,
         name,
+		nickname:name,
         description: bio,
         email,
       };
-      return githubInfo;
+	  
+      return this.authService.verifyUserAndSignJWT(githubInfo);
     } catch (err) {
       console.log(err);
-      throw new HttpException('깃허브 인증을 실패했습니다.', 401);
+      throw new HttpException('Github 인증을 실패', 401);
     }
   }
 }
