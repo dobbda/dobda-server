@@ -13,6 +13,7 @@ import { AnswersModule } from './answers/answers.module';
 import { AuthModule } from './auth/auth.module';
 import { FeatureRequestModule } from './featureRequest/featureRequests.module';
 import * as Joi from 'joi';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import * as Joi from 'joi';
     CommonModule,
     QuestionsModule,
     AnswersModule,
+    CommentsModule,
     AuthModule,
     FeatureRequestModule,
   ],
