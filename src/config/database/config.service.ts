@@ -8,6 +8,8 @@ import { Question } from 'src/questions/entities/question.entity';
 import { QuestionTag } from 'src/questions/entities/questionTag.entity';
 import { Tag } from 'src/questions/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
+import { Image } from 'src/images/entities/image.entity';
 
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
@@ -31,6 +33,8 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Question,
         QuestionTag,
         Answer,
+        Comment,
+        Image,
       ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],

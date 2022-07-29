@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
+import { Image } from 'src/images/entities/image.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -52,6 +53,9 @@ export class Question extends CoreEntity {
 
   @OneToMany((type) => Answer, (answer) => answer.question)
   answers: Answer[];
+
+  @OneToMany((type) => Image, (image) => image.question)
+  images: Image[];
 
   @OneToMany((type) => QuestionTag, (questionTag) => questionTag.questionId)
   questionTags: QuestionTag[];
