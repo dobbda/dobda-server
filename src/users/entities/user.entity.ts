@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
+import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
 import { Question } from 'src/questions/entities/question.entity';
@@ -75,4 +76,7 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Answer, (answer: Answer) => answer.author)
   answers: Answer[];
+
+  @OneToMany((type) => Comment, (comment: Comment) => comment.author)
+  comments: Comment[];
 }
