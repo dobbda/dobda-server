@@ -38,6 +38,18 @@ export class AuthController {
     private readonly naverAuthService: NaverAuthService,
     private readonly kakaoAuthService: KakaoAuthService,
   ) {}
+
+	//로그인 되어있는 유저 정보 조회
+	@Get()
+	@ApiOperation({ summary: '<auth>현재 로그인 되어 있는 유저 정보 조회' })
+	@ApiCreatedResponse({ description: '유저 정보', type: User })
+	@UseGuards(AccessTokenGuard)
+	async getCurrentUser(@CurrentUser() currentUser: User): Promise<User> {
+		console.log('userghkrdls: ',currentUser)
+		return currentUser;
+	}
+
+
   //로컬 회원가입
   @Post('local/new')
   @ApiOperation({ summary: '로컬 회원가입' })
@@ -66,32 +78,32 @@ export class AuthController {
   //리프레시 토큰 재발급  
   @Get('refresh')
   @ApiOperation({ summary: '리프레시 토큰 재발급' })
-  @ApiCreatedResponse({ description: 'JWT 토큰', type: Tokens })
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
+  ): Promise<ResLoginUser> {
+		console.log("컨트롤러: ", req.cookies)
 
-    const tokens = await this.authService.refreshTokens(req.cookies['jwt-refresh']);
-		console.log("컨트롤러: ", tokens)
-		response.cookie('jwt-access', tokens.accessToken, {
-      expires: new Date(tokens.accessExpires),
+    const resRefreshData = await this.authService.refreshTokens(req.cookies['jwt-refresh']);
+		response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
+      expires: new Date(resRefreshData.tokens.accessExpires),
       httpOnly: true,
     });
-    response.cookie('jwt-refresh', tokens.refreshToken, {
-      expires: new Date(tokens.refreshExpires),
+    response.cookie('jwt-refresh', resRefreshData.tokens.refreshToken, {
+      expires: new Date(resRefreshData.tokens.refreshExpires),
       httpOnly: true,  
 			// signed:true    //쿠키보안 적용시 postman에서  해석못함
-
     });
+		return resRefreshData
   }
 
 
   ///////////////////  로그아웃 (DB의 refreshToken 삭제) //////////////////////////////
   @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
+
   @Delete('logout')
-  async logout(@CurrentUser('email') email: string, @Res() response: Response) {
+  async logout(@CurrentUser('email') email: string, @Res() response: Response): Promise<void> {
     await this.authService.deleteRefreshToken(email);
     response.clearCookie('jwt-access');
     response.clearCookie('jwt-refresh');
@@ -118,12 +130,12 @@ export class AuthController {
     response.cookie('jwt-access', tokens.accessToken, {
       expires: new Date(tokens.accessExpires),
       httpOnly: true,
-			signed: true
+			// signed: true
     });
     response.cookie('jwt-refresh', tokens.refreshToken, {
       expires: new Date(tokens.refreshExpires),
       httpOnly: true,
-			signed:true
+			// signed:true
     });
     return user;
   }

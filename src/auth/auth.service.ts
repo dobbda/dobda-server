@@ -47,7 +47,7 @@ export class AuthService {
   //RefreshToken 해쉬 생각해보기
 
   async createJWT(email: UserLogInDTO['email']): Promise<Tokens> {
-		const accessExpires = Number( new Date(Date.now() + 60 * 60 * 1000 * 2)); // 2시간
+		const accessExpires = Number( new Date(Date.now() + 60 * 1000)); // 1분
 		const refreshExpires =Number( new Date(Date.now() + 60 * 60 * 1000 * 24 * 7)); // 24 hour 7일
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -80,8 +80,8 @@ export class AuthService {
   }
 
   //유저 정보와 DB의 refreshToken을 비교해 유효한 토큰이라면 토큰 재발급
-  async refreshTokens(refreshToken: string) {
-    const user = await this.usersRepository.findOne({refreshToken: refreshToken});
+  async refreshTokens(refreshToken: string): Promise<ResLoginUser> {
+    const {refreshToken:del, ...user} = await this.usersRepository.findOne({refreshToken: refreshToken});
 		if(!user){
 			throw new HttpException('유효하지 않은 토큰입니다.', 401);
 		}
@@ -90,7 +90,7 @@ export class AuthService {
     await this.updateRefreshToken(user.email, tokens.refreshToken);
 		console.log('신규토큰: ', tokens.refreshToken,  '기존토큰: ', refreshToken);
 
-    return tokens;
+    return {tokens,user};
   }
 
   async deleteRefreshToken(email: UserLogInDTO['email']) {
