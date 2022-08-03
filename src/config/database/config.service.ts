@@ -10,6 +10,7 @@ import { Tag } from 'src/questions/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Image } from 'src/images/entities/image.entity';
+import { Transaction } from 'src/coin/entities/transaction.entity';
 
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
@@ -34,6 +35,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         QuestionTag,
         Answer,
         Comment,
+        Transaction,
         Image,
       ],
       migrations: ['src/migration/**/*.ts'],
