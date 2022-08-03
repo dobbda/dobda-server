@@ -1,3 +1,4 @@
+import { UsersRepository } from 'src/users/users.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImagesRepository } from 'src/images/repositories/images.repository';
@@ -16,6 +17,7 @@ import { ImagesModule } from 'src/images/images.module';
       TagsRepository,
       QuestionTagsRepository,
       ImagesRepository,
+			UsersRepository
     ]),
   ],
   controllers: [QuestionController],

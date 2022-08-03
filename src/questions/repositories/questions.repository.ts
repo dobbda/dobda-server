@@ -8,8 +8,9 @@ export class QuestionsRepository extends Repository<Question> {
   async createQuestion(
     createQuestion: { title: string; content: string; coin: number },
     author: User,
-  ): Promise<Question> {
-    return this.save(this.create({ ...createQuestion, author }));
+  ): Promise<Question>{
+		const {id, email, nickname} = author
+    return await this.save(this.create({ ...createQuestion, author:{id, email, nickname} }))
   }
 
   async findOneQuestionWithId(questionId: number, getAuthor?: boolean) {

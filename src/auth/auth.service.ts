@@ -27,17 +27,20 @@ export class AuthService {
   }
 
   //DB에 유저가 존재하는지 확인 후 JWT(AccessToken)를 발급 (로그인 로직)
-  async verifyUserAndSignJWT(userRegisterDTO: UserRegisterDTO): Promise<ResLoginUser> {
-
-	const user = await this.usersRepository.findUserByEmail(userRegisterDTO.email) || await this.registerUser(userRegisterDTO)
-	if(!user){
-		throw new Error(`DB Error `);
-	}
+  async verifyUserAndSignJWT(
+    userRegisterDTO: UserRegisterDTO,
+  ): Promise<ResLoginUser> {
+    const user =
+      (await this.usersRepository.findUserByEmail(userRegisterDTO.email)) ||
+      (await this.registerUser(userRegisterDTO));
+    if (!user) {
+      throw new Error(`DB Error `);
+    }
     try {
       const tokens = await this.createJWT(user.email);
       await this.updateRefreshToken(user.email, tokens.refreshToken);
 
-      return {user,tokens};
+      return { user, tokens };
     } catch (error) {
       Logger.log(error, 'AuthService');
       throw new BadRequestException(error.message);
@@ -47,9 +50,12 @@ export class AuthService {
   //RefreshToken 해쉬 생각해보기
 
   async createJWT(email: UserLogInDTO['email']): Promise<Tokens> {
-		const accessExpires = Number( new Date(Date.now() + 60 * 1000)); // 1분
-		const refreshExpires =Number( new Date(Date.now() + 60 * 60 * 1000 * 24 * 7)); // 24 hour 7일
-
+    const accessExpires = Number(new Date(Date.now() + 60 * 1000)); // 1분
+    const refreshExpires = Number(
+      new Date(
+        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
+      ),
+    ); // 24 hour 7일
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -71,7 +77,7 @@ export class AuthService {
       ),
     ]);
 
-    return { accessToken, accessExpires, refreshToken ,refreshExpires};
+    return { accessToken, refreshToken };
   }
 
   //DB에 RefreshToken을 업데이트
@@ -81,22 +87,20 @@ export class AuthService {
 
   //유저 정보와 DB의 refreshToken을 비교해 유효한 토큰이라면 토큰 재발급
   async refreshTokens(refreshToken: string): Promise<ResLoginUser> {
-    const {refreshToken:del, ...user} = await this.usersRepository.findOne({refreshToken: refreshToken});
-		if(!user){
-			throw new HttpException('유효하지 않은 토큰입니다.', 401);
-		}
+    const { refreshToken: del, ...user } = await this.usersRepository.findOne({
+      refreshToken: refreshToken,
+    });
+    if (!user) {
+      throw new HttpException('유효하지 않은 토큰입니다.', 401);
+    }
 
     const tokens = await this.createJWT(user.email);
     await this.updateRefreshToken(user.email, tokens.refreshToken);
-		console.log('신규토큰: ', tokens.refreshToken,  '기존토큰: ', refreshToken);
 
-    return {tokens,user};
+    return { tokens, user };
   }
 
   async deleteRefreshToken(email: UserLogInDTO['email']) {
     await this.usersRepository.update({ email }, { refreshToken: null });
   }
-
-
- 
 }

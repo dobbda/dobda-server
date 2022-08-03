@@ -27,11 +27,13 @@ import { GithubAuthService } from './social/github.auth.service';
 import { KakaoAuthService } from './social/kakao.auth.service';
 import { NaverAuthService } from './social/naver.auth.service';
 import { User } from 'src/users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags('인증 API')
 export class AuthController {
   constructor(
+    private readonly configService: ConfigService,
     private readonly authService: AuthService,
     private readonly githubAuthService: GithubAuthService,
     private readonly googleAuthService: GoogleAuthService,
@@ -39,16 +41,15 @@ export class AuthController {
     private readonly kakaoAuthService: KakaoAuthService,
   ) {}
 
-	//로그인 되어있는 유저 정보 조회
-	@Get()
-	@ApiOperation({ summary: '<auth>현재 로그인 되어 있는 유저 정보 조회' })
-	@ApiCreatedResponse({ description: '유저 정보', type: User })
-	@UseGuards(AccessTokenGuard)
-	async getCurrentUser(@CurrentUser() currentUser: User): Promise<User> {
-		console.log('userghkrdls: ',currentUser)
-		return currentUser;
-	}
-
+  //로그인 되어있는 유저 정보 조회
+  @Get()
+  @ApiOperation({ summary: '<auth>현재 로그인 되어 있는 유저 정보 조회' })
+  @ApiCreatedResponse({ description: '유저 정보', type: User })
+  @UseGuards(AccessTokenGuard)
+  async getCurrentUser(@CurrentUser() currentUser: User): Promise<User> {
+    console.log('auth:', currentUser);
+    return currentUser;
+  }
 
   //로컬 회원가입
   @Post('local/new')
@@ -75,67 +76,88 @@ export class AuthController {
     response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
   }
 
-  //리프레시 토큰 재발급  
+  //리프레시 토큰 재발급
   @Get('refresh')
   @ApiOperation({ summary: '리프레시 토큰 재발급' })
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<ResLoginUser> {
-		console.log("컨트롤러: ", req.cookies)
+    const accessExpires = new Date(Date.now() + 1000 * 60 * 5); //
+    const refreshExpires = new Date(Date.now() + 1000 * 60 * 600); // 24 hour 7일
+    const resRefreshData = await this.authService.refreshTokens(
+      req.cookies['jwt-refresh'],
+    );
 
-    const resRefreshData = await this.authService.refreshTokens(req.cookies['jwt-refresh']);
-		response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
-      expires: new Date(resRefreshData.tokens.accessExpires),
+    response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
+      expires: accessExpires,
       httpOnly: true,
     });
     response.cookie('jwt-refresh', resRefreshData.tokens.refreshToken, {
-      expires: new Date(resRefreshData.tokens.refreshExpires),
-      httpOnly: true,  
-			// signed:true    //쿠키보안 적용시 postman에서  해석못함
+      expires: refreshExpires,
+      httpOnly: true,
+      // signed:true    //쿠키보안 적용시 postman에서  해석못함
     });
-		return resRefreshData
+
+    response.cookie('refresh-expires', '11111111111111111111111111', {
+      httpOnly: false,
+      expires: refreshExpires,
+    });
+    response.cookie('access-expires', '11111111111111111111111111', {
+      expires: accessExpires,
+      httpOnly: false,
+    });
+    return resRefreshData;
   }
 
-
   ///////////////////  로그아웃 (DB의 refreshToken 삭제) //////////////////////////////
+  @Delete('logout')
   @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
-
-  @Delete('logout')
-  async logout(@CurrentUser('email') email: string, @Res() response: Response): Promise<void> {
+  async logout(@CurrentUser('email') email: string, @Res() response: Response) {
     await this.authService.deleteRefreshToken(email);
     response.clearCookie('jwt-access');
     response.clearCookie('jwt-refresh');
-    response.send({ successs: true });
+    response.clearCookie('access-expires');
+    response.clearCookie('refresh-expires');
+    response.send();
   }
 
-	
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//  	                                     소셜로그인                                             //
-////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
+  //  	                                     소셜로그인                                             //
+  ////////////////////////////////////////////////////////////////////////////////////////////////////
 
   @Get('/:social')
   async logInWithGithub(
     @Query() socialCodeDto: SocialCodeDto,
     @Res({ passthrough: true }) response: Response,
-    @Param('social') social: string): Promise<User> 
-	{
+    @Param('social') social: string,
+  ): Promise<User> {
+    const accessExpires = new Date(Date.now() + 1000 * 60 * 1); //
+    const refreshExpires = new Date(Date.now() + 1000 * 60 * 600); // 24 hour 7일
     const { user, tokens } =
-      social == 'google' &&
-      (await this.googleAuthService.getGoogleInfo(socialCodeDto));
-    	social == 'github' &&
-      (await this.githubAuthService.getGithubInfo(socialCodeDto));
-
+      (social == 'google' &&
+        (await this.googleAuthService.getGoogleInfo(socialCodeDto))) ||
+      (social == 'github' &&
+        (await this.githubAuthService.getGithubInfo(socialCodeDto)));
     response.cookie('jwt-access', tokens.accessToken, {
-      expires: new Date(tokens.accessExpires),
+      expires: accessExpires,
       httpOnly: true,
-			// signed: true
+      // signed: true
     });
     response.cookie('jwt-refresh', tokens.refreshToken, {
-      expires: new Date(tokens.refreshExpires),
+      expires: refreshExpires,
       httpOnly: true,
-			// signed:true
+      // signed:true
+    });
+
+    response.cookie('refresh-expires', '11111111111111111111111111', {
+      httpOnly: false,
+      expires: refreshExpires,
+    });
+    response.cookie('access-expires', '11111111111111111111111111', {
+      expires: accessExpires,
+      httpOnly: false,
     });
     return user;
   }

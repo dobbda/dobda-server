@@ -1,3 +1,4 @@
+import { UsersRepository } from 'src/users/users.repository';
 import {
   BadRequestException,
   Injectable,
@@ -21,6 +22,7 @@ export class QuestionsService {
     private readonly tagsRepository: TagsRepository,
     private readonly questionTagsRepository: QuestionTagsRepository,
     private readonly imagesRepository: ImagesRepository,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async findQuestionOrError(questionId: number, getAuthor?: boolean) {
@@ -53,42 +55,28 @@ export class QuestionsService {
   }
 
   async getQuestion(questionId: number) {
-    const result = await this.findQuestionOrError(questionId);
+    const result = await this.findQuestionOrError(questionId, true);
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
+
     return {
       question: { ...result, tags },
     };
   }
 
-  async createQuestion(
-    { tagNames, content, ...rest }: CreateQuestionDto,
-    user: User,
-  ) {
-    /* content 클린 */
-    const cleanedContent = sanitizeHtml(content);
+  async createQuestion({ tagNames, content, ...rest }: 
+		CreateQuestionDto, user: User,) {
 
     /* question생성 */
     const question = await this.questionsRepository.createQuestion(
-      { content: cleanedContent, ...rest },
+      { content: content, ...rest },
       user,
     );
-
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
-
     /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
 
-    /* content에서 img 정보 추출 */
-    const imgUrls = parse(cleanedContent)
-      .querySelectorAll('img')
-      .map((elem) => elem.attrs['src'])
-      .filter((url) => url.includes('s3.amazonaws.com'));
-
-    /* image 생성 */
-    await this.imagesRepository.createImages(imgUrls, question);
-
-    return true;
+    return { ...question, tagNames: tags };
   }
 
   async editQuestion(
