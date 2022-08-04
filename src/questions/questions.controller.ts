@@ -45,7 +45,7 @@ export class QuestionController {
   })
   async getQuestions(
     @Query() getQuestionsDto: GetQuestionsDto,
-  ): Promise<GetQuestionsOutput> {
+  ) {
     return this.questionsService.getQuestions(getQuestionsDto);
   }
 

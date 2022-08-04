@@ -24,7 +24,7 @@ export class AnswersController {
   @Get()
   @ApiOperation({ summary: '답변 조회' })
   @ApiCreatedResponse({
-    description: '질문여러개를 조회한다',
+    description: '답변 조회',
     type: GetAnswersOutput,
   })
   async getAnswers(@Query() getAnswersDto: GetAnswersDto) {

@@ -23,14 +23,12 @@ export class UsersRepository extends Repository<User> {
 
   async findUserByEmail(email: string): Promise<User> {
     return await this.findOne({ email });
-    //***서비스에서 체크해서 없으면 가입해야돼서 response하면 안됨 ****
-    // try {
-    //   const user = await this.findOne({ email });
-    //   if (!user) throw new Error('처리되지 않은 오류 : findUserByEmail');
-    //   return user;
-    // } catch (error) {
-    //   throw new BadRequestException('사용자를 찾지 못했습니다.');
-    // }
+  }
+  async findUserByAuthorId(authorId: number): Promise<any> {
+    const find = await this.findOne({ id: authorId });
+    if (!find) throw new Error('Invalid');
+    const { coin, refreshToken, createdAt, updatedAt, ...users } = find;
+    return users;
   }
 
   //개발용 모든 유저 목록
