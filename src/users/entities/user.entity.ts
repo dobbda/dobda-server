@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { IsEmail, IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
+import { Transaction } from 'src/coin/entities/transaction.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
@@ -33,9 +40,8 @@ export class User extends CoreEntity {
   name: string;
 
   @IsUrl({ message: '아바타는 url문자열이어야 합니다.' })
-  @Column({nullable: true})
+  @Column({ nullable: true })
   avatar: string;
-
 
   @ApiProperty({
     description: '닉네임',
@@ -47,7 +53,7 @@ export class User extends CoreEntity {
   nickname: string;
 
   @ApiProperty({ description: '스킬' })
-  @Column({ type: 'json',nullable:true })
+  @Column({ type: 'json', nullable: true })
   skill: string[];
 
   @ApiProperty({ description: '코인' })
@@ -79,4 +85,16 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Comment, (comment: Comment) => comment.author)
   comments: Comment[];
+
+  @OneToMany(
+    (type) => Transaction,
+    (transaction: Transaction) => transaction.fromUser,
+  )
+  transactionsFrom: Transaction[];
+
+  @OneToMany(
+    (type) => Transaction,
+    (transaction: Transaction) => transaction.toUser,
+  )
+  transactionsTo: Transaction[];
 }
