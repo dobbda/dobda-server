@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateAnswerDto } from './dtos/create-answer.dto';
@@ -15,11 +14,12 @@ export class AnswersService {
 
   async getAnswers({ qid }: GetAnswersDto) {
     const answers = await this.answersRepository.find({
-      relations: ['questions'],
+      relations: ['question'],
       where: {
         question: qid,
       },
     });
+
     return {
       answers,
     };
@@ -27,7 +27,7 @@ export class AnswersService {
 
   async createAnswer({ content, qid }: CreateAnswerDto, user: User) {
     /* content 클린 */
-    const cleanedContent = sanitizeHtml(content);
+
 
     /* question 가져오기 */
     const question = await this.questionsRepository.findOne(qid);
@@ -35,7 +35,7 @@ export class AnswersService {
     if (question === null) return false;
 
     await this.answersRepository.createAnswer(
-      { content: cleanedContent },
+      {content },
       question,
       user,
     );
