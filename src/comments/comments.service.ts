@@ -27,13 +27,15 @@ export class CommentsService {
 
   async createComment({ answerId, content }: CreateCommentDto, user: User) {
     /* content 클린 */
-    const cleanedContent = sanitizeHtml(content);
 
     /* Question 가져오기 */
     const answer = await this.answersRepository.findOne(answerId);
-
+		if(!answer) return;
+		await this.answersRepository.save([{
+		id: answer.id,	commentsCount: answer.commentsCount+1
+		}])
     await this.commentsRepository.createComment(
-      { content: cleanedContent },
+      { content},
       answer,
       user,
     );
