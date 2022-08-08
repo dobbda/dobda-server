@@ -33,7 +33,9 @@ export class AnswersService {
     const question = await this.questionsRepository.findOne(qid);
 
     if (question === null) return false;
-
+		await this.questionsRepository.save([
+			{id: qid, answersCount: question.answersCount+1}
+		])
     await this.answersRepository.createAnswer(
       {content },
       question,

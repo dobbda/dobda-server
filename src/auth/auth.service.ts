@@ -50,7 +50,11 @@ export class AuthService {
   //RefreshToken 해쉬 생각해보기
 
   async createJWT(email: UserLogInDTO['email']): Promise<Tokens> {
-    const accessExpires = Number(new Date(Date.now() + 60 * 1000)); // 1분
+    const accessExpires = Number(
+      new Date(
+        Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
+      ),
+    ); // 24 hour 7일
     const refreshExpires = Number(
       new Date(
         Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),

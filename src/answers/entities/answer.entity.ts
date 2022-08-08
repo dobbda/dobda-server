@@ -26,6 +26,11 @@ export class Answer extends CoreEntity {
   @ManyToOne((type) => Question, (question) => question.answers)
   question: Question;
 
+
+  @Column({ default: 0 })
+  commentsCount: number;
+
+	
   @OneToOne((type) => Question)
   @JoinColumn()
   accepted_question: Question;

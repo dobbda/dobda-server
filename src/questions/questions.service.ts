@@ -35,7 +35,7 @@ export class QuestionsService {
     if (!question) {
       throw new NotFoundException('id에 해당하는 question이 없습니다.');
     }
-		const {content, ...reset} = question
+    const { content, ...reset } = question;
     return reset;
   }
 
@@ -48,7 +48,7 @@ export class QuestionsService {
     const result = await Promise.all(
       questions.map(async (question) => {
         const tags = await this.tagsRepository.allTagsInQuestion(question.id);
-				const {content, ...reset} = question
+        const { content, ...reset } = question;
         return { ...reset, tagNames: tags };
       }),
     );
@@ -58,18 +58,20 @@ export class QuestionsService {
     };
   }
 
-  async getQuestion(questionId: number) {// 상세조회 // + Answer // comment?
+  async getQuestion(questionId: number) {
+    // 상세조회 // + Answer // comment?
     const result = await this.findQuestionOrError(questionId, true);
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
-		const answer = await this.answersService.getAnswers({qid: questionId})
+    const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
       question: { ...result, tagNames: tags, ...answer },
     };
   }
 
-  async createQuestion({ tagNames, content, ...rest }: 
-		CreateQuestionDto, user: User,) {
-
+  async createQuestion(
+    { tagNames, content, ...rest }: CreateQuestionDto,
+    user: User,
+  ) {
     /* question생성 */
     const question = await this.questionsRepository.createQuestion(
       { content: content, ...rest },
@@ -79,8 +81,14 @@ export class QuestionsService {
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
     /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
-
-    return true;
+    const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+    return {
+      ...question,
+      tagNames: getTags,
+      author: { email: user.email, nickname: user.nickname, id: user.id },
+    };
   }
 
   async editQuestion(
@@ -98,18 +106,26 @@ export class QuestionsService {
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
     }
-    await this.questionsRepository.save([
+    const newQuestion = await this.questionsRepository.save([
       {
         id: result.id,
         ...editQuestion,
       },
     ]);
-    if (tagNames) {
-      await this.questionTagsRepository.delete({ questionId });
-      const tags = await this.tagsRepository.createNonExistTags(tagNames);
-      await this.questionTagsRepository.createQuestionTags(result.id, tags);
-    }
-    return true;
+
+    await this.questionTagsRepository.delete({ questionId });
+    const tags = await this.tagsRepository.createNonExistTags(tagNames);
+    await this.questionTagsRepository.createQuestionTags(result.id, tags);
+
+    const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+
+    return {
+      ...newQuestion,
+      tagNames: getTags,
+      author: { email: user.email, nickname: user.nickname, id: user.id },
+    };
   }
 
   async deleteQuestion(questionId: number, user: User) {

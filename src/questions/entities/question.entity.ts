@@ -41,6 +41,13 @@ export class Question extends CoreEntity {
   watch: number;
 
   @ApiProperty({
+    description: '답변갯수',
+    default: 0,
+  })
+  @Column({ default: 0 })
+  answersCount: number;
+
+  @ApiProperty({
     description: '질문 코인',
     default: 0,
   })
