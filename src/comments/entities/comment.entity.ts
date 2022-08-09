@@ -1,7 +1,7 @@
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @Entity()
 export class Comment extends CoreEntity {
@@ -11,6 +11,12 @@ export class Comment extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.comments)
   author: User;
 
+  @RelationId((answer: Answer) => answer.author)
+  authorId: number;
+
   @ManyToOne((type) => Answer, (answer) => answer.comments)
   answer: Answer;
+
+  @RelationId((comment: Comment) => comment.answer)
+  answerId: number;
 }
