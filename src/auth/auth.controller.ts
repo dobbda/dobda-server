@@ -83,8 +83,8 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<ResLoginUser> {
-    const accessExpires = new Date(Date.now() + 1000 * 60 * 5); //
-    const refreshExpires = new Date(Date.now() + 1000 * 60 * 600); // 24 hour 7일
+    const accessExpires = new Date(Date.now() + 1000 * 60 * 60); //1시간//
+    const refreshExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7일
     const resRefreshData = await this.authService.refreshTokens(
       req.cookies['jwt-refresh'],
     );

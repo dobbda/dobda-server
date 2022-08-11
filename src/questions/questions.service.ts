@@ -54,17 +54,18 @@ export class QuestionsService {
     );
     return {
       result,
-      totalPages: Math.ceil(total / 20),
+      totalPages: Math.ceil(total / 5),
     };
   }
 
   async getQuestion(questionId: number) {
     // 상세조회 // + Answer // comment?
     const result = await this.findQuestionOrError(questionId, true);
+		
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
-    const answer = await this.answersService.getAnswers({ qid: questionId });
+    // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
-      question: { ...result, tagNames: tags, ...answer },
+      question: { ...result, tagNames: tags},
     };
   }
 
