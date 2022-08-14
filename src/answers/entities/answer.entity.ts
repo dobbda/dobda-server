@@ -9,6 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
+  RelationId,
 } from 'typeorm';
 
 @Entity()
@@ -23,8 +24,17 @@ export class Answer extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.answers)
   author: User;
 
+  @RelationId((answer: Answer) => answer.author)
+  authorId: number;
+
   @ManyToOne((type) => Question, (question) => question.answers)
   question: Question;
+
+  @RelationId((answer: Answer) => answer.question)
+  questionId: number;
+
+  @Column({ default: 0 })
+  commentsCount: number;
 
   @OneToOne((type) => Question)
   @JoinColumn()

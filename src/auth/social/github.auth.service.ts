@@ -36,19 +36,18 @@ export class GithubAuthService {
         },
       });
       const { access_token } = response.data;
-
       const { data } = await axios.get(getUserUrl, {
         headers: {
           Authorization: `token ${access_token}`,
         },
       });
+
       // 메일
       const { data: emailDataArr } = await axios.get(getUserMail, {
         headers: {
           Authorization: `token ${access_token}`,
         },
       });
-
       const { email } = await emailDataArr.find(
         (emailObj) => emailObj.primary === true && emailObj.verified === true,
       );
@@ -61,7 +60,7 @@ export class GithubAuthService {
         description: bio,
         email,
       };
-	  
+			
       return this.authService.verifyUserAndSignJWT(githubInfo);
     } catch (err) {
       console.log(err);

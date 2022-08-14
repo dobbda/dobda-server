@@ -16,29 +16,36 @@ export class CommentsService {
   ) {}
 
   async getComments({ aid }: GetCommentsDto) {
-    const comments = await this.commentsRepository.find({
-      relations: ['answers'],
-      where: {
-        answer: aid,
-      },
-    });
+    const comments = await this.commentsRepository
+      .createQueryBuilder('comment')
+      .where({ answer: aid })
+      .leftJoin('comment.author', 'author')
+      .addSelect([
+        'author.email',
+        'author.nickname',
+        'author.id',
+        'author.avatar',
+      ])
+			.orderBy('comment.updatedAt', 'DESC')
+      .getMany();
     return {
       comments,
     };
   }
 
   async createComment({ answerId, content }: CreateCommentDto, user: User) {
-    /* content 클린 */
-    const cleanedContent = sanitizeHtml(content);
-
     /* Question 가져오기 */
     const answer = await this.answersRepository.findOne(answerId);
-
-    const comment = await this.commentsRepository.createComment(
-      { content: cleanedContent },
-      answer,
-      user,
-    );
+    
+    if (!answer) return;
+    await this.answersRepository.save([
+      {
+        id: answer.id,
+        commentsCount: answer.commentsCount + 1,
+      },
+    ]);
+    
+    const comment = await this.commentsRepository.createComment({ content }, answer, user);
 
     await this.notisService.addCommentNoti(comment, user);
 

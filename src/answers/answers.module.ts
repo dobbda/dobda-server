@@ -8,7 +8,8 @@ import { AnswersRepository } from './repositories/answers.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AnswersRepository, QuestionsRepository])],
-  controllers: [AnswersController],
+  controllers: [AnswersController
   providers: [AnswersService, NotisService],
+	exports: [AnswersService, TypeOrmModule]
 })
 export class AnswersModule {}

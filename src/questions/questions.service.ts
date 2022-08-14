@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import parse from 'node-html-parser';
 import sanitizeHtml from 'sanitize-html';
+import { UsersRepository } from 'src/users/users.repository';
 import { ImagesRepository } from 'src/images/repositories/images.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
@@ -13,6 +14,7 @@ import { GetQuestionsDto } from './dtos/get-questions.dto';
 import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
+import { AnswersService } from 'src/answers/answers.service';
 
 @Injectable()
 export class QuestionsService {
@@ -21,6 +23,8 @@ export class QuestionsService {
     private readonly tagsRepository: TagsRepository,
     private readonly questionTagsRepository: QuestionTagsRepository,
     private readonly imagesRepository: ImagesRepository,
+    private readonly usersRepository: UsersRepository,
+    private readonly answersService: AnswersService,
   ) {}
 
   async findQuestionOrError(questionId: number, getAuthor?: boolean) {
@@ -31,7 +35,8 @@ export class QuestionsService {
     if (!question) {
       throw new NotFoundException('id에 해당하는 question이 없습니다.');
     }
-    return question;
+    const { content, ...reset } = question;
+    return reset;
   }
 
   async getQuestions({ page, title, tagId }: GetQuestionsDto) {
@@ -43,20 +48,24 @@ export class QuestionsService {
     const result = await Promise.all(
       questions.map(async (question) => {
         const tags = await this.tagsRepository.allTagsInQuestion(question.id);
-        return { ...question, tags };
+        const { content, ...reset } = question;
+        return { ...reset, tagNames: tags };
       }),
     );
     return {
       result,
-      totalPages: Math.ceil(total / 20),
+      totalPages: Math.ceil(total / 5),
     };
   }
 
   async getQuestion(questionId: number) {
-    const result = await this.findQuestionOrError(questionId);
+    // 상세조회 // + Answer // comment?
+    const result = await this.findQuestionOrError(questionId, true);
+		
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
+    // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
-      question: { ...result, tags },
+      question: { ...result, tagNames: tags},
     };
   }
 
@@ -64,31 +73,23 @@ export class QuestionsService {
     { tagNames, content, ...rest }: CreateQuestionDto,
     user: User,
   ) {
-    /* content 클린 */
-    const cleanedContent = sanitizeHtml(content);
-
     /* question생성 */
     const question = await this.questionsRepository.createQuestion(
-      { content: cleanedContent, ...rest },
+      { content: content, ...rest },
       user,
     );
-
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
-
     /* questionTag 생성 */
     await this.questionTagsRepository.createQuestionTags(question.id, tags);
-
-    /* content에서 img 정보 추출 */
-    const imgUrls = parse(cleanedContent)
-      .querySelectorAll('img')
-      .map((elem) => elem.attrs['src'])
-      .filter((url) => url.includes('s3.amazonaws.com'));
-
-    /* image 생성 */
-    await this.imagesRepository.createImages(imgUrls, question);
-
-    return true;
+    const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+    return {
+      ...question,
+      tagNames: getTags,
+      author: { email: user.email, nickname: user.nickname, id: user.id },
+    };
   }
 
   async editQuestion(
@@ -106,18 +107,26 @@ export class QuestionsService {
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
     }
-    await this.questionsRepository.save([
+    const newQuestion = await this.questionsRepository.save([
       {
         id: result.id,
         ...editQuestion,
       },
     ]);
-    if (tagNames) {
-      await this.questionTagsRepository.delete({ questionId });
-      const tags = await this.tagsRepository.createNonExistTags(tagNames);
-      await this.questionTagsRepository.createQuestionTags(result.id, tags);
-    }
-    return true;
+
+    await this.questionTagsRepository.delete({ questionId });
+    const tags = await this.tagsRepository.createNonExistTags(tagNames);
+    await this.questionTagsRepository.createQuestionTags(result.id, tags);
+
+    const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+
+    return {
+      ...newQuestion,
+      tagNames: getTags,
+      author: { email: user.email, nickname: user.nickname, id: user.id },
+    };
   }
 
   async deleteQuestion(questionId: number, user: User) {
