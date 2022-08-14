@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
+import { NotisService } from 'src/noti/notis.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateAnswerDto } from './dtos/create-answer.dto';
@@ -10,6 +12,7 @@ export class AnswersService {
   constructor(
     private readonly answersRepository: AnswersRepository,
     private readonly questionsRepository: QuestionsRepository,
+    private readonly notisService: NotisService,
   ) {}
 
   async getAnswers({ qid }: GetAnswersDto) {
@@ -35,14 +38,18 @@ export class AnswersService {
     const question = await this.questionsRepository.findOne(qid);
 
     if (question === null) return false;
+    
 		await this.questionsRepository.save([
 			{id: qid, answersCount: question.answersCount+1}
 		])
-    await this.answersRepository.createAnswer(
+    
+    const answer = await this.answersRepository.createAnswer(
       {content },
       question,
       user,
     );
+
+    await this.notisService.addAnswerNoti(answer, user);
 
     return true;
   }
