@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
-import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateNotiDto } from './dtos/create-noti.dto';
-import { GetNoti, GetNotisOutput } from './dtos/get-noti.dto';
-import { Noti, NotiType } from './entities/noti.entity';
+import { GetNotisOutput } from './dtos/get-noti.dto';
 import { NotisRepository } from './repositories/notis.repository';
+import { Comment } from 'src/comments/entities/comment.entity';
+import { NotiType } from './entities/noti.entity';
+import { Answer } from 'src/answers/entities/answer.entity';
 
 @Injectable()
 export class NotisService {
@@ -60,6 +60,7 @@ export class NotisService {
 
   async viewNoti(id: number, user: User) {
     const noti = await this.notisRepository.findOneNotiWithId(id);
+
     if (!noti) {
       throw new NotFoundException('id에 해당하는 noti가 없습니다.');
     }
@@ -73,5 +74,28 @@ export class NotisService {
     this.notisRepository.save(noti);
 
     return null;
+  }
+
+  async addAnswerNoti(answer: Answer, to: User) {
+    this.createNoti({
+      type: NotiType.ANSWER,
+      content: JSON.stringify({
+        questionId: answer.question.id,
+        content: answer.content.substring(0, 20),
+      }),
+      to: to,
+    });
+  }
+
+  async addCommentNoti(comment: Comment, to: User) {
+    this.createNoti({
+      type: NotiType.COMMENT,
+      content: JSON.stringify({
+        questionId: comment.answer.question.id,
+        answerId: comment.answer.id,
+        content: comment.content.substring(0, 20),
+      }),
+      to: to,
+    });
   }
 }
