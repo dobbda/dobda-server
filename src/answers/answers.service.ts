@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import sanitizeHtml from 'sanitize-html';
 import { NotisService } from 'src/noti/notis.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
@@ -26,7 +26,7 @@ export class AnswersService {
         'author.id',
         'author.avatar',
       ])
-			.orderBy('answer.updatedAt', 'DESC')
+      .orderBy('answer.updatedAt', 'DESC')
       .getMany();
     return {
       answers,
@@ -38,18 +38,36 @@ export class AnswersService {
     const question = await this.questionsRepository.findOne(qid);
 
     if (question === null) return false;
-    
-		await this.questionsRepository.save([
-			{id: qid, answersCount: question.answersCount+1}
-		])
-    
+
+    await this.questionsRepository.save([
+      { id: qid, answersCount: question.answersCount + 1 },
+    ]);
+
     const answer = await this.answersRepository.createAnswer(
-      {content },
+      { content },
       question,
       user,
     );
 
     await this.notisService.addAnswerNoti(answer, user);
+
+    return true;
+  }
+
+  async acceptAnswer(answerId: number, user: User) {
+    const answer = await this.answersRepository.findOne(answerId);
+
+    if (answer.question.author !== user) {
+      throw new ForbiddenException('질문자만 답변을 채택할 수 있습니다.');
+    }
+
+    answer.accepted = true;
+    answer.question.acceptedAnswerId = answer.id;
+    answer.question.acceptedAnswer = answer;
+
+    await this.answersRepository.save(answer);
+
+    await this.notisService.addAcceptNoti(answer, user);
 
     return true;
   }
