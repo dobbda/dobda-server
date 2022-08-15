@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import sanitizeHtml from 'sanitize-html';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
+import { NotisService } from 'src/noti/notis.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { GetCommentsDto } from './dtos/get-comment.dto';
@@ -11,6 +12,7 @@ export class CommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
     private readonly answersRepository: AnswersRepository,
+    private readonly notisService: NotisService,
   ) {}
 
   async getComments({ aid }: GetCommentsDto) {
@@ -34,6 +36,7 @@ export class CommentsService {
   async createComment({ answerId, content }: CreateCommentDto, user: User) {
     /* Question 가져오기 */
     const answer = await this.answersRepository.findOne(answerId);
+    
     if (!answer) return;
     await this.answersRepository.save([
       {
@@ -41,7 +44,10 @@ export class CommentsService {
         commentsCount: answer.commentsCount + 1,
       },
     ]);
-    await this.commentsRepository.createComment({ content }, answer, user);
+    
+    const comment = await this.commentsRepository.createComment({ content }, answer, user);
+
+    await this.notisService.addCommentNoti(comment, user);
 
     return true;
   }

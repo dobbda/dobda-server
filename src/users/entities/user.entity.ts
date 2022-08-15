@@ -12,6 +12,7 @@ import { Transaction } from 'src/coin/entities/transaction.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
+import { Noti } from 'src/noti/entities/noti.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -97,4 +98,7 @@ export class User extends CoreEntity {
     (transaction: Transaction) => transaction.toUser,
   )
   transactionsTo: Transaction[];
+
+  @OneToMany((type) => Noti, (noti: Noti) => noti.to)
+  notis: Noti[];
 }

@@ -1,8 +1,12 @@
+
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  Injectable
 } from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
+import { NotisService } from 'src/noti/notis.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateAnswerDto } from './dtos/create-answer.dto';
@@ -14,6 +18,7 @@ export class AnswersService {
   constructor(
     private readonly answersRepository: AnswersRepository,
     private readonly questionsRepository: QuestionsRepository,
+    private readonly notisService: NotisService,
   ) {}
 
   async getAnswers({ qid }: GetAnswersDto) {
@@ -38,6 +43,7 @@ export class AnswersService {
     /* question 가져오기 */
     const question = await this.questionsRepository.findOne(qid);
 
+
     if (question === null) {
       throw new NotFoundException('잘못된 접근입니다.');
     }
@@ -45,6 +51,15 @@ export class AnswersService {
       { id: qid, answersCount: question.answersCount + 1 },
     ]);
     await this.answersRepository.createAnswer({ content }, question, user);
+    
+    
+    const answer = await this.answersRepository.createAnswer(
+      {content },
+      question,
+      user,
+    );
+    
+    await this.notisService.addAnswerNoti(answer, user);
     return true;
   }
 
