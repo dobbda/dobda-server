@@ -3,7 +3,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  Injectable
 } from '@nestjs/common';
 import sanitizeHtml from 'sanitize-html';
 import { NotisService } from 'src/noti/notis.service';
