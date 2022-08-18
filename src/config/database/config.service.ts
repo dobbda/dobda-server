@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Answer } from 'src/answers/entities/answer.entity';
-import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
-import { FeatureRequestTag } from 'src/featureRequest/entities/featureRequestTag.entity';
+import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
+import { OutSourcingTag } from 'src/outSourcing/entities/outSourcingTag.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { QuestionTag } from 'src/questions/entities/questionTag.entity';
 import { Tag } from 'src/questions/entities/tag.entity';
@@ -29,8 +29,8 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
       logging: true,
       entities: [
         User,
-        FeatureRequest,
-        FeatureRequestTag,
+        OutSourcing,
+        OutSourcingTag,
         Tag,
         Question,
         QuestionTag,

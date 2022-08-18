@@ -11,7 +11,7 @@ import { Answer } from 'src/answers/entities/answer.entity';
 import { Transaction } from 'src/coin/entities/transaction.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
-import { FeatureRequest } from 'src/featureRequest/entities/featureRequest.entity';
+import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
 import { Noti } from 'src/noti/entities/noti.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
@@ -76,10 +76,10 @@ export class User extends CoreEntity {
   questions: Question[];
 
   @OneToMany(
-    (type) => FeatureRequest,
-    (featureRequest: FeatureRequest) => featureRequest.author,
+    (type) => OutSourcing,
+    (outSourcing: OutSourcing) => outSourcing.author,
   )
-  featureRequests: FeatureRequest[];
+  outSourcings: OutSourcing[];
 
   @OneToMany((type) => Answer, (answer: Answer) => answer.author)
   answers: Answer[];

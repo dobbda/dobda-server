@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { CreateTagsDto } from 'src/questions/dtos/create-question.dto';
 
-export class CreateFeatureRequestDto extends CreateTagsDto {
+export class CreateOutSourcingDto extends CreateTagsDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ description: '제목' })

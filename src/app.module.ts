@@ -11,7 +11,7 @@ import { CommonModule } from './common/common.module';
 import { QuestionsModule } from './questions/questions.module';
 import { AnswersModule } from './answers/answers.module';
 import { AuthModule } from './auth/auth.module';
-import { FeatureRequestModule } from './featureRequest/featureRequests.module';
+import { OutSourcingModule } from './outSourcing/outSourcings.module';
 import * as Joi from 'joi';
 import { CommentsModule } from './comments/comments.module';
 
@@ -47,7 +47,7 @@ import { CommentsModule } from './comments/comments.module';
     AnswersModule,
     CommentsModule,
     AuthModule,
-    FeatureRequestModule,
+    OutSourcingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
