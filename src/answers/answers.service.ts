@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import sanitizeHtml from 'sanitize-html';
 import { NotisService } from 'src/noti/notis.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
@@ -26,7 +31,7 @@ export class AnswersService {
         'author.id',
         'author.avatar',
       ])
-			.orderBy('answer.updatedAt', 'DESC')
+      .orderBy('answer.updatedAt', 'DESC')
       .getMany();
     return {
       answers,
@@ -37,20 +42,59 @@ export class AnswersService {
     /* question 가져오기 */
     const question = await this.questionsRepository.findOne(qid);
 
-    if (question === null) return false;
+
+    if (question === null) {
+      throw new NotFoundException('잘못된 접근입니다.');
+    }
+    await this.questionsRepository.save([
+      { id: qid, answersCount: question.answersCount + 1 },
+    ]);
+    await this.answersRepository.createAnswer({ content }, question, user);
     
-		await this.questionsRepository.save([
-			{id: qid, answersCount: question.answersCount+1}
-		])
     
     const answer = await this.answersRepository.createAnswer(
       {content },
       question,
       user,
     );
-
+    
     await this.notisService.addAnswerNoti(answer, user);
-
     return true;
+  }
+
+  async editAnswer(content: string, aid: number, user: User) {
+    const answer = await this.answersRepository.findOne({ id: aid });
+    if (user.id !== answer.authorId) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
+    }
+    if (answer.commentsCount) {
+      throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
+    }
+    if (answer.accepted) {
+      throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
+    }
+
+    const newAnswer = await this.answersRepository.save({
+      id: aid,
+      content: content,
+    });
+    return newAnswer;
+  }
+
+  async deleteAnswer(aid: number, user: User) {
+    const answer = await this.answersRepository.findOne({ id: aid });
+    if (user.id !== answer.authorId) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
+    }
+    if (answer.commentsCount) {
+      throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
+    }
+    if (answer.accepted) {
+      throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
+    }
+    await this.answersRepository.delete({
+      id: aid,
+    });
+		return {success:true}
   }
 }
