@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
-import { FeatureRequestTag } from 'src/featureRequest/entities/featureRequestTag.entity';
+import { OutSourcingTag } from 'src/outSourcing/entities/outSourcingTag.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { QuestionTag } from './questionTag.entity';
 
@@ -18,9 +18,6 @@ export class Tag extends CoreEntity {
   @OneToMany((type) => QuestionTag, (questionTag) => questionTag.tagId)
   questionTags: QuestionTag[];
 
-  @OneToMany(
-    (type) => FeatureRequestTag,
-    (featureRequestTag) => featureRequestTag.tagId,
-  )
-  featureRequestTags: FeatureRequestTag[];
+  @OneToMany((type) => OutSourcingTag, (outSourcingTag) => outSourcingTag.tagId)
+  outSourcingTags: OutSourcingTag[];
 }
