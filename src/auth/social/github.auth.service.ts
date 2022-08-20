@@ -54,9 +54,9 @@ export class GithubAuthService {
 
       const { avatar_url, name, bio } = data;
       const githubInfo: UserRegisterDTO = {
-        avatar: avatar_url,
+        avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
         name,
-		nickname:name,
+				nickname:name,
         description: bio,
         email,
       };
