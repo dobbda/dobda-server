@@ -49,9 +49,7 @@ export class AnswersService {
     await this.questionsRepository.save([
       { id: qid, answersCount: question.answersCount + 1 },
     ]);
-    await this.answersRepository.createAnswer({ content }, question, user);
-    
-    
+        
     const answer = await this.answersRepository.createAnswer(
       {content },
       question,
