@@ -101,7 +101,7 @@ export class QuestionsService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    if (result.accepteAnswerId) {
+    if (result.acceptedAnswerId) {
       throw new BadRequestException(
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
@@ -134,7 +134,7 @@ export class QuestionsService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    if (result.accepteAnswerId) {
+    if (result.acceptedAnswerId) {
       throw new BadRequestException(
         '답변이 채택된 게시글은 삭제가 불가능합니다.',
       );
