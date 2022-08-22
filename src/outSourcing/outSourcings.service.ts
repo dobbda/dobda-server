@@ -72,8 +72,15 @@ export class OutSourcingService {
       outSourcing.id,
       tags,
     );
+
+		const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+		
     return {
-      result: true,
+      ...outSourcing,
+      tagNames: getTags,
+      author: { email: user.email, nickname: user.nickname, id: user.id, avatar:user.avatar},
     };
   }
 
