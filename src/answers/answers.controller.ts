@@ -67,4 +67,29 @@ export class AnswersController {
   async acceptAnswer(@Param('id') answerId: number, @CurrentUser() user: User) {
     return this.answersService.acceptAnswer(answerId, user);
   }
+
+  @Patch(':id')
+  @ApiOperation({ summary: '답변 수정' })
+  @ApiBody({ type: "{content:string}" })
+  @ApiCreatedResponse({ description: '답변을 등록한다' })
+  @UseGuards(AccessTokenGuard)
+  async editAnswer(
+		@Param('id') aid: number,
+    @Body("content") content: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.answersService.editAnswer(content, aid, user);
+  }
+
+
+  @Delete(':id')
+  @ApiOperation({ summary: '답변삭제' })
+  @ApiCreatedResponse({ description: '답변을 등록한다' })
+  @UseGuards(AccessTokenGuard)
+  async deledteAnswer(
+    @Param('id') aid: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.answersService.deleteAnswer(aid, user);
+  }
 }

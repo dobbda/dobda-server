@@ -33,10 +33,9 @@ export class QuestionsService {
       getAuthor,
     );
     if (!question) {
-      throw new NotFoundException('id에 해당하는 question이 없습니다.');
+      throw new NotFoundException('게시글이 삭제되었거나 잘못된 접근입니다.');
     }
-    const { content, ...reset } = question;
-    return reset;
+    return question;
   }
 
   async getQuestions({ page, title, tagId }: GetQuestionsDto) {
@@ -88,7 +87,7 @@ export class QuestionsService {
     return {
       ...question,
       tagNames: getTags,
-      author: { email: user.email, nickname: user.nickname, id: user.id },
+      author: { email: user.email, nickname: user.nickname, id: user.id, avatar:user.avatar},
     };
   }
 
@@ -123,9 +122,9 @@ export class QuestionsService {
     });
 
     return {
-      ...newQuestion,
+      ...newQuestion[0],
       tagNames: getTags,
-      author: { email: user.email, nickname: user.nickname, id: user.id },
+      author: { email: user.email, nickname: user.nickname, id: user.id, avatar: user.avatar},
     };
   }
 

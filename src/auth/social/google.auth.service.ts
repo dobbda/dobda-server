@@ -43,7 +43,7 @@ export class GoogleAuthService {
           name, //실명은 웹내에서 추가로 인증예정
           nickname: name,
           email,
-          avatar: picture,
+					avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
         };
         return this.authService.verifyUserAndSignJWT(googleInfo);
 

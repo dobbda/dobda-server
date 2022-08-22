@@ -13,12 +13,12 @@ import {
   RelationId,
 } from 'typeorm';
 import { Progress } from '../types/progressType';
-import { FeatureRequestTag } from './featureRequestTag.entity';
+import { OutSourcingTag } from './outSourcingTag.entity';
 
 @Entity()
-export class FeatureRequest extends CoreEntity {
+export class OutSourcing extends CoreEntity {
   @ApiProperty({
-    description: '기능요청 제목',
+    description: '외주 제목',
     required: true,
   })
   @Column()
@@ -26,7 +26,7 @@ export class FeatureRequest extends CoreEntity {
   title: string;
 
   @ApiProperty({
-    description: '기능요청 내용',
+    description: '외주 내용',
     required: true,
   })
   @Column()
@@ -34,14 +34,14 @@ export class FeatureRequest extends CoreEntity {
   content: string;
 
   @ApiProperty({
-    description: '기능요청 조회 수',
+    description: '외주 조회 수',
     default: 0,
   })
   @Column({ default: 0 })
   watch: number;
 
   @ApiProperty({
-    description: '기능요청 코인',
+    description: '외주 코인',
     default: 0,
   })
   @Column({ nullable: true, default: 0 })
@@ -49,14 +49,14 @@ export class FeatureRequest extends CoreEntity {
   coin: number;
 
   @ApiProperty({
-    description: '기능요청 마감일',
+    description: '외주 마감일',
     required: true,
   })
   @Column({ type: 'date' })
   deadline: Date;
 
   @ApiProperty({
-    description: '기능요청 진행도',
+    description: '외주 진행도',
     enum: Progress,
     default: Progress.Pending,
   })
@@ -64,7 +64,7 @@ export class FeatureRequest extends CoreEntity {
   progress: Progress;
 
   /* 작성자 */
-  @ManyToOne((type) => User, (user) => user.featureRequests)
+  @ManyToOne((type) => User, (user) => user.outSourcings)
   author: User;
 
   /* 채택답변 */
@@ -77,14 +77,14 @@ export class FeatureRequest extends CoreEntity {
   answers: Answer[];
 
   @OneToMany(
-    (type) => FeatureRequestTag,
-    (featureRequestTag) => featureRequestTag.featureRequestId,
+    (type) => OutSourcingTag,
+    (outSourcingTag) => outSourcingTag.outSourcingId,
   )
-  featureRequestTags: FeatureRequestTag[];
+  outSourcingTags: OutSourcingTag[];
 
   @ApiProperty({
-    description: '기능요청 작성자 id',
+    description: '외주 작성자 id',
   })
-  @RelationId((featureRequest: FeatureRequest) => featureRequest.author)
+  @RelationId((outSourcing: OutSourcing) => outSourcing.author)
   authorId: number;
 }

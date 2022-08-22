@@ -99,11 +99,11 @@ export class AuthController {
       // signed:true    //쿠키보안 적용시 postman에서  해석못함
     });
 
-    response.cookie('refresh-expires', '11111111111111111111111111', {
+    response.cookie('refresh-expires', refreshExpires, {
       httpOnly: false,
       expires: refreshExpires,
     });
-    response.cookie('access-expires', '11111111111111111111111111', {
+    response.cookie('access-expires', refreshExpires, {
       expires: accessExpires,
       httpOnly: false,
     });
@@ -151,11 +151,11 @@ export class AuthController {
       // signed:true
     });
 
-    response.cookie('refresh-expires', '11111111111111111111111111', {
+    response.cookie('refresh-expires', refreshExpires, {
       httpOnly: false,
       expires: refreshExpires,
     });
-    response.cookie('access-expires', '11111111111111111111111111', {
+    response.cookie('access-expires', refreshExpires, {
       expires: accessExpires,
       httpOnly: false,
     });

@@ -11,19 +11,24 @@ import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
 import { Image } from 'src/images/entities/image.entity';
 import { ImagesModule } from 'src/images/images.module';
+import { NotiModule } from 'src/noti/notis.module';
+import { NotisRepository } from 'src/noti/repositories/notis.repository';
+import { NotisService } from 'src/noti/notis.service';
 
 @Module({
   imports: [
 		AnswersModule,
+		NotiModule,
     TypeOrmModule.forFeature([
       QuestionsRepository,
       TagsRepository,
       QuestionTagsRepository,
       ImagesRepository,
 			UsersRepository,
+			NotisRepository
     ]),
   ],
   controllers: [QuestionController],
-  providers: [QuestionsService, AnswersService],
+  providers: [QuestionsService, AnswersService, NotisService],
 })
 export class QuestionsModule {}

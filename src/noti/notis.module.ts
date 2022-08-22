@@ -9,5 +9,6 @@ import { NotisRepository } from './repositories/notis.repository';
   imports: [TypeOrmModule.forFeature([NotisRepository])],
   controllers: [NotisController],
   providers: [NotisService],
+	exports: [TypeOrmModule, NotisService],
 })
 export class NotiModule {}
