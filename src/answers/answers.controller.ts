@@ -1,8 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
@@ -47,6 +57,16 @@ export class AnswersController {
     return this.answersService.createAnswer(createAnswerDto, user);
   }
 
+  @Patch('/:id')
+  @ApiOperation({ summary: '답변 채택' })
+  @ApiParam({ name: 'id', required: true, description: 'Answer Id' })
+  @ApiCreatedResponse({
+    description: 'id에 해당하는 답변과 답변의 질문을 채택 상태로 변경한다.',
+  })
+  @UseGuards(AccessTokenGuard)
+  async acceptAnswer(@Param('id') answerId: number, @CurrentUser() user: User) {
+    return this.answersService.acceptAnswer(answerId, user);
+  }
 
   @Patch(':id')
   @ApiOperation({ summary: '답변 수정' })

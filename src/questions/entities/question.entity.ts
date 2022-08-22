@@ -69,7 +69,7 @@ export class Question extends CoreEntity {
 
   @OneToOne((type) => Answer)
   @JoinColumn()
-  accepteAnswer: Answer;
+  acceptedAnswer: Answer;
 
   @ApiProperty({
     description: '질문 작성자 id',
@@ -80,6 +80,6 @@ export class Question extends CoreEntity {
   @ApiProperty({
     description: '채택답변 id',
   })
-  @RelationId((question: Question) => question.accepteAnswer)
-  accepteAnswerId: number;
+  @RelationId((question: Question) => question.acceptedAnswer)
+  acceptedAnswerId: number;
 }

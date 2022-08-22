@@ -1,6 +1,6 @@
-
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -42,7 +42,6 @@ export class AnswersService {
     /* question 가져오기 */
     const question = await this.questionsRepository.findOne(qid);
 
-
     if (question === null) {
       throw new NotFoundException('잘못된 접근입니다.');
     }
@@ -51,7 +50,7 @@ export class AnswersService {
     ]);
         
     const answer = await this.answersRepository.createAnswer(
-      {content },
+      { content },
       question,
       user,
     );
@@ -60,6 +59,24 @@ export class AnswersService {
     return true;
   }
 
+  async acceptAnswer(answerId: number, user: User) {
+    const answer = await this.answersRepository.findOne(answerId);
+
+    if (answer.question.author !== user) {
+      throw new ForbiddenException('질문자만 답변을 채택할 수 있습니다.');
+    }
+
+    answer.accepted = true;
+    answer.question.acceptedAnswerId = answer.id;
+    answer.question.acceptedAnswer = answer;
+
+    await this.answersRepository.save(answer);
+
+    await this.notisService.addAcceptNoti(answer, user);
+
+    return true;
+  }
+    
   async editAnswer(content: string, aid: number, user: User) {
     const answer = await this.answersRepository.findOne({ id: aid });
     if (user.id !== answer.authorId) {

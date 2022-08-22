@@ -98,4 +98,15 @@ export class NotisService {
       to: to,
     });
   }
+
+  async addAcceptNoti(answer: Answer, to: User) {
+    this.createNoti({
+      type: NotiType.ACCEPT,
+      content: JSON.stringify({
+        questionId: answer.question.id,
+        content: `${answer.content.substring(0, 20)} 답변이 채택되었습니다.`,
+      }),
+      to: to,
+    });
+  }
 }
