@@ -39,6 +39,7 @@
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
+    "iamport-rest-client-nodejs": "^0.9.11",
     "joi": "^17.6.0",
     "node-html-parser": "^5.3.3",
     "passport": "^0.5.3",
