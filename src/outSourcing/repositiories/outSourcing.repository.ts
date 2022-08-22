@@ -33,8 +33,16 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
   async findAll(page: number, title?: string, tagId?: number) {
     const outSourcingQuery = this.createQueryBuilder('outSourcing')
       .take(20)
-      .skip((page - 1) * 20);
-    if (title) {
+      .skip((page - 1) * 20)
+			.leftJoin('outSourcing.author', 'author')
+      .addSelect([
+        'author.email',
+        'author.nickname',
+        'author.id',
+        'author.avatar',
+      ])
+			.orderBy('outSourcing.updatedAt', 'DESC')
+    if (title && title !== "undefined") {
       outSourcingQuery.where('outSourcing.title like :title', {
         title: `%${title}%`,
       });
