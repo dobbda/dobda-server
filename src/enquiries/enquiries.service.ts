@@ -1,0 +1,102 @@
+import { OutSourcingRepository } from '../outSourcing/repositiories/outSourcing.repository';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import sanitizeHtml from 'sanitize-html';
+import { NotisService } from 'src/noti/notis.service';
+import { User } from 'src/users/entities/user.entity';
+import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
+import { GetEnquiryDto } from './dtos/get-enquiry.dto';
+import { EnquiriesRepository } from './repositories/enquiries.repository';
+
+@Injectable()
+export class EnquiriesService {
+  constructor(
+    private readonly enquiryRepository: EnquiriesRepository,
+    private readonly outSourceRepository: OutSourcingRepository,
+    private readonly notisService: NotisService,
+  ) {}
+
+  async getEnquiries({ oid }: GetEnquiryDto) {
+		console.log(oid)
+    const enquiries = await this.enquiryRepository
+      .createQueryBuilder('enquiry')
+      .where({ outSourcing: oid })
+      .leftJoin('enquiry.author', 'author')
+      .addSelect([
+        'author.email',
+        'author.nickname',
+        'author.id',
+        'author.avatar',
+      ])
+      .orderBy('enquiry.updatedAt', 'DESC')
+      .getMany();
+    return {
+      enquiries,
+    };
+  }
+
+  async createEnquiry({ content, oid }: CreateEnquiryDto, user: User) {
+    /* outSourcing 가져오기 */
+    const outSourcing = await this.outSourceRepository.findOne(oid);
+
+    if (outSourcing === null) {
+      throw new NotFoundException('잘못된 접근입니다.');
+    }
+    await this.outSourceRepository.save([
+      { id: oid, answersCount: outSourcing.enquiriesCount + 1 },
+    ]);
+        
+    const enquiry = await this.enquiryRepository.createEnquiry(
+      { content },
+      outSourcing,
+      user,
+    );
+    
+    // await this.notisService.addEnquiryNoti(enquiry, user);
+    return true;
+  }
+
+  async selectEnquiry(answerId: number, user: User) {
+		
+  }
+    
+  async editEnquiry(content: string, oid: number, user: User) {
+    const enquiry = await this.enquiryRepository.findOne({ id: oid });
+    if (user.id !== enquiry.authorId) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
+    }
+    if (enquiry.commentsCount) {
+      throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
+    }
+    if (enquiry.selected) {
+      throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
+    }
+
+    const newEnquiry = await this.enquiryRepository.save({
+      id: oid,
+      content: content,
+    });
+    return newEnquiry;
+  }
+
+  async deleteEnquiry(oid: number, user: User) {
+    const enquiry = await this.enquiryRepository.findOne({ id: oid });
+    if (user.id !== enquiry.authorId) {
+      throw new BadRequestException('작성자만 수정이 가능합니다');
+    }
+    if (enquiry.commentsCount) {
+      throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
+    }
+    if (enquiry.selected) {
+      throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
+    }
+    await this.enquiryRepository.delete({
+      id: oid,
+    });
+		return {success:true}
+  }
+}

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNumber, IsString } from 'class-validator';
-import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
+import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -68,13 +68,13 @@ export class OutSourcing extends CoreEntity {
   author: User;
 
   /* 채택답변 */
-  @OneToOne((type) => Answer)
+  @OneToOne((type) => Enquiry)
   @JoinColumn()
-  accepteAnswer: Answer;
+  selectedEnquiry: Enquiry;
 
   /* 답변들 */
-  @OneToMany((type) => Answer, (answer) => answer.question)
-  answers: Answer[];
+  @OneToMany((type) => Enquiry, (enquiry) => enquiry.outSourcing)
+  enquiries: Enquiry[];
 
   @OneToMany(
     (type) => OutSourcingTag,
@@ -87,4 +87,11 @@ export class OutSourcing extends CoreEntity {
   })
   @RelationId((outSourcing: OutSourcing) => outSourcing.author)
   authorId: number;
+
+	@Column({ default: 0 })
+	enquiriesCount: number;
+
+	@RelationId((outSourcing: OutSourcing) => outSourcing.selectedEnquiry)
+  selectedEnquiryId: number;
 }
+

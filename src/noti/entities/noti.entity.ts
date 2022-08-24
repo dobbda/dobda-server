@@ -18,6 +18,9 @@ export enum NotiType {
   ACCEPT, // 채택
   INCOME, // 출금
   OUTCOME, // 입금
+	// SELECT, // 외주 거래시작 (거래할 유저 선택함)
+	// C2BPAY, // 유저가 금액 결제 완료 (결제 금액은 웹계좌에 저장))
+	// B2CPAY, // 웹이 프리랜서에게 지급 완료 (웹계좌에서 프리랜서에게 지불))
 }
 
 @Entity()

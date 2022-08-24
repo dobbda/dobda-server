@@ -1,3 +1,4 @@
+import { EnquiriesModule } from './enquiries/enquiries.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -48,6 +49,7 @@ import { CommentsModule } from './comments/comments.module';
     CommentsModule,
     AuthModule,
     OutSourcingModule,
+		EnquiriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
