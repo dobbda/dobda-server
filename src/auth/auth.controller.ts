@@ -47,7 +47,6 @@ export class AuthController {
   @ApiCreatedResponse({ description: '유저 정보', type: User })
   @UseGuards(AccessTokenGuard)
   async getCurrentUser(@CurrentUser() currentUser: User): Promise<User> {
-    console.log('auth:', currentUser);
     return currentUser;
   }
 

@@ -44,7 +44,7 @@ export class OutSourcingService {
         const tags = await this.tagsRepository.allTagsInOutSourcing(
           outSourcing.id,
         );
-        return { ...outSourcing, tags };
+        return { ...outSourcing, tagNames:tags };
       }),
     );
 
@@ -66,7 +66,7 @@ export class OutSourcingService {
 
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
-
+		
     /* outSourcingTag 생성 */
     await this.outSourcingTagRepository.createOutSourcingTags(
       outSourcing.id,
@@ -76,7 +76,6 @@ export class OutSourcingService {
 		const getTags = tags.map((tag) => {
       return { name: tag.name };
     });
-		
     return {
       ...outSourcing,
       tagNames: getTags,
@@ -87,7 +86,7 @@ export class OutSourcingService {
   async getOutSourcing(outSourcingId: number) {
     const result = await this.findOutSourcingOrError(outSourcingId, true);
     const tags = await this.tagsRepository.allTagsInOutSourcing(outSourcingId);
-    return { outSourcing: { ...result, tags } };
+    return {...result, tagNames: tags };
   }
 
   async editOutSourcing(
@@ -105,11 +104,10 @@ export class OutSourcingService {
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
     }
-    console.log(editOutSourcing);
-    await this.outSourcingRepository.save([
+		
+    const update = await this.outSourcingRepository.save([
       { id: outSourcingId, ...editOutSourcing },
     ]);
-    if (tagNames) {
       await this.outSourcingTagRepository.delete({
         outSourcingId: outSourcing.id,
       });
@@ -118,8 +116,15 @@ export class OutSourcingService {
         outSourcing.id,
         tags,
       );
-    }
-    return true;
+			const getTags = tags.map((tag) => {
+				return { name: tag.name };
+			});
+	
+		
+    return {
+			...update[0], 
+			tagNames: getTags, 
+			author: { email: user.email, nickname: user.nickname, id: user.id, avatar: user.avatar},};
   }
 
   async deleteOutSourcing(outSourcingId: number, user: User) {

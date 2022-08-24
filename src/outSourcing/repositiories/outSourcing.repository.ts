@@ -25,7 +25,7 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
     if (getAuthor) {
       outSourcing
         .leftJoin('outSourcing.author', 'author')
-        .addSelect(['author.email', 'author.nickname', 'author.id']);
+        .addSelect(['author.email', 'author.nickname', 'author.id', "author.avatar"]);
     }
     return outSourcing.getOne();
   }
