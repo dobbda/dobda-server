@@ -15,6 +15,7 @@ import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
 import { Noti } from 'src/noti/entities/noti.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
+import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
 
 export class SkillName {
   name: string;
@@ -101,4 +102,8 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Noti, (noti: Noti) => noti.to)
   notis: Noti[];
+
+
+	@OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
+  enquiries: Enquiry[];
 }
