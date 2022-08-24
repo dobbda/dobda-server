@@ -12,4 +12,23 @@ export class CommentsRepository extends Repository<Comment> {
   ): Promise<Comment> {
     return this.save(this.create({ ...createComment, author, answer }));
   }
+
+  async findOneCommentWithId(commentId: number, getAuthor?: boolean) {
+    const comment = this.createQueryBuilder('comment').where(
+      'comment.id = :commentId',
+      { commentId },
+    );
+
+    if (getAuthor) {
+      comment
+        .leftJoin('comment.author', 'author')
+        .addSelect([
+          'author.email',
+          'author.nickname',
+          'author.id',
+          'author.avatar',
+        ]);
+    }
+    return comment.getOne();
+  }
 }
