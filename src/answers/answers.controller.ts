@@ -58,7 +58,11 @@ export class AnswersController {
     return this.answersService.createAnswer(createAnswerDto, user);
   }
 
-  @Patch('/:id')
+  /* 
+    답변 채택 API
+    url: answers/accept/:id (PATCH)
+  */
+  @Patch('/accept/:id')
   @ApiOperation({ summary: '답변 채택' })
   @ApiParam({ name: 'id', required: true, description: 'Answer Id' })
   @ApiCreatedResponse({
@@ -69,28 +73,32 @@ export class AnswersController {
     return this.answersService.acceptAnswer(answerId, user);
   }
 
-  @Patch(':id')
+  /* 
+    답변 수정 API
+    url: answers/:id (PATCH)
+  */
+  @Patch('/:id')
   @ApiOperation({ summary: '답변 수정' })
-  @ApiBody({ type: "{content:string}" })
+  @ApiBody({ type: '{content:string}' })
   @ApiCreatedResponse({ description: '답변을 등록한다' })
   @UseGuards(AccessTokenGuard)
   async editAnswer(
-		@Param('id') aid: number,
-    @Body("content") content: string,
+    @Param('id') aid: number,
+    @Body('content') content: string,
     @CurrentUser() user: User,
   ) {
     return this.answersService.editAnswer(content, aid, user);
   }
 
-
-  @Delete(':id')
+  /* 
+    답변 삭제 API
+    url: answers/:id (DELETE)
+  */
+  @Delete('/:id')
   @ApiOperation({ summary: '답변삭제' })
   @ApiCreatedResponse({ description: '답변을 등록한다' })
   @UseGuards(AccessTokenGuard)
-  async deledteAnswer(
-    @Param('id') aid: number,
-    @CurrentUser() user: User,
-  ) {
+  async deledteAnswer(@Param('id') aid: number, @CurrentUser() user: User) {
     return this.answersService.deleteAnswer(aid, user);
   }
 }
