@@ -41,7 +41,7 @@ export class TagsRepository extends Repository<Tag> {
 
   async allTagsInQuestion(questionId: number) {
     return this.createQueryBuilder('tag')
-      .select(['tag.name'])
+      .select(['tag.name',"tag.id"])
       .leftJoin('tag.questionTags', 'questionTags')
       .where('questionTags.questionId = :questionId', { questionId })
       .getMany();
@@ -49,7 +49,7 @@ export class TagsRepository extends Repository<Tag> {
 
   async allTagsInOutSourcing(outSourcingId: number) {
     return this.createQueryBuilder('tag')
-      .select(['tag.name'])
+      .select(['tag.name',"tag.id"])
       .leftJoin('tag.outSourcingTags', 'outSourcingTags')
       .where('outSourcingTags.outSourcingId = :outSourcingId', {
         outSourcingId,

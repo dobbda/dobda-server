@@ -64,7 +64,7 @@ export class QuestionsService {
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
-      question: { ...result, tagNames: tags},
+      ...result, tagNames: tags,
     };
   }
 
