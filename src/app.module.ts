@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { OutSourcingModule } from './outSourcing/outSourcings.module';
 import * as Joi from 'joi';
 import { CommentsModule } from './comments/comments.module';
+import { RepliesModule } from './replies/replies.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { CommentsModule } from './comments/comments.module';
     AuthModule,
     OutSourcingModule,
 		EnquiriesModule,
+		RepliesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

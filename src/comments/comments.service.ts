@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
 import { NotisService } from 'src/noti/notis.service';
 import { User } from 'src/users/entities/user.entity';
@@ -20,10 +19,10 @@ export class CommentsService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getComments({ aid }: GetCommentsDto) {
+  async getComments({ answerId }: GetCommentsDto) {
     const comments = await this.commentsRepository
       .createQueryBuilder('comment')
-      .where({ answer: aid })
+      .where({ answer: answerId })
       .leftJoin('comment.author', 'author')
       .addSelect([
         'author.email',
