@@ -24,7 +24,7 @@ import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
 import { GetEnquiryDto, GetEnquiriesOutput } from './dtos/get-enquiry.dto';
 
 @Controller('enquiries')
-@ApiTags('문의 API')
+@ApiTags('outSourcing 문의 API<reply parents>')
 export class EnquiriesController {
   constructor(private readonly enquiriesService: EnquiriesService) {}
 
@@ -58,8 +58,8 @@ export class EnquiriesController {
     description: 'id에 해당하는 문의 글에 결제프로세스를 진행한다',
   })
   @UseGuards(AccessTokenGuard)
-  async acceptEnquiry(@Param('id') answerId: number, @CurrentUser() user: User) {
-    return this.enquiriesService.selectEnquiry(answerId, user);
+  async acceptEnquiry(@Param('id') enquiryId: number, @CurrentUser() user: User) {
+    return this.enquiriesService.selectEnquiry(enquiryId, user);
   }
 
 

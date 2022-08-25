@@ -16,6 +16,7 @@ import { Noti } from 'src/noti/entities/noti.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Reply } from 'src/replies/entities/reply.entity';
 
 export class SkillName {
   name: string;
@@ -87,6 +88,9 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Comment, (comment: Comment) => comment.author)
   comments: Comment[];
+
+  @OneToMany((type) => Reply, (reply: Reply) => reply.author)
+  replies: Reply[];
 
   @OneToMany(
     (type) => Transaction,

@@ -15,6 +15,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export enum NotiType {
   ANSWER = 0, //답변
   COMMENT, // 댓글
+	REPLY,
   ACCEPT, // 채택
   INCOME, // 출금
   OUTCOME, // 입금

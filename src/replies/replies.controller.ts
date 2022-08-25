@@ -20,62 +20,62 @@ import {
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { CommentsService } from './comments.service';
-import { CreateCommentDto } from './dtos/create-comment.dto';
-import { EditCommentDto } from './dtos/edit-comment.dto';
-import { GetCommentsDto, GetCommentsOutput } from './dtos/get-comment.dto';
+import { RepliesService } from './replies.service';
+import { EditReplyDto } from './dtos/edit-reply.dto';
+import { GetReplyDto, GetReplyOutput } from './dtos/get-reply.dto';
+import { CreateReplyDto } from './dtos/create-reply.dto';
 
-@Controller('comments')
-@ApiTags('question 댓글 API<Answer children>')
-export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+@Controller('replies')
+@ApiTags('outSourcing 댓글 API<enquiry children>')
+export class RepliesController {
+  constructor(private readonly repliesService: RepliesService) {}
 
   /* 
     댓글 조회
-    url: comments (GET)
+    url: replies (GET)
   */
   @Get()
   @ApiOperation({ summary: '댓글 조회' })
   @ApiCreatedResponse({
     description: '댓글여러개를 조회한다',
-    type: GetCommentsOutput,
+    type: GetReplyOutput,
   })
-  async getAnswers(@Query() getCommentsDto: GetCommentsDto) {
-    return this.commentsService.getComments(getCommentsDto);
+  async getAnswers(@Query() getRepliesDto: GetReplyDto) {
+    return this.repliesService.getReplies(getRepliesDto);
   }
 
   /* 
     댓글 등록 API
-    url: comments (POST)
+    url: replies (POST)
   */
   @Post()
   @ApiOperation({ summary: '댓글 등록' })
-  @ApiBody({ type: CreateCommentDto })
+  @ApiBody({ type: CreateReplyDto })
   @ApiCreatedResponse({ description: '댓글을 등록한다' })
   @UseGuards(AccessTokenGuard)
   async createQuestion(
-    @Body() createCommentDto: CreateCommentDto,
+    @Body() createReplyDto: CreateReplyDto,
     @CurrentUser() user: User,
   ) {
-    return this.commentsService.createComment(createCommentDto, user);
+    return this.repliesService.createReply(createReplyDto, user);
   }
 
   /* 
     댓글 수정 API
-    url: comments/:id (PATCH)
+    url: replies/:id (PATCH)
   */
   @Patch('/:id')
   @ApiOperation({ summary: '댓글 수정' })
-  @ApiParam({ name: 'id', required: true, description: 'comments Id' })
-  @ApiBody({ type: PartialType(CreateCommentDto) })
+  @ApiParam({ name: 'id', required: true, description: 'replies Id' })
+  @ApiBody({ type: PartialType(CreateReplyDto) })
   @ApiCreatedResponse({ description: 'id에 해당하는 댓글을 수정한다' })
   @UseGuards(AccessTokenGuard)
   async editQuestion(
-    @Param('id') commentId: number,
-    @Body() editCommentDto: EditCommentDto,
+    @Param('id') replyId: number,
+    @Body() editReplyDto: EditReplyDto,
     @CurrentUser() user: User,
   ) {
-    return this.commentsService.editComment(commentId, editCommentDto, user);
+    return this.repliesService.editReply(replyId, editReplyDto, user);
   }
 
   /* 
@@ -84,13 +84,13 @@ export class CommentsController {
   */
   @Delete('/:id')
   @ApiOperation({ summary: '댓글 삭제' })
-  @ApiParam({ name: 'id', required: true, description: 'Comment Id' })
+  @ApiParam({ name: 'id', required: true, description: 'Reply Id' })
   @ApiCreatedResponse({ description: 'id에 해당하는 댓글을 삭제한다' })
   @UseGuards(AccessTokenGuard)
   async deleteQuestion(
     @Param('id') questionId: number,
     @CurrentUser() user: User,
   ) {
-    return this.commentsService.deleteComment(questionId, user);
+    return this.repliesService.deleteReply(questionId, user);
   }
 }

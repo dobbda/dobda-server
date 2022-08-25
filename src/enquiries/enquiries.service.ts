@@ -47,7 +47,7 @@ export class EnquiriesService {
       throw new NotFoundException('잘못된 접근입니다.');
     }
     await this.outSourceRepository.save([
-      { id: oid, answersCount: outSourcing.enquiriesCount + 1 },
+      { id: oid, enquiriesCount: outSourcing.enquiriesCount + 1 },
     ]);
         
     const enquiry = await this.enquiryRepository.createEnquiry(
@@ -60,7 +60,7 @@ export class EnquiriesService {
     return true;
   }
 
-  async selectEnquiry(answerId: number, user: User) {
+  async selectEnquiry(enquiryId: number, user: User) {
 		
   }
     
@@ -69,7 +69,7 @@ export class EnquiriesService {
     if (user.id !== enquiry.authorId) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    if (enquiry.commentsCount) {
+    if (enquiry.repliesCount) {
       throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
     }
     if (enquiry.selected) {
@@ -88,7 +88,7 @@ export class EnquiriesService {
     if (user.id !== enquiry.authorId) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    if (enquiry.commentsCount) {
+    if (enquiry.repliesCount) {
       throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
     }
     if (enquiry.selected) {

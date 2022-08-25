@@ -24,7 +24,7 @@ import { CreateAnswerDto } from './dtos/create-answer.dto';
 import { GetAnswersDto, GetAnswersOutput } from './dtos/get-answer.dto';
 
 @Controller('answers')
-@ApiTags('답변 API')
+@ApiTags('question 답변 API<Comment parents>')
 export class AnswersController {
   constructor(private readonly answersService: AnswersService) {}
 

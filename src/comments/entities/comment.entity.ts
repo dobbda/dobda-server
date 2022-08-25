@@ -12,7 +12,7 @@ export class Comment extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.comments)
   author: User;
 
-  @RelationId((answer: Answer) => answer.author)
+  @RelationId((comment: Comment) => comment.author)
   authorId: number;
 
   @ManyToOne((type) => Answer, (answer) => answer.comments)
@@ -20,10 +20,4 @@ export class Comment extends CoreEntity {
 
   @RelationId((comment: Comment) => comment.answer)
   answerId: number;
-
-  @ManyToOne((type) => Enquiry, (enquiry) => enquiry.comments)
-  enquiry: Enquiry;
-	
-  @RelationId((comment: Comment) => comment.enquiry)
-  enquiryId: number;
 }

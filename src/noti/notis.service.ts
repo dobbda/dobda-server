@@ -1,3 +1,4 @@
+import { Reply } from 'src/replies/entities/reply.entity';
 import {
   ForbiddenException,
   Injectable,
@@ -87,13 +88,26 @@ export class NotisService {
     });
   }
 
-  async addCommentNoti(comment: Comment, to: User) {
+  async addCommentNoti(comment: Comment, to: User) { //question 댓글
     this.createNoti({
       type: NotiType.COMMENT,
       content: JSON.stringify({
-        questionId: comment.answer.question.id,
+        questionId: comment.answer.questionId,
         answerId: comment.answer.id,
         content: comment.content.substring(0, 20),
+      }),
+      to: to,
+    });
+  }
+
+	async addReplyNoti(reply: Reply, to: User) { //outSourcing 댓글
+		console.log(reply)
+    this.createNoti({
+      type: NotiType.COMMENT,
+      content: JSON.stringify({
+        outSourcingId: reply.enquiry.outSourcingId,
+        enquiryId: reply.enquiryId,
+        content: reply.content.substring(0, 20),
       }),
       to: to,
     });

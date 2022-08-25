@@ -1,3 +1,4 @@
+import { Reply } from 'src/replies/entities/reply.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
@@ -41,6 +42,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Transaction,
         Image,
 				Enquiry,
+				Reply,
       ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],
