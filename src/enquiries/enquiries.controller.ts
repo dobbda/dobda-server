@@ -51,7 +51,7 @@ export class EnquiriesController {
   }
 
 
-  @Patch('/select/:id')
+  @Get('/select/:id')
   @ApiOperation({ summary: '문의 선택' })
   @ApiParam({ name: 'id', required: true, description: 'enquiry Id' })
   @ApiCreatedResponse({

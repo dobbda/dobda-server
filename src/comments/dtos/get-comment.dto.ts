@@ -7,7 +7,7 @@ export class GetCommentsDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: 'answerId', required: true })
-  answerId: number;
+  aid: number;
 }
 
 export class GetCommentsOutput {

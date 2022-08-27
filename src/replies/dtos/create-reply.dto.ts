@@ -10,5 +10,5 @@ export class CreateReplyDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '답변 아이디' })
-  readonly enquiryId: number;
+  readonly eid: number;
 }

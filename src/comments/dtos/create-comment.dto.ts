@@ -10,5 +10,5 @@ export class CreateCommentDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '답변 아이디' })
-  readonly answerId: number;
+  readonly aid: number;
 }

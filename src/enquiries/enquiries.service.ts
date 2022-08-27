@@ -85,6 +85,8 @@ export class EnquiriesService {
 
   async deleteEnquiry(oid: number, user: User) {
     const enquiry = await this.enquiryRepository.findOne({ id: oid });
+    const outSourcing = await this.outSourceRepository.findOne(enquiry?.outSourcingId);
+
     if (user.id !== enquiry.authorId) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
@@ -94,9 +96,14 @@ export class EnquiriesService {
     if (enquiry.selected) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
+
     await this.enquiryRepository.delete({
       id: oid,
     });
+
+		await this.outSourceRepository.save([
+      { id: oid, enquiriesCount: outSourcing.enquiriesCount - 1 },
+    ]);
 		return {success:true}
   }
 }

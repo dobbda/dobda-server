@@ -21,10 +21,10 @@ export class RepliesService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getReplies({ enquiryId }: GetReplyDto) {
+  async getReplies({ eid }: GetReplyDto) {
     const replies = await this.repliesRepository
       .createQueryBuilder('reply')
-      .where({ enquiry: enquiryId })
+      .where({ enquiry: eid })
       .leftJoin('reply.author', 'author')
       .addSelect([
         'author.email',
@@ -39,9 +39,9 @@ export class RepliesService {
     };
   }
 
-  async createReply({ enquiryId, content }: CreateReplyDto, user: User) {
+  async createReply({ eid, content }: CreateReplyDto, user: User) {
     /* Question 가져오기 */
-    const enquiry = await this.enquiriesRepository.findOne(enquiryId);
+    const enquiry = await this.enquiriesRepository.findOne(eid);
 
     if (!enquiry) return;
     await this.enquiriesRepository.save([
@@ -98,9 +98,9 @@ export class RepliesService {
     };
   }
 
-  async deleteReply(replyId: number, user: User) {
+  async deleteReply(rid: number, user: User) {
     const result = await this.repliesRepository.findOneReplyWithId(
-      replyId,
+      rid,
       null,
     );
 
@@ -113,7 +113,7 @@ export class RepliesService {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
 
-    await this.repliesRepository.delete({ id: replyId });
+    await this.repliesRepository.delete({ id: rid });
     return true;
   }
 }
