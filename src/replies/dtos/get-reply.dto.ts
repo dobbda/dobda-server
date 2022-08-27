@@ -8,7 +8,7 @@ export class GetReplyDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: 'requiryId', required: true })
-  enquiryId: number;
+  eid: number;
 }
 
 export class GetReplyOutput {

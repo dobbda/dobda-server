@@ -19,10 +19,10 @@ export class CommentsService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getComments({ answerId }: GetCommentsDto) {
+  async getComments({ aid }: GetCommentsDto) {
     const comments = await this.commentsRepository
       .createQueryBuilder('comment')
-      .where({ answer: answerId })
+      .where({ answer:aid })
       .leftJoin('comment.author', 'author')
       .addSelect([
         'author.email',
@@ -37,9 +37,9 @@ export class CommentsService {
     };
   }
 
-  async createComment({ answerId, content }: CreateCommentDto, user: User) {
+  async createComment({ aid, content }: CreateCommentDto, user: User) {
     /* Question 가져오기 */
-    const answer = await this.answersRepository.findOne(answerId);
+    const answer = await this.answersRepository.findOne(aid);
 
     if (!answer) return;
     await this.answersRepository.save([

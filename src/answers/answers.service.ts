@@ -98,6 +98,7 @@ export class AnswersService {
 
   async deleteAnswer(aid: number, user: User) {
     const answer = await this.answersRepository.findOne({ id: aid });
+    const question = await this.questionsRepository.findOne(answer.questionId);
     if (user.id !== answer.authorId) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
@@ -107,9 +108,15 @@ export class AnswersService {
     if (answer.accepted) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
+
     await this.answersRepository.delete({
       id: aid,
     });
+
+		await this.questionsRepository.save([
+      { id: question.id, answersCount: question.answersCount -1 },
+    ]);
+		
 		return {success:true}
   }
 }
