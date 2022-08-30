@@ -1,3 +1,4 @@
+import { UsersRepository } from './../users/users.repository';
 import {
   BadRequestException,
   Injectable,
@@ -17,6 +18,8 @@ export class OutSourcingService {
     private readonly outSourcingRepository: OutSourcingRepository,
     private readonly outSourcingTagRepository: OutSourcingTagRepository,
     private readonly tagsRepository: TagsRepository,
+    private readonly userRepository: UsersRepository,
+
   ) {}
 
   async findOutSourcingOrError(outSourcingId: number, getAuthor?: boolean) {
@@ -76,6 +79,9 @@ export class OutSourcingService {
 		const getTags = tags.map((tag) => {
       return { name: tag.name };
     });
+
+		await this.userRepository.update(user.id, {outSourcingCount: ()=> "+ 1"})
+
     return {
       ...outSourcing,
       tagNames: getTags,
@@ -139,16 +145,24 @@ export class OutSourcingService {
       );
     }
     await this.outSourcingRepository.delete({ id: outSourcing.id });
+		await this.userRepository.update(user.id, {outSourcingCount: ()=> "- 1"})
+
     return true;
   }
 
   async updateOutSourcingWatch(outSourcingId: number) {
-    const outSourcing = await this.findOutSourcingOrError(outSourcingId);
-    await this.outSourcingRepository.save([
-      { id: outSourcingId, watch: outSourcing.watch + 1 },
-    ]);
-    return true;
+    // const outSourcing = await this.findOutSourcingOrError(outSourcingId);
+		try {
+			await this.outSourcingRepository.update(outSourcingId, {watch: ()=> "watch - 1"})
+			return true;
+		} 
+		catch {
+			return false;
+		}
+
   }
+
+
 
   canUpdateAndDelete(progress: Progress) {
     return progress == Progress.Pending;

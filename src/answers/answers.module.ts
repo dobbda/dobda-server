@@ -1,3 +1,4 @@
+import { UsersRepository } from './../users/users.repository';
 import { NotisRepository } from 'src/noti/repositories/notis.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,7 +10,9 @@ import { AnswersRepository } from './repositories/answers.repository';
 import { NotiModule } from 'src/noti/notis.module';
 
 @Module({
-  imports: [NotiModule, TypeOrmModule.forFeature([AnswersRepository, QuestionsRepository, NotisRepository])],
+  imports: [NotiModule, TypeOrmModule.forFeature([
+		AnswersRepository, QuestionsRepository, NotisRepository, UsersRepository
+	])],
   controllers: [AnswersController],
   providers: [AnswersService, NotisService],
   exports: [AnswersService, TypeOrmModule]

@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
 import { EnquiriesRepository } from 'src/enquiries/repositories/enquiries.repository';
 import { NotisService } from 'src/noti/notis.service';
@@ -44,12 +43,6 @@ export class RepliesService {
     const enquiry = await this.enquiriesRepository.findOne(eid);
 
     if (!enquiry) return;
-    await this.enquiriesRepository.save([
-      {
-        id: enquiry.id,
-        repliesCount: enquiry.repliesCount + 1,
-      },
-    ]);
 
     const reply = await this.repliesRepository.createReply(
       { content },
@@ -57,16 +50,15 @@ export class RepliesService {
       user,
     );
 
+    await this.enquiriesRepository.update(enquiry.id, {
+      repliesCount: () => '+ 1',
+    });
     await this.notisService.addReplyNoti(reply, user);
 
     return true;
   }
 
-  async editReply(
-    replyId: number,
-    { ...editReply }: EditReplyDto,
-    user: User,
-  ) {
+  async editReply(replyId: number, { ...editReply }: EditReplyDto, user: User) {
     const result = await this.repliesRepository.findOneReplyWithId(
       replyId,
       null,
@@ -99,10 +91,7 @@ export class RepliesService {
   }
 
   async deleteReply(rid: number, user: User) {
-    const result = await this.repliesRepository.findOneReplyWithId(
-      rid,
-      null,
-    );
+    const result = await this.repliesRepository.findOneReplyWithId(rid, null);
 
     if (!result) {
       throw new NotFoundException('댓글이 삭제되었거나 잘못된 접근입니다.');
@@ -112,7 +101,7 @@ export class RepliesService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-
+    await this.enquiriesRepository.update(rid, { repliesCount: () => '- 1' });
     await this.repliesRepository.delete({ id: rid });
     return true;
   }
