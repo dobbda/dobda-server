@@ -1,9 +1,10 @@
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UserUpdateDTO } from './dtos/user-update.dto';
 
 @Controller('users')
 @ApiTags('유저 API')
@@ -17,6 +18,15 @@ export class UsersController {
   @UseGuards(AccessTokenGuard)
   async getCurrentUser(@CurrentUser() currentUser: User) {
     return currentUser;
+  }
+
+  @Patch('myinfo')
+  @ApiOperation({ summary: '현재 로그인 되어 있는 유저 정보 조회' })
+  @ApiCreatedResponse({ description: '유저 정보', type: User })
+  @UseGuards(AccessTokenGuard)
+  async updateMyInfo(@Body() userUpdateDto: UserUpdateDTO, @CurrentUser() currentUser: User) {
+    console.log(userUpdateDto)
+		return await this.usersService.userUpdate(userUpdateDto, currentUser);
   }
 
   @Get('/:id')

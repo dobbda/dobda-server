@@ -59,6 +59,11 @@ export class User extends CoreEntity {
   @Column({ type: 'json', nullable: true })
   skill: string[];
 
+  @ApiProperty({ description: '소개' })
+  @Column({ type: 'json', nullable: true })
+	@IsString()
+  description: string;
+
   @ApiProperty({ description: '코인' })
   @IsNumber()
   @Column({ default: 0 })

@@ -4,6 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import axios, { AxiosResponse } from "axios";
 import { UsersRepository } from "src/users/users.repository";
 import { AuthService } from "../auth.service";
+import { SocialCodeDto } from "../dtos/social-code.dto";
 
 @Injectable()
 export class KakaoAuthService {
@@ -14,6 +15,6 @@ export class KakaoAuthService {
         private authService: AuthService,
       ) {}
     
-      async getKakaoInfo(code: string){
+      async getKakaoInfo(code: SocialCodeDto){
       }
 }

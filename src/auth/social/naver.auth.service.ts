@@ -6,6 +6,7 @@ import { JwtService } from "@nestjs/jwt";
 import axios, { AxiosResponse } from "axios";
 import { UsersRepository } from "src/users/users.repository";
 import { AuthService } from "../auth.service";
+import { SocialCodeDto } from "../dtos/social-code.dto";
 
 @Injectable()
 export class NaverAuthService {
@@ -16,7 +17,7 @@ export class NaverAuthService {
         private authService: AuthService,
       ) {}
     
-      async getNaverbInfo(code: string){
+      async getNaverInfo(code: SocialCodeDto){
        
       }
 
