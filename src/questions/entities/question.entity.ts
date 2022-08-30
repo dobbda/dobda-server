@@ -46,6 +46,8 @@ export class Question extends CoreEntity {
   })
   @Column({ default: 0 })
   answersCount: number;
+  @Column({ default: 0 })
+  answercount: number;
 
   @ApiProperty({
     description: '질문 코인',

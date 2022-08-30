@@ -5,7 +5,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
 import { NotisService } from 'src/noti/notis.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
@@ -46,16 +45,14 @@ export class EnquiriesService {
     if (outSourcing === null) {
       throw new NotFoundException('잘못된 접근입니다.');
     }
-    await this.outSourceRepository.save([
-      { id: oid, enquiriesCount: outSourcing.enquiriesCount + 1 },
-    ]);
         
     const enquiry = await this.enquiryRepository.createEnquiry(
       { content },
       outSourcing,
       user,
     );
-    
+
+    await this.outSourceRepository.update(oid, {enquiriesCount:()=> "+ 1"});
     // await this.notisService.addEnquiryNoti(enquiry, user);
     return true;
   }
@@ -101,9 +98,8 @@ export class EnquiriesService {
       id: oid,
     });
 
-		await this.outSourceRepository.save([
-      { id: oid, enquiriesCount: outSourcing.enquiriesCount - 1 },
-    ]);
+    await this.outSourceRepository.update(oid, {enquiriesCount:()=> "- 1"});
+
 		return {success:true}
   }
 }

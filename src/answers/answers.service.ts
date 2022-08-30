@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import sanitizeHtml from 'sanitize-html';
 import { NotisService } from 'src/noti/notis.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
+import { UsersRepository } from 'src/users/users.repository';
 import { CreateAnswerDto } from './dtos/create-answer.dto';
 import { GetAnswersDto } from './dtos/get-answer.dto';
 import { AnswersRepository } from './repositories/answers.repository';
@@ -18,6 +18,7 @@ export class AnswersService {
     private readonly answersRepository: AnswersRepository,
     private readonly questionsRepository: QuestionsRepository,
     private readonly notisService: NotisService,
+    private readonly userRepository: UsersRepository,
   ) {}
 
   async getAnswers({ qid }: GetAnswersDto) {
@@ -45,10 +46,13 @@ export class AnswersService {
     if (question === null) {
       throw new NotFoundException('잘못된 접근입니다.');
     }
-    await this.questionsRepository.save([
-      { id: qid, answersCount: question.answersCount + 1 },
-    ]);
+    await this.questionsRepository.update(qid, {
+			answersCount: ()=> '+ 1'
+		});
         
+		// await this.questionsRepository.update(questionId,{
+		// 	watch:()=>"watch + 1"
+		// })
     const answer = await this.answersRepository.createAnswer(
       { content },
       question,
@@ -59,21 +63,38 @@ export class AnswersService {
     return true;
   }
 
+	// 채택
   async acceptAnswer(answerId: number, user: User) {
-    const answer = await this.answersRepository.findOne(answerId);
+    const answer = await this.answersRepository.findOne(answerId);// answer.question이 undefined으로 나옴
+    const question = await this.questionsRepository.findOne(answer.questionId);
 
-    if (answer.question.author !== user) {
+		if (question.acceptedAnswerId ) {
+      throw new ForbiddenException('이미 채택된 답변이 있습니다.');
+    }
+    if (question.authorId !== user.id) {
       throw new ForbiddenException('질문자만 답변을 채택할 수 있습니다.');
+    }
+    if (question.authorId == answer.authorId) {
+      throw new ForbiddenException('본인 답변은 채택할 수 없습니다.');
     }
 
     answer.accepted = true;
-    answer.question.acceptedAnswerId = answer.id;
-    answer.question.acceptedAnswer = answer;
-
+    question.acceptedAnswerId = answer.id;
+    question.acceptedAnswer = answer;
+		answer.question=question
     await this.answersRepository.save(answer);
+    await this.questionsRepository.save(question);
 
     await this.notisService.addAcceptNoti(answer, user);
 
+		await this.userRepository.update(user.id, {setAcceptCount: ()=> "+ 1"});
+		await this.userRepository.update(answer.authorId, {getAcceptCount: ()=> "+ 1"});
+
+		if(question.coin >0){ // 코인 이동
+			await this.userRepository.update(answer.authorId, {coin: ()=> `+ ${question.coin}`});
+			await this.userRepository.update(user.id, {coin: ()=> `- ${question.coin}`});
+		}
+        
     return true;
   }
     
@@ -96,6 +117,7 @@ export class AnswersService {
     return newAnswer;
   }
 
+
   async deleteAnswer(aid: number, user: User) {
     const answer = await this.answersRepository.findOne({ id: aid });
     const question = await this.questionsRepository.findOne(answer.questionId);
@@ -112,11 +134,11 @@ export class AnswersService {
     await this.answersRepository.delete({
       id: aid,
     });
-
-		await this.questionsRepository.save([
-      { id: question.id, answersCount: question.answersCount -1 },
-    ]);
 		
+    await this.questionsRepository.update(question.id, {
+			answersCount: ()=> "- 1"
+		});
+
 		return {success:true}
   }
 }

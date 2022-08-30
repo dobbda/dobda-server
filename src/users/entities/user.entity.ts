@@ -115,4 +115,18 @@ export class User extends CoreEntity {
 
 	@OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
   enquiries: Enquiry[];
+
+	// //////////////////////////////////////////////////////////////////
+  @Column({ default: 0 })
+  questionsCount: number;
+
+  @Column({ default: 0 })
+  getAcceptCount: number;
+
+  @Column({ default: 0 })
+	setAcceptCount:number;
+
+  @Column({ default: 0 })
+  outSourcingCount: number;
+
 }

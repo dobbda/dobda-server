@@ -3,8 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import parse from 'node-html-parser';
-import sanitizeHtml from 'sanitize-html';
 import { UsersRepository } from 'src/users/users.repository';
 import { ImagesRepository } from 'src/images/repositories/images.repository';
 import { User } from 'src/users/entities/user.entity';
@@ -84,6 +82,11 @@ export class QuestionsService {
     const getTags = tags.map((tag) => {
       return { name: tag.name };
     });
+
+		await this.usersRepository.update(user.id,{
+			questionsCount:()=> "+1"
+		})
+		
     return {
       ...question,
       tagNames: getTags,
@@ -144,10 +147,13 @@ export class QuestionsService {
   }
 
   async updateQuestionWatch(questionId: number) {
-    const question = await this.findQuestionOrError(questionId);
-    await this.questionsRepository.save([
-      { id: questionId, watch: question.watch + 1 },
-    ]);
+    // const question = await this.findQuestionOrError(questionId);
+    // await this.questionsRepository.save([
+    //   { id: questionId, watch: question.watch + 1 },
+    // ]);
+		await this.questionsRepository.update(questionId,{
+			watch:()=>"+1"
+		})
     return true;
   }
 }
