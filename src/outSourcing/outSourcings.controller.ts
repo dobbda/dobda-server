@@ -74,7 +74,7 @@ export class OutSourcingController {
   @ApiCreatedResponse({ description: 'id에 해당하는 외주을 조회한다' })
   @ApiParam({ name: 'id', required: true, description: '외주 Id' })
   async getOutSourcing(@Param('id') outSourcingId: number) {
-    return this.outSourcingService.getOutSourcing(outSourcingId);
+    return this.outSourcingService.getOneOutSourcing(outSourcingId);
   }
 
   /* 
