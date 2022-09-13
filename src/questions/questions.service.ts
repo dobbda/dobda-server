@@ -55,10 +55,13 @@ export class QuestionsService {
     };
   }
 
-  async getQuestion(questionId: number) {
+  async getOneQuestion(questionId: number) {
     // 상세조회 // + Answer // comment?
     const result = await this.findQuestionOrError(questionId, true);
-		
+		await this.questionsRepository.update(questionId,{
+			watch:()=>"+1"
+		})
+		result.watch += 1
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
@@ -146,14 +149,14 @@ export class QuestionsService {
     return true;
   }
 
-  async updateQuestionWatch(questionId: number) {
-    // const question = await this.findQuestionOrError(questionId);
-    // await this.questionsRepository.save([
-    //   { id: questionId, watch: question.watch + 1 },
-    // ]);
-		await this.questionsRepository.update(questionId,{
-			watch:()=>"+1"
-		})
-    return true;
-  }
+  // async updateQuestionWatch(questionId: number) {
+  //   // const question = await this.findQuestionOrError(questionId);
+  //   // await this.questionsRepository.save([
+  //   //   { id: questionId, watch: question.watch + 1 },
+  //   // ]);
+	// 	await this.questionsRepository.update(questionId,{
+	// 		watch:()=>"+1"
+	// 	})
+  //   return true;
+  // }
 }

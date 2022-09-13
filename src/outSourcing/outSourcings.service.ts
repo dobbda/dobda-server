@@ -89,9 +89,11 @@ export class OutSourcingService {
     };
   }
 
-  async getOutSourcing(outSourcingId: number) {
+  async getOneOutSourcing(outSourcingId: number) {
     const result = await this.findOutSourcingOrError(outSourcingId, true);
     const tags = await this.tagsRepository.allTagsInOutSourcing(outSourcingId);
+		await this.outSourcingRepository.update(outSourcingId, {watch: ()=> " + 1"})
+		result.watch += 1
     return {...result, tagNames: tags };
   }
 

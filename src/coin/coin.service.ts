@@ -6,6 +6,7 @@ import { SendCoinDto, SendCoinOutput } from './dtos/send-coin.dto';
 import { TransactionsRepository } from './repositories/transactions.repository';
 
 @Injectable()
+// only coin history
 export class CoinService {
   constructor(
     private readonly usersRepository: UsersRepository,
