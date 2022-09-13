@@ -61,7 +61,7 @@ export class QuestionsService {
 		await this.questionsRepository.update(questionId,{
 			watch:()=>"+1"
 		})
-		result.watch =+1
+		result.watch += 1
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
