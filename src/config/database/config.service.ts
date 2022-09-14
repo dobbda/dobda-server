@@ -22,11 +22,11 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      username: this.configService.get<string>('DB_USER'),
-      password: this.configService.get<string>('DB_PASSWORD'),
-      port: +this.configService.get<number>('DB_PORT'),
-      host: this.configService.get<string>('DB_HOST'),
-      database: this.configService.get<string>('DB_NAME'),
+      username: this.configService.get<string>('POSTGRES_USER'),
+      password: this.configService.get<string>('POSTGRES_PASSWORD'),
+      port: +this.configService.get<number>('POSTGRES_PORT'),
+      host: this.configService.get<string>('POSTGRES_HOST'),
+      database: this.configService.get<string>('POSTGRES_DB'),
       synchronize: true,
       logging: true,
       entities: [
@@ -41,8 +41,8 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Comment,
         Transaction,
         Image,
-				Enquiry,
-				Reply,
+        Enquiry,
+        Reply,
       ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],
