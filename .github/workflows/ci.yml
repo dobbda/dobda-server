@@ -30,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          dockerfile: .Dockerfile
+          dockerfile: ./Dockerfile
           platform: linux/arm64/v8,linux/amd64
           push: true
           tags: shinhyeok/dobda-server:latest
