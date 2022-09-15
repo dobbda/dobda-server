@@ -51,7 +51,7 @@ export class RepliesService {
     );
 
     await this.enquiriesRepository.update(enquiry.id, {
-      repliesCount: () => '+ 1',
+      repliesCount: enquiry.repliesCount + 1,
     });
     await this.notisService.addReplyNoti(reply, user);
 

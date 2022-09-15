@@ -58,14 +58,15 @@ export class QuestionsService {
   async getOneQuestion(questionId: number) {
     // 상세조회 // + Answer // comment?
     const result = await this.findQuestionOrError(questionId, true);
-		await this.questionsRepository.update(questionId,{
-			watch:()=>"+1"
-		})
-		result.watch += 1
+    await this.questionsRepository.update(questionId, {
+      watch: () => `watch + 1`,
+    });
+    result.watch += 1;
     const tags = await this.tagsRepository.allTagsInQuestion(questionId);
     // const answer = await this.answersService.getAnswers({ qid: questionId });
     return {
-      ...result, tagNames: tags,
+      ...result,
+      tagNames: tags,
     };
   }
 
@@ -86,14 +87,19 @@ export class QuestionsService {
       return { name: tag.name };
     });
 
-		await this.usersRepository.update(user.id,{
-			questionsCount:()=> "+1"
-		})
-		
+    await this.usersRepository.update(user.id, {
+      questionsCount: user.questionsCount + 1,
+    });
+
     return {
       ...question,
       tagNames: getTags,
-      author: { email: user.email, nickname: user.nickname, id: user.id, avatar:user.avatar},
+      author: {
+        email: user.email,
+        nickname: user.nickname,
+        id: user.id,
+        avatar: user.avatar,
+      },
     };
   }
 
@@ -130,7 +136,12 @@ export class QuestionsService {
     return {
       ...newQuestion[0],
       tagNames: getTags,
-      author: { email: user.email, nickname: user.nickname, id: user.id, avatar: user.avatar},
+      author: {
+        email: user.email,
+        nickname: user.nickname,
+        id: user.id,
+        avatar: user.avatar,
+      },
     };
   }
 
@@ -154,9 +165,9 @@ export class QuestionsService {
   //   // await this.questionsRepository.save([
   //   //   { id: questionId, watch: question.watch + 1 },
   //   // ]);
-	// 	await this.questionsRepository.update(questionId,{
-	// 		watch:()=>"+1"
-	// 	})
+  // 	await this.questionsRepository.update(questionId,{
+  // 		watch:()=>"watch + 1"
+  // 	})
   //   return true;
   // }
 }
