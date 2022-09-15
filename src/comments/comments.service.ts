@@ -22,7 +22,7 @@ export class CommentsService {
   async getComments({ aid }: GetCommentsDto) {
     const comments = await this.commentsRepository
       .createQueryBuilder('comment')
-      .where({ answer:aid })
+      .where({ answer: aid })
       .leftJoin('comment.author', 'author')
       .addSelect([
         'author.email',
@@ -42,7 +42,9 @@ export class CommentsService {
     const answer = await this.answersRepository.findOne(aid);
 
     if (!answer) return;
-    await this.answersRepository.update(answer.id,{ commentsCount:()=> "+ 1"});
+    await this.answersRepository.update(answer.id, {
+      commentsCount: answer.commentsCount + 1,
+    });
 
     const comment = await this.commentsRepository.createComment(
       { content },
@@ -105,7 +107,9 @@ export class CommentsService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    await this.answersRepository.update(result.answerId,{ commentsCount:()=> "- 1"});
+    await this.answersRepository.update(result.answerId, {
+      // commentsCount:()=> -1,
+    });
 
     await this.commentsRepository.delete({ id: commentId });
 

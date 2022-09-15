@@ -20,7 +20,7 @@ export class EnquiriesService {
   ) {}
 
   async getEnquiries({ oid }: GetEnquiryDto) {
-		console.log(oid)
+    console.log(oid);
     const enquiries = await this.enquiryRepository
       .createQueryBuilder('enquiry')
       .where({ outSourcing: oid })
@@ -45,22 +45,22 @@ export class EnquiriesService {
     if (outSourcing === null) {
       throw new NotFoundException('잘못된 접근입니다.');
     }
-        
+
     const enquiry = await this.enquiryRepository.createEnquiry(
       { content },
       outSourcing,
       user,
     );
 
-    await this.outSourceRepository.update(oid, {enquiriesCount:()=> "+ 1"});
+    await this.outSourceRepository.update(oid, {
+      enquiriesCount: outSourcing.enquiriesCount + 1,
+    });
     // await this.notisService.addEnquiryNoti(enquiry, user);
     return true;
   }
 
-  async selectEnquiry(enquiryId: number, user: User) {
-		
-  }
-    
+  async selectEnquiry(enquiryId: number, user: User) {}
+
   async editEnquiry(content: string, oid: number, user: User) {
     const enquiry = await this.enquiryRepository.findOne({ id: oid });
     if (user.id !== enquiry.authorId) {
@@ -82,7 +82,9 @@ export class EnquiriesService {
 
   async deleteEnquiry(oid: number, user: User) {
     const enquiry = await this.enquiryRepository.findOne({ id: oid });
-    const outSourcing = await this.outSourceRepository.findOne(enquiry?.outSourcingId);
+    const outSourcing = await this.outSourceRepository.findOne(
+      enquiry?.outSourcingId,
+    );
 
     if (user.id !== enquiry.authorId) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
@@ -98,8 +100,8 @@ export class EnquiriesService {
       id: oid,
     });
 
-    await this.outSourceRepository.update(oid, {enquiriesCount:()=> "- 1"});
+    await this.outSourceRepository.update(oid, { enquiriesCount: () => '- 1' });
 
-		return {success:true}
+    return { success: true };
   }
 }

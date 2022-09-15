@@ -47,28 +47,28 @@ export class AnswersService {
       throw new NotFoundException('잘못된 접근입니다.');
     }
     await this.questionsRepository.update(qid, {
-			answersCount: ()=> '+ 1'
-		});
-        
-		// await this.questionsRepository.update(questionId,{
-		// 	watch:()=>"watch + 1"
-		// })
+      answersCount: question.answersCount + 1,
+    });
+
+    // await this.questionsRepository.update(questionId,{
+    // 	watch:()=>"watch + 1"
+    // })
     const answer = await this.answersRepository.createAnswer(
       { content },
       question,
       user,
     );
-    
+
     await this.notisService.addAnswerNoti(answer, user);
     return true;
   }
 
-	// 채택
+  // 채택
   async acceptAnswer(answerId: number, user: User) {
-    const answer = await this.answersRepository.findOne(answerId);// answer.question이 undefined으로 나옴
+    const answer = await this.answersRepository.findOne(answerId); // answer.question이 undefined으로 나옴
     const question = await this.questionsRepository.findOne(answer.questionId);
 
-		if (question.acceptedAnswerId ) {
+    if (question.acceptedAnswerId) {
       throw new ForbiddenException('이미 채택된 답변이 있습니다.');
     }
     if (question.authorId !== user.id) {
@@ -81,23 +81,30 @@ export class AnswersService {
     answer.accepted = true;
     question.acceptedAnswerId = answer.id;
     question.acceptedAnswer = answer;
-		answer.question=question
+    answer.question = question;
     await this.answersRepository.save(answer);
     await this.questionsRepository.save(question);
-
     await this.notisService.addAcceptNoti(answer, user);
+    await this.userRepository.update(user.id, {
+      setAcceptCount: user.setAcceptCount + 1,
+    });
+    await this.userRepository.update(answer.authorId, {
+      getAcceptCount: user.getAcceptCount + 1,
+    });
 
-		await this.userRepository.update(user.id, {setAcceptCount: ()=> "+ 1"});
-		await this.userRepository.update(answer.authorId, {getAcceptCount: ()=> "+ 1"});
+    if (question.coin > 0) {
+      // 코인 이동
+      await this.userRepository.update(answer.authorId, {
+        coin: () => `coin + ${question.coin}`,
+      });
+      await this.userRepository.update(user.id, {
+        coin: () => `coin - ${question.coin}`,
+      });
+    }
 
-		if(question.coin >0){ // 코인 이동
-			await this.userRepository.update(answer.authorId, {coin: ()=> `+ ${question.coin}`});
-			await this.userRepository.update(user.id, {coin: ()=> `- ${question.coin}`});
-		}
-        
     return true;
   }
-    
+
   async editAnswer(content: string, aid: number, user: User) {
     const answer = await this.answersRepository.findOne({ id: aid });
     if (user.id !== answer.authorId) {
@@ -117,7 +124,6 @@ export class AnswersService {
     return newAnswer;
   }
 
-
   async deleteAnswer(aid: number, user: User) {
     const answer = await this.answersRepository.findOne({ id: aid });
     const question = await this.questionsRepository.findOne(answer.questionId);
@@ -134,11 +140,11 @@ export class AnswersService {
     await this.answersRepository.delete({
       id: aid,
     });
-		
-    await this.questionsRepository.update(question.id, {
-			answersCount: ()=> "- 1"
-		});
 
-		return {success:true}
+    await this.questionsRepository.update(question.id, {
+      answersCount: question.answersCount++,
+    });
+
+    return { success: true };
   }
 }

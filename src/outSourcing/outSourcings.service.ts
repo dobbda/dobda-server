@@ -19,7 +19,6 @@ export class OutSourcingService {
     private readonly outSourcingTagRepository: OutSourcingTagRepository,
     private readonly tagsRepository: TagsRepository,
     private readonly userRepository: UsersRepository,
-
   ) {}
 
   async findOutSourcingOrError(outSourcingId: number, getAuthor?: boolean) {
@@ -47,7 +46,7 @@ export class OutSourcingService {
         const tags = await this.tagsRepository.allTagsInOutSourcing(
           outSourcing.id,
         );
-        return { ...outSourcing, tagNames:tags };
+        return { ...outSourcing, tagNames: tags };
       }),
     );
 
@@ -69,32 +68,41 @@ export class OutSourcingService {
 
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
-		
+
     /* outSourcingTag 생성 */
     await this.outSourcingTagRepository.createOutSourcingTags(
       outSourcing.id,
       tags,
     );
 
-		const getTags = tags.map((tag) => {
+    const getTags = tags.map((tag) => {
       return { name: tag.name };
     });
 
-		await this.userRepository.update(user.id, {outSourcingCount: ()=> "+ 1"})
+    await this.userRepository.update(user.id, {
+      outSourcingCount: user.outSourcingCount + 1,
+    });
 
     return {
       ...outSourcing,
       tagNames: getTags,
-      author: { email: user.email, nickname: user.nickname, id: user.id, avatar:user.avatar},
+      author: {
+        email: user.email,
+        nickname: user.nickname,
+        id: user.id,
+        avatar: user.avatar,
+      },
     };
   }
 
   async getOneOutSourcing(outSourcingId: number) {
     const result = await this.findOutSourcingOrError(outSourcingId, true);
     const tags = await this.tagsRepository.allTagsInOutSourcing(outSourcingId);
-		await this.outSourcingRepository.update(outSourcingId, {watch: ()=> " + 1"})
-		result.watch += 1
-    return {...result, tagNames: tags };
+    await this.outSourcingRepository.update(outSourcingId, {
+      watch: result.watch + 1,
+    });
+    result.watch += 1;
+    return { ...result, tagNames: tags };
   }
 
   async editOutSourcing(
@@ -112,27 +120,32 @@ export class OutSourcingService {
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
     }
-		
+
     const update = await this.outSourcingRepository.save([
       { id: outSourcingId, ...editOutSourcing },
     ]);
-      await this.outSourcingTagRepository.delete({
-        outSourcingId: outSourcing.id,
-      });
-      const tags = await this.tagsRepository.createNonExistTags(tagNames);
-      await this.outSourcingTagRepository.createOutSourcingTags(
-        outSourcing.id,
-        tags,
-      );
-			const getTags = tags.map((tag) => {
-				return { name: tag.name };
-			});
-	
-		
+    await this.outSourcingTagRepository.delete({
+      outSourcingId: outSourcing.id,
+    });
+    const tags = await this.tagsRepository.createNonExistTags(tagNames);
+    await this.outSourcingTagRepository.createOutSourcingTags(
+      outSourcing.id,
+      tags,
+    );
+    const getTags = tags.map((tag) => {
+      return { name: tag.name };
+    });
+
     return {
-			...update[0], 
-			tagNames: getTags, 
-			author: { email: user.email, nickname: user.nickname, id: user.id, avatar: user.avatar},};
+      ...update[0],
+      tagNames: getTags,
+      author: {
+        email: user.email,
+        nickname: user.nickname,
+        id: user.id,
+        avatar: user.avatar,
+      },
+    };
   }
 
   async deleteOutSourcing(outSourcingId: number, user: User) {
@@ -147,24 +160,24 @@ export class OutSourcingService {
       );
     }
     await this.outSourcingRepository.delete({ id: outSourcing.id });
-		await this.userRepository.update(user.id, {outSourcingCount: ()=> "- 1"})
+    await this.userRepository.update(user.id, {
+      outSourcingCount: user.outSourcingCount++,
+    });
 
     return true;
   }
 
   async updateOutSourcingWatch(outSourcingId: number) {
     // const outSourcing = await this.findOutSourcingOrError(outSourcingId);
-		try {
-			await this.outSourcingRepository.update(outSourcingId, {watch: ()=> "watch - 1"})
-			return true;
-		} 
-		catch {
-			return false;
-		}
-
+    try {
+      await this.outSourcingRepository.update(outSourcingId, {
+        watch: () => 'watch - 1',
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
-
-
 
   canUpdateAndDelete(progress: Progress) {
     return progress == Progress.Pending;
