@@ -29,8 +29,8 @@ jobs:
       - name: Build and Push Docker Images
         uses: docker/build-push-action@v3
         with:
-          dockerfile: Dockerfile
           context: .
-          platform: linux/arm64/v8,linux/amd64
+          dockerfile: .Dockerfile
+          platforms: linux/arm64/v8,linux/amd64
           push: true
           tags: shinhyeok/dobda-server:latest
