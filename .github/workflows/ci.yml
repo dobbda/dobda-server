@@ -12,8 +12,8 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: create env file
         run: echo "${{ secrets.ENV_VARS }}" >> .prod.env
@@ -31,6 +31,6 @@ jobs:
         with:
           context: .
           dockerfile: .Dockerfile
-          platforms: linux/arm64/v8,linux/amd64
+          platform: linux/arm64/v8,linux/amd6
           push: true
           tags: shinhyeok/dobda-server:latest
