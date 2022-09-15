@@ -15,7 +15,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: create env file
-        run: echo "${{ secrets.BAC_ENV }}" >> .prod.env
+        run: echo "${{ secrets.BACK_ENV }}" >> .prod.env
 
       - name: Login
         uses: docker/login-action@v1
