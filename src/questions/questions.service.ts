@@ -51,23 +51,27 @@ export class QuestionsService {
     );
     return {
       result,
-      totalPages: Math.ceil(total / 5),
+      totalPages: Math.ceil(total / 20),
     };
   }
 
   async getOneQuestion(questionId: number) {
     // 상세조회 // + Answer // comment?
-    const result = await this.findQuestionOrError(questionId, true);
-    await this.questionsRepository.update(questionId, {
-      watch: () => `watch + 1`,
-    });
-    result.watch += 1;
-    const tags = await this.tagsRepository.allTagsInQuestion(questionId);
-    // const answer = await this.answersService.getAnswers({ qid: questionId });
-    return {
-      ...result,
-      tagNames: tags,
-    };
+    try {
+      if (questionId) {
+        const result = await this.findQuestionOrError(questionId, true);
+        await this.questionsRepository.update(questionId, {
+          watch: () => `watch + 1`,
+        });
+        result.watch += 1;
+        const tags = await this.tagsRepository.allTagsInQuestion(questionId);
+        // const answer = await this.answersService.getAnswers({ qid: questionId });
+        return {
+          ...result,
+          tagNames: tags,
+        };
+      }
+    } catch {}
   }
 
   async createQuestion(

@@ -28,6 +28,6 @@ async function bootstrap() {
   //Swagger 관련 셋업
   setupSwagger(app);
 
-  await app.listen(8080);
+  await app.listen(process.env.SERVER_PORT);
 }
 bootstrap();

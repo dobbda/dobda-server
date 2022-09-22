@@ -95,6 +95,9 @@ export class EnquiriesService {
     if (enquiry.selected) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
+    await this.outSourceRepository.update(outSourcing.id, {
+      enquiriesCount: outSourcing.enquiriesCount - 1,
+    });
 
     await this.enquiryRepository.delete({
       id: oid,

@@ -47,7 +47,6 @@ export class AuthController {
   @ApiCreatedResponse({ description: '유저 정보', type: User })
   @UseGuards(AccessTokenGuard)
   async getCurrentUser(@CurrentUser() currentUser: User): Promise<User> {
-		console.log("currentUser: ", currentUser)
     return currentUser;
   }
 
@@ -83,9 +82,12 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<ResLoginUser> {
-
-		const accessExpires = new Date( Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')))
-    const refreshExpires = new Date( Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')))
+    const accessExpires = new Date(
+      Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
+    );
+    const refreshExpires = new Date(
+      Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
+    );
     const resRefreshData = await this.authService.refreshTokens(
       req.cookies['jwt-refresh'],
     );
@@ -135,16 +137,16 @@ export class AuthController {
     @Param('social') social: string,
   ): Promise<User> {
     const accessExpires = new Date(Date.now() + 1000 * 60 * 60); //
-    const refreshExpires = new Date(Date.now() + 1000 * 3600 * 48); // 
+    const refreshExpires = new Date(Date.now() + 1000 * 3600 * 48); //
     const { user, tokens } =
       (social == 'google' &&
         (await this.googleAuthService.getGoogleInfo(socialCodeDto))) ||
       (social == 'github' &&
         (await this.githubAuthService.getGithubInfo(socialCodeDto)));
-      (social == 'kakao' &&
-        (await this.kakaoAuthService.getKakaoInfo(socialCodeDto)));
-      (social == 'naver' &&
-        (await this.naverAuthService.getNaverInfo(socialCodeDto)));
+    social == 'kakao' &&
+      (await this.kakaoAuthService.getKakaoInfo(socialCodeDto));
+    social == 'naver' &&
+      (await this.naverAuthService.getNaverInfo(socialCodeDto));
 
     response.cookie('jwt-access', tokens.accessToken, {
       expires: accessExpires,

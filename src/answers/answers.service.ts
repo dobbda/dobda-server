@@ -141,8 +141,8 @@ export class AnswersService {
       id: aid,
     });
 
-    await this.questionsRepository.update(question.id, {
-      answersCount: question.answersCount++,
+    await this.questionsRepository.update(answer.questionId, {
+      answersCount: question.answersCount - 1,
     });
 
     return { success: true };

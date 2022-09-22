@@ -5,7 +5,6 @@ import { Question } from '../entities/question.entity';
 
 @EntityRepository(Question)
 export class QuestionsRepository extends Repository<Question> {
-	
   async createQuestion(
     createQuestion: { title: string; content: string; coin: number },
     author: User,
@@ -34,8 +33,8 @@ export class QuestionsRepository extends Repository<Question> {
 
   async findAll(page: number, title?: string, tagId?: number) {
     const questionQuery = this.createQueryBuilder('question')
-      .take(5)
-      .skip((page - 1) * 5)
+      .take(20)
+      .skip((page - 1) * 20)
       .leftJoin('question.author', 'author')
       .addSelect([
         'author.email',
@@ -43,10 +42,9 @@ export class QuestionsRepository extends Repository<Question> {
         'author.id',
         'author.avatar',
       ])
-			.orderBy('question.updatedAt', 'DESC')
+      .orderBy('question.updatedAt', 'DESC');
 
-
-    if (title && title !== "undefined") {
+    if (title && title !== 'undefined') {
       questionQuery.where('question.title like :title', {
         title: `%${title}%`,
       });
