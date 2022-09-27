@@ -91,7 +91,7 @@ export class OutSourcing extends CoreEntity {
   @Column({ default: 0 })
   enquiriesCount: number;
 
-  @Column()
+  @Column({ default: '' })
   cardImage: string;
 
   @RelationId((outSourcing: OutSourcing) => outSourcing.selectedEnquiry)
