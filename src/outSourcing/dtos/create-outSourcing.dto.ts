@@ -22,4 +22,9 @@ export class CreateOutSourcingDto extends CreateTagsDto {
   @IsNotEmpty()
   @ApiProperty({ description: '마감일' })
   readonly deadline: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({ description: '마감일' })
+  readonly cardImage: string;
 }

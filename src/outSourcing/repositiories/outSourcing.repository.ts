@@ -11,6 +11,7 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
       content: string;
       coin: number;
       deadline: Date;
+      cardImage: string;
     },
     author: User,
   ) {
@@ -25,7 +26,12 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
     if (getAuthor) {
       outSourcing
         .leftJoin('outSourcing.author', 'author')
-        .addSelect(['author.email', 'author.nickname', 'author.id', "author.avatar"]);
+        .addSelect([
+          'author.email',
+          'author.nickname',
+          'author.id',
+          'author.avatar',
+        ]);
     }
     return outSourcing.getOne();
   }
@@ -34,15 +40,15 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
     const outSourcingQuery = this.createQueryBuilder('outSourcing')
       .take(20)
       .skip((page - 1) * 20)
-			.leftJoin('outSourcing.author', 'author')
+      .leftJoin('outSourcing.author', 'author')
       .addSelect([
         'author.email',
         'author.nickname',
         'author.id',
         'author.avatar',
       ])
-			.orderBy('outSourcing.updatedAt', 'DESC')
-    if (title && title !== "undefined") {
+      .orderBy('outSourcing.updatedAt', 'DESC');
+    if (title && title !== 'undefined') {
       outSourcingQuery.where('outSourcing.title like :title', {
         title: `%${title}%`,
       });
