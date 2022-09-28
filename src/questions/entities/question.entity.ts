@@ -64,7 +64,9 @@ export class Question extends CoreEntity {
   @OneToMany((type) => Image, (image) => image.question)
   images: Image[];
 
-  @OneToMany((type) => QuestionTag, (questionTag) => questionTag.questionId)
+  @OneToMany((type) => QuestionTag, (questionTag) => questionTag.questionId, {
+    onDelete: 'CASCADE',
+  })
   questionTags: QuestionTag[];
 
   @OneToOne((type) => Answer)

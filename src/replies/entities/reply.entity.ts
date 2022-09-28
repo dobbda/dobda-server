@@ -14,10 +14,11 @@ export class Reply extends CoreEntity {
   @RelationId((reply: Reply) => reply.author)
   authorId: number;
 
-
-  @ManyToOne((type) => Enquiry, (enquiry) => enquiry.replies)
+  @ManyToOne((type) => Enquiry, (enquiry) => enquiry.replies, {
+    onDelete: 'CASCADE',
+  })
   enquiry: Enquiry;
-	
+
   @RelationId((reply: Reply) => reply.enquiry)
   enquiryId: number;
 }

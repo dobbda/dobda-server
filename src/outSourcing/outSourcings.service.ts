@@ -152,16 +152,16 @@ export class OutSourcingService {
     const outSourcing = await this.findOutSourcingOrError(outSourcingId);
     /* outSourcing을 로그인한 user가 만든게 맞는지 check */
     if (outSourcing.authorId !== user.id) {
-      throw new BadRequestException('작성자만 삭제가 가능합니다');
+      throw new BadRequestException('작성자만 수정 가능합니다.');
     }
     if (!this.canUpdateAndDelete(outSourcing.progress)) {
       throw new BadRequestException(
-        '답변이 채택된 게시글은 삭제가 불가능합니다.',
+        '프로젝트에 선택된 유저가 있어 삭제가 불가능 합니다.',
       );
     }
     await this.outSourcingRepository.delete({ id: outSourcing.id });
     await this.userRepository.update(user.id, {
-      outSourcingCount: user.outSourcingCount++,
+      outSourcingCount: user.outSourcingCount - 1,
     });
 
     return true;

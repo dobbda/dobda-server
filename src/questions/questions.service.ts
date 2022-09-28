@@ -155,9 +155,9 @@ export class QuestionsService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    if (result.acceptedAnswerId) {
+    if (result.acceptedAnswerId || result.answersCount > 0) {
       throw new BadRequestException(
-        '답변이 채택된 게시글은 삭제가 불가능합니다.',
+        '답변이 달린 게시글은 삭제가 불가능합니다.',
       );
     }
     await this.questionsRepository.delete({ id: questionId });
