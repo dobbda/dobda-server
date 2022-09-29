@@ -28,21 +28,23 @@ export class Enquiry extends CoreEntity {
   @RelationId((enquiry: Enquiry) => enquiry.author)
   authorId: number;
 
-	
-  @ManyToOne((type) => OutSourcing, (outSourcing) => outSourcing.enquiries)
+  @ManyToOne((type) => OutSourcing, (outSourcing) => outSourcing.enquiries, {
+    onDelete: 'CASCADE',
+  })
   outSourcing: OutSourcing;
 
+  @OneToMany((type) => Reply, (reply) => reply.enquiry, {
+    cascade: true,
+  })
   @RelationId((enquiry: Enquiry) => enquiry.outSourcing)
   outSourcingId: number;
 
   @Column({ default: 0 })
   repliesCount: number;
 
-  @OneToOne((type) => OutSourcing)
+  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.selectedEnquiry)
   @JoinColumn()
-  selected_enquiry: OutSourcing;
+  selectedEnquiry: OutSourcing;
 
-  @OneToMany((type) => Reply, (reply) => reply.enquiry)
   replies: Reply[];
-
 }

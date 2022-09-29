@@ -67,18 +67,23 @@ export class OutSourcing extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.outSourcings)
   author: User;
 
+  /* 답변들 */
+  @OneToMany((type) => Enquiry, (enquiry) => enquiry.outSourcing, {
+    cascade: true,
+  })
+  enquiries: Enquiry[];
+
   /* 채택답변 */
   @OneToOne((type) => Enquiry)
   @JoinColumn()
   selectedEnquiry: Enquiry;
 
-  /* 답변들 */
-  @OneToMany((type) => Enquiry, (enquiry) => enquiry.outSourcing)
-  enquiries: Enquiry[];
-
   @OneToMany(
     (type) => OutSourcingTag,
     (outSourcingTag) => outSourcingTag.outSourcingId,
+    {
+      cascade: true,
+    },
   )
   outSourcingTags: OutSourcingTag[];
 
