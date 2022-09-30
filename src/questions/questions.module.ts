@@ -1,3 +1,4 @@
+import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
 import { AnswersModule } from './../answers/answers.module';
 import { AnswersService } from './../answers/answers.service';
 import { UsersRepository } from 'src/users/users.repository';
@@ -9,23 +10,24 @@ import { QuestionsService } from './questions.service';
 import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
-import { Image } from 'src/images/entities/image.entity';
-import { ImagesModule } from 'src/images/images.module';
 import { NotiModule } from 'src/noti/notis.module';
 import { NotisRepository } from 'src/noti/repositories/notis.repository';
 import { NotisService } from 'src/noti/notis.service';
+import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
   imports: [
-		AnswersModule,
-		NotiModule,
+    AnswersModule,
+    NotiModule,
+    PaymentModule,
     TypeOrmModule.forFeature([
       QuestionsRepository,
       TagsRepository,
       QuestionTagsRepository,
       ImagesRepository,
-			UsersRepository,
-			NotisRepository
+      UsersRepository,
+      NotisRepository,
+      PaymentsRepository,
     ]),
   ],
   controllers: [QuestionController],

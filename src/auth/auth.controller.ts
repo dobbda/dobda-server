@@ -75,57 +75,6 @@ export class AuthController {
     response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
   }
 
-  //리프레시 토큰 재발급
-  @Get('refresh')
-  @ApiOperation({ summary: '리프레시 토큰 재발급' })
-  async refreshToken(
-    @Req() req: Request,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<ResLoginUser> {
-    const accessExpires = new Date(
-      Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
-    );
-    const refreshExpires = new Date(
-      Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
-    );
-    const resRefreshData = await this.authService.refreshTokens(
-      req.cookies['jwt-refresh'],
-    );
-
-    response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
-      expires: accessExpires,
-      httpOnly: true,
-    });
-    response.cookie('jwt-refresh', resRefreshData.tokens.refreshToken, {
-      expires: refreshExpires,
-      httpOnly: true,
-      // signed:true    //쿠키보안 적용시 postman에서  해석못함
-    });
-
-    response.cookie('refresh-expires', refreshExpires, {
-      httpOnly: false,
-      expires: refreshExpires,
-    });
-    response.cookie('access-expires', refreshExpires, {
-      expires: accessExpires,
-      httpOnly: false,
-    });
-    return resRefreshData;
-  }
-
-  ///////////////////  로그아웃 (DB의 refreshToken 삭제) //////////////////////////////
-  @Delete('logout')
-  @UseGuards(AccessTokenGuard)
-  @ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
-  async logout(@CurrentUser('email') email: string, @Res() response: Response) {
-    await this.authService.deleteRefreshToken(email);
-    response.clearCookie('jwt-access');
-    response.clearCookie('jwt-refresh');
-    response.clearCookie('access-expires');
-    response.clearCookie('refresh-expires');
-    response.send();
-  }
-
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   //  	                                     소셜로그인                                             //
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,8 +85,6 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Param('social') social: string,
   ): Promise<User> {
-    const accessExpires = new Date(Date.now() + 1000 * 60 * 60); //
-    const refreshExpires = new Date(Date.now() + 1000 * 3600 * 48); //
     const { user, tokens } =
       (social == 'google' &&
         (await this.googleAuthService.getGoogleInfo(socialCodeDto))) ||
@@ -149,24 +96,59 @@ export class AuthController {
       (await this.naverAuthService.getNaverInfo(socialCodeDto));
 
     response.cookie('jwt-access', tokens.accessToken, {
-      expires: accessExpires,
+      expires: new Date(
+        Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
+      ),
       httpOnly: true,
       // signed: true
     });
     response.cookie('jwt-refresh', tokens.refreshToken, {
-      expires: refreshExpires,
+      expires: new Date(
+        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
+      ),
       httpOnly: true,
       // signed:true
     });
 
-    response.cookie('refresh-expires', refreshExpires, {
-      httpOnly: false,
-      expires: refreshExpires,
-    });
-    response.cookie('access-expires', refreshExpires, {
-      expires: accessExpires,
-      httpOnly: false,
-    });
     return user;
+  }
+
+  //리프레시 토큰 재발급
+  @Get('refresh')
+  @ApiOperation({ summary: '리프레시 토큰 재발급' })
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<User> {
+    const resRefreshData = await this.authService.refreshTokens(
+      req.cookies['jwt-refresh'],
+    );
+
+    response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
+      expires: new Date(
+        Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
+      ),
+      httpOnly: true,
+    });
+    response.cookie('jwt-refresh', resRefreshData.tokens.refreshToken, {
+      expires: new Date(
+        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
+      ),
+      httpOnly: true,
+      // signed:true    //쿠키보안 적용시 postman에서  해석못함
+    });
+
+    return resRefreshData.user;
+  }
+
+  ///////////////////  로그아웃 (DB의 refreshToken 삭제) //////////////////////////////
+  @Delete('logout')
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({ summary: '로그아웃 처리 (DB의 refreshToken 삭제' })
+  async logout(@CurrentUser('email') email: string, @Res() response: Response) {
+    await this.authService.deleteRefreshToken(email);
+    response.clearCookie('jwt-access');
+    response.clearCookie('jwt-refresh');
+    response.send();
   }
 }

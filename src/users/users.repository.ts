@@ -27,7 +27,7 @@ export class UsersRepository extends Repository<User> {
   async findUserByAuthorId(authorId: number): Promise<any> {
     const find = await this.findOne({ id: authorId });
     if (!find) throw new Error('Invalid');
-    const { coin, refreshToken, createdAt, updatedAt, ...users } = find;
+    const { refreshToken, createdAt, updatedAt, ...users } = find;
     return users;
   }
 

@@ -1,3 +1,5 @@
+import { PayType } from './../payment/entities/payments.entity';
+import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
 import {
   BadRequestException,
   ForbiddenException,
@@ -11,6 +13,7 @@ import { UsersRepository } from 'src/users/users.repository';
 import { CreateAnswerDto } from './dtos/create-answer.dto';
 import { GetAnswersDto } from './dtos/get-answer.dto';
 import { AnswersRepository } from './repositories/answers.repository';
+import { PaymentService } from 'src/payment/payment.service';
 
 @Injectable()
 export class AnswersService {
@@ -19,6 +22,7 @@ export class AnswersService {
     private readonly questionsRepository: QuestionsRepository,
     private readonly notisService: NotisService,
     private readonly userRepository: UsersRepository,
+    private readonly paymentService: PaymentService,
   ) {}
 
   async getAnswers({ qid }: GetAnswersDto) {
@@ -50,9 +54,6 @@ export class AnswersService {
       answersCount: question.answersCount + 1,
     });
 
-    // await this.questionsRepository.update(questionId,{
-    // 	watch:()=>"watch + 1"
-    // })
     const answer = await this.answersRepository.createAnswer(
       { content },
       question,
@@ -67,7 +68,9 @@ export class AnswersService {
   async acceptAnswer(answerId: number, user: User) {
     const answer = await this.answersRepository.findOne(answerId); // answer.question이 undefined으로 나옴
     const question = await this.questionsRepository.findOne(answer.questionId);
-
+    const toUser = await this.userRepository.findUserByAuthorId(
+      answer.authorId,
+    );
     if (question.acceptedAnswerId) {
       throw new ForbiddenException('이미 채택된 답변이 있습니다.');
     }
@@ -84,22 +87,23 @@ export class AnswersService {
     answer.question = question;
     await this.answersRepository.save(answer);
     await this.questionsRepository.save(question);
-    await this.notisService.addAcceptNoti(answer, user);
+    await this.notisService.addAcceptNoti(answer, toUser);
     await this.userRepository.update(user.id, {
+      //채택한 수
       setAcceptCount: user.setAcceptCount + 1,
     });
     await this.userRepository.update(answer.authorId, {
+      //채택된 답변수
       getAcceptCount: user.getAcceptCount + 1,
     });
 
-    if (question.coin > 0) {
-      // 코인 이동
-      await this.userRepository.update(answer.authorId, {
-        coin: () => `coin + ${question.coin}`,
-      });
-      await this.userRepository.update(user.id, {
-        coin: () => `coin - ${question.coin}`,
-      });
+    if (question.coin > 0 && user.coin >= question.coin) {
+      this.paymentService.tossCoin(
+        user,
+        question.authorId,
+        question.coin,
+        PayType.QUESTION,
+      );
     }
 
     return true;
