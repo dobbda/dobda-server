@@ -100,7 +100,7 @@ export class AnswersService {
     if (question.coin > 0 && user.coin >= question.coin) {
       this.paymentService.tossCoin(
         user,
-        question.authorId,
+        answer.authorId,
         question.coin,
         PayType.QUESTION,
       );

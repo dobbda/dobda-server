@@ -27,18 +27,21 @@ export class PaymentService {
 
   async tossCoin(user: User, toUserId: number, value: number, type: PayType) {
     const toUser = await this.usersRepository.findUserByAuthorId(toUserId);
-    if (!toUser) {
-      return;
-    }
+    if (!toUser) return;
 
     user.coin -= value;
     toUser.coin += value;
 
     await this.usersRepository.save([user, toUser]);
-
     await this.paymentsRepository.createPayment({
       user: user,
-      toUserId,
+      toUserId: toUserId,
+      type: type,
+      coin: -value,
+    });
+    await this.paymentsRepository.createPayment({
+      user: toUser,
+      toUserId: user.id,
       type: type,
       coin: value,
     });
