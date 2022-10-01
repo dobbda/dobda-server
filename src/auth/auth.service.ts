@@ -50,16 +50,6 @@ export class AuthService {
   //RefreshToken 해쉬 생각해보기
 
   async createJWT(email: UserLogInDTO['email']): Promise<Tokens> {
-    const accessExpires = Number(
-      new Date(
-        Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
-      ),
-    ); // 24 hour 7일
-    const refreshExpires = Number(
-      new Date(
-        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
-      ),
-    ); // 24 hour 7일
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -67,7 +57,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('ACCESS_TOKEN_SECRET_KEY'),
-          expiresIn: accessExpires,
+          expiresIn: Number(this.configService.get<string>('ACCESS_EXPIRES')),
         },
       ),
       this.jwtService.signAsync(
@@ -76,7 +66,7 @@ export class AuthService {
         },
         {
           secret: this.configService.get<string>('REFRESH_TOKEN_SECRET_KEY'),
-          expiresIn: refreshExpires,
+          expiresIn: Number(this.configService.get<string>('REFRESH_EXPIRES')),
         },
       ),
     ]);

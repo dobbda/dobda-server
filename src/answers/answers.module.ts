@@ -1,3 +1,6 @@
+import { PaymentModule } from './../payment/payment.module';
+import { PaymentService } from './../payment/payment.service';
+import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
 import { UsersRepository } from './../users/users.repository';
 import { NotisRepository } from 'src/noti/repositories/notis.repository';
 import { Module } from '@nestjs/common';
@@ -10,11 +13,19 @@ import { AnswersRepository } from './repositories/answers.repository';
 import { NotiModule } from 'src/noti/notis.module';
 
 @Module({
-  imports: [NotiModule, TypeOrmModule.forFeature([
-		AnswersRepository, QuestionsRepository, NotisRepository, UsersRepository
-	])],
+  imports: [
+    NotiModule,
+    PaymentModule,
+    TypeOrmModule.forFeature([
+      AnswersRepository,
+      QuestionsRepository,
+      NotisRepository,
+      UsersRepository,
+      PaymentsRepository,
+    ]),
+  ],
   controllers: [AnswersController],
-  providers: [AnswersService, NotisService],
-  exports: [AnswersService, TypeOrmModule]
+  providers: [AnswersService, NotisService, PaymentService],
+  exports: [AnswersService, TypeOrmModule],
 })
 export class AnswersModule {}

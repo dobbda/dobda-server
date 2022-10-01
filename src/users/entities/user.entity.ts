@@ -1,3 +1,4 @@
+import { Payment } from '../../payment/entities/payments.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import {
@@ -8,7 +9,6 @@ import {
   IsUrl,
 } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
-import { Transaction } from 'src/coin/entities/transaction.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
@@ -61,7 +61,7 @@ export class User extends CoreEntity {
 
   @ApiProperty({ description: '소개' })
   @Column({ type: 'json', nullable: true })
-	@IsString()
+  @IsString()
   description: string;
 
   @ApiProperty({ description: '코인' })
@@ -97,26 +97,16 @@ export class User extends CoreEntity {
   @OneToMany((type) => Reply, (reply: Reply) => reply.author)
   replies: Reply[];
 
-  @OneToMany(
-    (type) => Transaction,
-    (transaction: Transaction) => transaction.fromUser,
-  )
-  transactionsFrom: Transaction[];
-
-  @OneToMany(
-    (type) => Transaction,
-    (transaction: Transaction) => transaction.toUser,
-  )
-  transactionsTo: Transaction[];
+  @OneToMany((type) => Payment, (Payment: Payment) => Payment.user)
+  payments: Payment[];
 
   @OneToMany((type) => Noti, (noti: Noti) => noti.to)
   notis: Noti[];
 
-
-	@OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
+  @OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
   enquiries: Enquiry[];
 
-	// //////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////
   @Column({ default: 0 })
   questionsCount: number;
 
@@ -124,9 +114,8 @@ export class User extends CoreEntity {
   getAcceptCount: number;
 
   @Column({ default: 0 })
-	setAcceptCount:number;
+  setAcceptCount: number;
 
   @Column({ default: 0 })
   outSourcingCount: number;
-
 }

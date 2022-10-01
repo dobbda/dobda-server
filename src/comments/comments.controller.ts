@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -34,13 +33,13 @@ export class CommentsController {
     댓글 조회
     url: comments (GET)
   */
-  @Get()
+  @Get('/:aid')
   @ApiOperation({ summary: '댓글 조회' })
   @ApiCreatedResponse({
     description: '댓글여러개를 조회한다',
     type: GetCommentsOutput,
   })
-  async getAnswers(@Query() getCommentsDto: GetCommentsDto) {
+  async getAnswers(@Param('aid') getCommentsDto: GetCommentsDto) {
     return this.commentsService.getComments(getCommentsDto);
   }
 

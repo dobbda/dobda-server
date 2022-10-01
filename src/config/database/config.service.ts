@@ -11,10 +11,9 @@ import { Tag } from 'src/questions/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Image } from 'src/images/entities/image.entity';
-import { Transaction } from 'src/coin/entities/transaction.entity';
 import { Noti } from 'src/noti/entities/noti.entity';
 import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
-
+import { Payment } from 'src/payment/entities/payments.entity';
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -39,7 +38,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Noti,
         Answer,
         Comment,
-        Transaction,
+        Payment,
         Image,
         Enquiry,
         Reply,

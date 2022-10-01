@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsersRepository } from 'src/users/users.repository';
-import { ImagesRepository } from 'src/images/repositories/images.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
@@ -20,7 +19,6 @@ export class QuestionsService {
     private readonly questionsRepository: QuestionsRepository,
     private readonly tagsRepository: TagsRepository,
     private readonly questionTagsRepository: QuestionTagsRepository,
-    private readonly imagesRepository: ImagesRepository,
     private readonly usersRepository: UsersRepository,
     private readonly answersService: AnswersService,
   ) {}

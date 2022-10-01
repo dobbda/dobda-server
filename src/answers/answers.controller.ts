@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -32,13 +31,13 @@ export class AnswersController {
     답변 조회
     url: answers (GET)
   */
-  @Get()
+  @Get('/:qid')
   @ApiOperation({ summary: '답변 조회' })
   @ApiCreatedResponse({
     description: '답변 조회',
     type: GetAnswersOutput,
   })
-  async getAnswers(@Query() getAnswersDto: GetAnswersDto) {
+  async getAnswers(@Param('qid') getAnswersDto: GetAnswersDto) {
     return this.answersService.getAnswers(getAnswersDto);
   }
 

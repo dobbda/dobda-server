@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -34,13 +33,13 @@ export class RepliesController {
     댓글 조회
     url: replies (GET)
   */
-  @Get()
+  @Get('/:eid')
   @ApiOperation({ summary: '댓글 조회' })
   @ApiCreatedResponse({
     description: '댓글여러개를 조회한다',
     type: GetReplyOutput,
   })
-  async getAnswers(@Query() getRepliesDto: GetReplyDto) {
+  async getAnswers(@Param('eid') getRepliesDto: GetReplyDto) {
     return this.repliesService.getReplies(getRepliesDto);
   }
 

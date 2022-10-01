@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -28,13 +27,13 @@ import { GetEnquiryDto, GetEnquiriesOutput } from './dtos/get-enquiry.dto';
 export class EnquiriesController {
   constructor(private readonly enquiriesService: EnquiriesService) {}
 
-  @Get()
+  @Get('/:oid')
   @ApiOperation({ summary: '문의 조회' })
   @ApiCreatedResponse({
     description: '문의 조회',
     type: GetEnquiriesOutput,
   })
-  async getEnquiries(@Query() getEnquiryDto: GetEnquiryDto) {
+  async getEnquiries(@Param('oid') getEnquiryDto: GetEnquiryDto) {
     return this.enquiriesService.getEnquiries(getEnquiryDto);
   }
 
@@ -50,7 +49,6 @@ export class EnquiriesController {
     return this.enquiriesService.createEnquiry(createEnquiryDto, user);
   }
 
-
   @Get('/select/:id')
   @ApiOperation({ summary: '문의 선택' })
   @ApiParam({ name: 'id', required: true, description: 'enquiry Id' })
@@ -58,10 +56,12 @@ export class EnquiriesController {
     description: 'id에 해당하는 문의 글에 결제프로세스를 진행한다',
   })
   @UseGuards(AccessTokenGuard)
-  async acceptEnquiry(@Param('id') enquiryId: number, @CurrentUser() user: User) {
+  async acceptEnquiry(
+    @Param('id') enquiryId: number,
+    @CurrentUser() user: User,
+  ) {
     return this.enquiriesService.selectEnquiry(enquiryId, user);
   }
-
 
   @Patch('/:id')
   @ApiOperation({ summary: '문의 수정' })
@@ -75,7 +75,6 @@ export class EnquiriesController {
   ) {
     return this.enquiriesService.editEnquiry(content, aid, user);
   }
-
 
   @Delete('/:id')
   @ApiOperation({ summary: '문의삭제' })
