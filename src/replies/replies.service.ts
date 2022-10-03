@@ -20,7 +20,7 @@ export class RepliesService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getReplies({ eid }: GetReplyDto) {
+  async getReplies(eid: number) {
     const replies = await this.repliesRepository
       .createQueryBuilder('reply')
       .where({ enquiry: eid })
