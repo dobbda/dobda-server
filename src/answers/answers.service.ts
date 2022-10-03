@@ -25,7 +25,7 @@ export class AnswersService {
     private readonly paymentService: PaymentService,
   ) {}
 
-  async getAnswers({ qid }: GetAnswersDto) {
+  async getAnswers(qid: number) {
     const answers = await this.answersRepository
       .createQueryBuilder('answer')
       .where({ question: qid })
