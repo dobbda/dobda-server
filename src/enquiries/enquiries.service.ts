@@ -19,7 +19,7 @@ export class EnquiriesService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getEnquiries({ oid }: GetEnquiryDto) {
+  async getEnquiries(oid: number) {
     console.log(oid);
     const enquiries = await this.enquiryRepository
       .createQueryBuilder('enquiry')

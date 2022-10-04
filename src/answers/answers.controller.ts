@@ -37,8 +37,9 @@ export class AnswersController {
     description: '답변 조회',
     type: GetAnswersOutput,
   })
-  async getAnswers(@Param('qid') getAnswersDto: GetAnswersDto) {
-    return this.answersService.getAnswers(getAnswersDto);
+
+  async getAnswers(@Param('qid') qid: number) {
+    return this.answersService.getAnswers(qid);
   }
 
   /* 

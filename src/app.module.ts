@@ -47,6 +47,7 @@ const authenticate = async (email: string, password: string) => {
   return null;
 };
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -83,7 +84,7 @@ const authenticate = async (email: string, password: string) => {
     EnquiriesModule,
     RepliesModule,
     PaymentModule,
-
+    
     AdminModule.createAdmin({
       adminJsOptions: {
         rootPath: '/admin',

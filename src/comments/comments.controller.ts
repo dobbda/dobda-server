@@ -39,8 +39,9 @@ export class CommentsController {
     description: '댓글여러개를 조회한다',
     type: GetCommentsOutput,
   })
-  async getAnswers(@Param('aid') getCommentsDto: GetCommentsDto) {
-    return this.commentsService.getComments(getCommentsDto);
+
+  async getAnswers(@Param('aid') aid: number) {
+    return this.commentsService.getComments(aid);
   }
 
   /* 

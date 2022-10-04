@@ -19,7 +19,7 @@ export class CommentsService {
     private readonly notisService: NotisService,
   ) {}
 
-  async getComments({ aid }: GetCommentsDto) {
+  async getComments(aid: number) {
     const comments = await this.commentsRepository
       .createQueryBuilder('comment')
       .where({ answer: aid })
