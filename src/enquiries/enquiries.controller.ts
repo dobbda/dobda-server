@@ -33,6 +33,7 @@ export class EnquiriesController {
     description: '문의 조회',
     type: GetEnquiriesOutput,
   })
+
   async getEnquiries(@Param('oid') oid: number) {
     return this.enquiriesService.getEnquiries(oid);
   }

@@ -80,7 +80,7 @@ export class AuthService {
   }
 
   //유저 정보와 DB의 refreshToken을 비교해 유효한 토큰이라면 토큰 재발급
-  async refreshTokens(refreshToken: string): Promise<ResLoginUser> {
+  async refreshTokens(refreshToken: string) {
     const { refreshToken: del, ...user } = await this.usersRepository.findOne({
       refreshToken: refreshToken,
     });

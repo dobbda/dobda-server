@@ -39,6 +39,7 @@ export class RepliesController {
     description: '댓글여러개를 조회한다',
     type: GetReplyOutput,
   })
+
   async getAnswers(@Param('eid') eid: number) {
     return this.repliesService.getReplies(eid);
   }

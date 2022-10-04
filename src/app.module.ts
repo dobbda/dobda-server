@@ -18,6 +18,36 @@ import { CommentsModule } from './comments/comments.module';
 import { RepliesModule } from './replies/replies.module';
 import { PaymentModule } from './payment/payment.module';
 
+import { Answer } from './answers/entities/answer.entity';
+import { Enquiry } from './enquiries/entities/enquiry.entity';
+import { Noti } from './noti/entities/noti.entity';
+import { OutSourcing } from './outSourcing/entities/outSourcing.entity';
+import { OutSourcingTag } from './outSourcing/entities/outSourcingTag.entity';
+import { Payment } from './payment/entities/payments.entity';
+import { Question } from './questions/entities/question.entity';
+import { QuestionTag } from './questions/entities/questionTag.entity';
+import { Tag } from './questions/entities/tag.entity';
+import { Reply } from './replies/entities/reply.entity';
+import { User } from './users/entities/user.entity';
+import { Comment } from './comments/entities/comment.entity';
+
+import { AdminModule } from '@adminjs/nestjs';
+import AdminJS from 'admin-bro';
+import { Database, Resource } from 'admin-bro-typeorm';
+AdminJS.registerAdapter({ Database, Resource });
+
+const authenticate = async (email: string, password: string) => {
+  const DEFAULT_ADMIN = {
+    email: process.env.ADMIN_EMAIL,
+    password: process.env.ADMIN_PWD,
+  };
+  if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+    return Promise.resolve(DEFAULT_ADMIN);
+  }
+  return null;
+};
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -54,6 +84,35 @@ import { PaymentModule } from './payment/payment.module';
     EnquiriesModule,
     RepliesModule,
     PaymentModule,
+    
+    AdminModule.createAdmin({
+      adminJsOptions: {
+        rootPath: '/admin',
+        resources: [
+          User,
+          OutSourcing,
+          Question,
+          OutSourcingTag,
+          Tag,
+          QuestionTag,
+          Noti,
+          Answer,
+          Comment,
+          Payment,
+          Enquiry,
+          Reply,
+        ],
+        branding: {
+          companyName: 'DOBDA',
+          logo: 'https://dobda.s3.ap-northeast-2.amazonaws.com/logo.svg',
+        },
+      },
+      auth: {
+        authenticate,
+        cookieName: 'ADMINS',
+        cookiePassword: process.env.ACCESS_TOKEN_SECRET_KEY,
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

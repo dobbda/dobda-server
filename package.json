@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "NODE_ENV=prod nest build",
+    "build": "cross-env NODE_ENV=prod nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=prod nest start",
     "start:dev": "cross-env NODE_ENV=dev nest start --watch",
@@ -24,6 +24,14 @@
     "make:rollback": "ts-node -P tsconfig.server.json ./node_modules/typeorm/cli.js migration:revert"
   },
   "dependencies": {
+    "@adminjs/express": "^5.0.1",
+    "@adminjs/nestjs": "^5.0.1",
+    "@adminjs/typeorm": "^4.0.0",
+    "admin-bro": "^4.0.1",
+    "admin-bro-typeorm": "^0.1.6-alpha.9",
+    "adminjs": "^6.2.4",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.17.3",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.1",
     "@nestjs/core": "^8.0.0",
@@ -53,7 +61,7 @@
     "typeorm": "^0.2.45"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.0.0",
+    "@nestjs/cli": "^8.0.5",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@types/axios": "^0.14.0",

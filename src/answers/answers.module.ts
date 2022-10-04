@@ -1,6 +1,6 @@
 import { PaymentModule } from './../payment/payment.module';
 import { PaymentService } from './../payment/payment.service';
-import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
+import { PaymentsRepository } from '../payment/repositories/payment.repository';
 import { UsersRepository } from './../users/users.repository';
 import { NotisRepository } from 'src/noti/repositories/notis.repository';
 import { Module } from '@nestjs/common';

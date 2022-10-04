@@ -1,5 +1,5 @@
 import { User } from 'src/users/entities/user.entity';
-import { PaymentsRepository } from './repository.ts/payment.repository';
+import { PaymentsRepository } from './repositories/payment.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { GetPaymentDto, OutPayments } from './dtos/get-payment.dto';
 import { UsersRepository } from 'src/users/users.repository';
