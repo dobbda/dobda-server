@@ -81,9 +81,7 @@ export class AuthController {
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<User> {
-    console.log('cookie: ', req.cookies['jwt-refresh']);
-
+  ) {
     const resRefreshData = await this.authService.refreshTokens(
       req.cookies['jwt-refresh'],
     );

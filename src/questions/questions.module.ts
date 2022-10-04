@@ -1,4 +1,4 @@
-import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
+import { PaymentsRepository } from '../payment/repositories/payment.repository';
 import { AnswersModule } from './../answers/answers.module';
 import { AnswersService } from './../answers/answers.service';
 import { UsersRepository } from 'src/users/users.repository';

@@ -14,16 +14,16 @@ export class UsersService {
   constructor(private usersRepository: UsersRepository) {}
 
   async getMyInfo(userUpdate: UserUpdateDTO, user: User): Promise<User> {
-  	const found = await this.usersRepository.findOne(user.id);
+    const found = await this.usersRepository.findOne(user.id);
 
     return found;
   }
-  async userUpdate(userUpdate: UserUpdateDTO, user: User): Promise<User> {
+  async userUpdate(userUpdate: UserUpdateDTO, user: User) {
     await this.usersRepository.update(user.id, userUpdate);
-    return {...user, ...userUpdate};
+    return { ...user, ...userUpdate };
   }
 
-  async getUserInfo(userId: number): Promise<User> {
+  async getUserInfo(userId: number) {
     const { refreshToken, ...res } = await this.usersRepository.findOne({
       id: userId,
     });

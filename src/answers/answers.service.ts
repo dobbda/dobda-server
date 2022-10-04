@@ -1,5 +1,5 @@
 import { PayType } from './../payment/entities/payments.entity';
-import { PaymentsRepository } from './../payment/repository.ts/payment.repository';
+import { PaymentsRepository } from '../payment/repositories/payment.repository';
 import {
   BadRequestException,
   ForbiddenException,
