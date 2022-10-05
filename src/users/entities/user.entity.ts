@@ -60,7 +60,7 @@ export class User extends CoreEntity {
   skill: string[];
 
   @ApiProperty({ description: '소개' })
-  @Column({ type: 'json', nullable: true })
+  @Column({ nullable: true })
   @IsString()
   description: string;
 

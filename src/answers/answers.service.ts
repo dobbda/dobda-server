@@ -94,7 +94,7 @@ export class AnswersService {
     });
     await this.userRepository.update(answer.authorId, {
       //채택된 답변수
-      getAcceptCount: user.getAcceptCount + 1,
+      getAcceptCount: toUser.getAcceptCount + 1,
     });
 
     if (question.coin > 0 && user.coin >= question.coin) {
