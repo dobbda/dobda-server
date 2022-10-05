@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { EditCommentDto } from './dtos/edit-comment.dto';
@@ -16,7 +16,7 @@ export class CommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
     private readonly answersRepository: AnswersRepository,
-    private readonly notisService: NotisService,
+    private readonly alarmsService: AlarmsService,
   ) {}
 
   async getComments(aid: number) {
@@ -52,7 +52,7 @@ export class CommentsService {
       user,
     );
 
-    await this.notisService.addCommentNoti(comment, user);
+    await this.alarmsService.addCommentAlarm(comment, user);
 
     return true;
   }

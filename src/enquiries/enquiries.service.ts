@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
 import { GetEnquiryDto } from './dtos/get-enquiry.dto';
@@ -16,7 +16,7 @@ export class EnquiriesService {
   constructor(
     private readonly enquiryRepository: EnquiriesRepository,
     private readonly outSourceRepository: OutSourcingRepository,
-    private readonly notisService: NotisService,
+    private readonly alarmsService: AlarmsService,
   ) {}
 
   async getEnquiries(oid: number) {
@@ -55,7 +55,7 @@ export class EnquiriesService {
     await this.outSourceRepository.update(oid, {
       enquiriesCount: outSourcing.enquiriesCount + 1,
     });
-    // await this.notisService.addEnquiryNoti(enquiry, user);
+    // await this.alarmsService.addEnquiryAlarm(enquiry, user);
     return true;
   }
 

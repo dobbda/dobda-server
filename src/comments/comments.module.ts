@@ -1,16 +1,23 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
-import { NotiModule } from 'src/noti/notis.module';
-import { NotisService } from 'src/noti/notis.service';
-import { NotisRepository } from 'src/noti/repositories/notis.repository';
+import { AlarmModule } from 'src/alarms/alarms.module';
+import { AlarmsService } from 'src/alarms/alarms.service';
+import { AlarmsRepository } from 'src/alarms/repositories/alarms.repository';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { CommentsRepository } from './repositories/comments.repository';
 
 @Module({
-  imports: [NotiModule, TypeOrmModule.forFeature([CommentsRepository,AnswersRepository, NotisRepository])],
+  imports: [
+    AlarmModule,
+    TypeOrmModule.forFeature([
+      CommentsRepository,
+      AnswersRepository,
+      AlarmsRepository,
+    ]),
+  ],
   controllers: [CommentsController],
-  providers: [CommentsService, NotisService],
+  providers: [CommentsService, AlarmsService],
 })
 export class CommentsModule {}

@@ -12,30 +12,30 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum NotiType {
+export enum AlarmType {
   ANSWER = 0, //답변
   COMMENT, // 댓글
-	REPLY,
+  REPLY,
   ACCEPT, // 채택
   INCOME, // 출금
   OUTCOME, // 입금
-	// SELECT, // 외주 거래시작 (거래할 유저 선택함)
-	// C2BPAY, // 유저가 금액 결제 완료 (결제 금액은 웹계좌에 저장))
-	// B2CPAY, // 웹이 프리랜서에게 지급 완료 (웹계좌에서 프리랜서에게 지불))
+  // SELECT, // 외주 거래시작 (거래할 유저 선택함)
+  // C2BPAY, // 유저가 금액 결제 완료 (결제 금액은 웹계좌에 저장))
+  // B2CPAY, // 웹이 프리랜서에게 지급 완료 (웹계좌에서 프리랜서에게 지불))
 }
 
 @Entity()
-export class Noti extends CoreEntity {
+export class Alarm extends CoreEntity {
   @ApiProperty({
     description: '알림 타입',
     required: true,
   })
   @Column({
     type: 'enum',
-    enum: NotiType,
+    enum: AlarmType,
     nullable: false,
   })
-  type: NotiType;
+  type: AlarmType;
 
   @ApiProperty({
     description: '알림 내용',
@@ -55,6 +55,6 @@ export class Noti extends CoreEntity {
     description: '알림 대상',
     required: true,
   })
-  @ManyToOne((type) => User, (user) => user.notis)
+  @ManyToOne((type) => User, (user) => user.alarms)
   to: User;
 }

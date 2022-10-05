@@ -5,23 +5,23 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
-import { CreateNotiDto } from './dtos/create-noti.dto';
-import { GetNotisOutput } from './dtos/get-noti.dto';
-import { NotisRepository } from './repositories/notis.repository';
+import { CreateAlarmDto } from './dtos/create-alarm.dto';
+import { GetAlarmsOutput } from './dtos/get-alarm.dto';
+import { AlarmsRepository } from './repositories/alarms.repository';
 import { Comment } from 'src/comments/entities/comment.entity';
-import { NotiType } from './entities/noti.entity';
+import { AlarmType } from './entities/alarm.entity';
 import { Answer } from 'src/answers/entities/answer.entity';
 
 @Injectable()
-export class NotisService {
-  constructor(private readonly notisRepository: NotisRepository) {}
+export class AlarmsService {
+  constructor(private readonly alarmsRepository: AlarmsRepository) {}
 
-  async createNoti(dto: CreateNotiDto) {
-    await this.notisRepository.createNoti(dto);
+  async createAlarm(dto: CreateAlarmDto) {
+    await this.alarmsRepository.createAlarm(dto);
   }
 
-  async getNotis(user: User): Promise<GetNotisOutput> {
-    const result = await this.notisRepository.find({
+  async getAlarms(user: User): Promise<GetAlarmsOutput> {
+    const result = await this.alarmsRepository.find({
       where: {
         to: user,
       },
@@ -29,7 +29,7 @@ export class NotisService {
     });
 
     return {
-      notis: result.map((x) => {
+      alarms: result.map((x) => {
         return {
           id: x.id,
           type: x.type,
@@ -40,15 +40,15 @@ export class NotisService {
     };
   }
 
-  async getAllNotis(user: User): Promise<GetNotisOutput> {
-    const result = await this.notisRepository.find({
+  async getAllAlarms(user: User): Promise<GetAlarmsOutput> {
+    const result = await this.alarmsRepository.find({
       where: {
         to: user,
       },
     });
 
     return {
-      notis: result.map((x) => {
+      alarms: result.map((x) => {
         return {
           id: x.id,
           type: x.type,
@@ -59,27 +59,27 @@ export class NotisService {
     };
   }
 
-  async viewNoti(id: number, user: User) {
-    const noti = await this.notisRepository.findOneNotiWithId(id);
+  async viewAlarm(id: number, user: User) {
+    const alarm = await this.alarmsRepository.findOneAlarmWithId(id);
 
-    if (!noti) {
+    if (!alarm) {
       throw new NotFoundException('id에 해당하는 noti가 없습니다.');
     }
 
-    if (noti.to.id !== user.id) {
+    if (alarm.to.id !== user.id) {
       throw new ForbiddenException('잘못된 요청입니다.');
     }
 
-    noti.checked = true;
+    alarm.checked = true;
 
-    this.notisRepository.save(noti);
+    this.alarmsRepository.save(alarm);
 
     return null;
   }
 
-  async addAnswerNoti(answer: Answer, to: User) {
-    this.createNoti({
-      type: NotiType.ANSWER,
+  async addAnswerAlarm(answer: Answer, to: User) {
+    this.createAlarm({
+      type: AlarmType.ANSWER,
       content: JSON.stringify({
         questionId: answer.question.id,
         content: answer.content.substring(0, 20),
@@ -88,9 +88,10 @@ export class NotisService {
     });
   }
 
-  async addCommentNoti(comment: Comment, to: User) { //question 댓글
-    this.createNoti({
-      type: NotiType.COMMENT,
+  async addCommentAlarm(comment: Comment, to: User) {
+    //question 댓글
+    this.createAlarm({
+      type: AlarmType.COMMENT,
       content: JSON.stringify({
         questionId: comment.answer.questionId,
         answerId: comment.answer.id,
@@ -100,10 +101,11 @@ export class NotisService {
     });
   }
 
-	async addReplyNoti(reply: Reply, to: User) { //outSourcing 댓글
-		console.log(reply)
-    this.createNoti({
-      type: NotiType.COMMENT,
+  async addReplyAlarm(reply: Reply, to: User) {
+    //outSourcing 댓글
+    console.log(reply);
+    this.createAlarm({
+      type: AlarmType.COMMENT,
       content: JSON.stringify({
         outSourcingId: reply.enquiry.outSourcingId,
         enquiryId: reply.enquiryId,
@@ -113,9 +115,9 @@ export class NotisService {
     });
   }
 
-  async addAcceptNoti(answer: Answer, to: User) {
-    this.createNoti({
-      type: NotiType.ACCEPT,
+  async addAcceptAlarm(answer: Answer, to: User) {
+    this.createAlarm({
+      type: AlarmType.ACCEPT,
       content: JSON.stringify({
         questionId: answer.question.id,
         content: `${answer.content.substring(0, 20)} 답변이 채택되었습니다.`,

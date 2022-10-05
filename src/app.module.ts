@@ -20,7 +20,7 @@ import { PaymentModule } from './payment/payment.module';
 
 import { Answer } from './answers/entities/answer.entity';
 import { Enquiry } from './enquiries/entities/enquiry.entity';
-import { Noti } from './noti/entities/noti.entity';
+import { Alarm } from './alarms/entities/alarm.entity';
 import { OutSourcing } from './outSourcing/entities/outSourcing.entity';
 import { OutSourcingTag } from './outSourcing/entities/outSourcingTag.entity';
 import { Payment } from './payment/entities/payments.entity';
@@ -34,6 +34,8 @@ import { Comment } from './comments/entities/comment.entity';
 import { AdminModule } from '@adminjs/nestjs';
 import AdminJS from 'admin-bro';
 import { Database, Resource } from 'admin-bro-typeorm';
+import { NotisModule } from './notis/notis.module';
+import { Noti } from './notis/entities/noti.entity';
 AdminJS.registerAdapter({ Database, Resource });
 
 const authenticate = async (email: string, password: string) => {
@@ -46,7 +48,6 @@ const authenticate = async (email: string, password: string) => {
   }
   return null;
 };
-
 
 @Module({
   imports: [
@@ -74,17 +75,7 @@ const authenticate = async (email: string, password: string) => {
       useClass: PostgresConfigService,
       inject: [PostgresConfigService],
     }),
-    UsersModule,
-    CommonModule,
-    QuestionsModule,
-    AnswersModule,
-    CommentsModule,
-    AuthModule,
-    OutSourcingModule,
-    EnquiriesModule,
-    RepliesModule,
-    PaymentModule,
-    
+
     AdminModule.createAdmin({
       adminJsOptions: {
         rootPath: '/admin',
@@ -95,12 +86,13 @@ const authenticate = async (email: string, password: string) => {
           OutSourcingTag,
           Tag,
           QuestionTag,
-          Noti,
+          Alarm,
           Answer,
           Comment,
           Payment,
           Enquiry,
           Reply,
+          Noti,
         ],
         branding: {
           companyName: 'DOBDA',
@@ -113,6 +105,18 @@ const authenticate = async (email: string, password: string) => {
         cookiePassword: process.env.ACCESS_TOKEN_SECRET_KEY,
       },
     }),
+
+    UsersModule,
+    CommonModule,
+    QuestionsModule,
+    AnswersModule,
+    CommentsModule,
+    AuthModule,
+    OutSourcingModule,
+    EnquiriesModule,
+    RepliesModule,
+    PaymentModule,
+    NotisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

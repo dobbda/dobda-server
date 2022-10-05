@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
-import { NotiType } from '../entities/noti.entity';
+import { AlarmType } from '../entities/alarm.entity';
 
-export class CreateNotiDto {
+export class CreateAlarmDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '타입' })
-  readonly type: NotiType;
+  readonly type: AlarmType;
 
   @IsString()
   @IsNotEmpty()

@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UsersRepository } from 'src/users/users.repository';
@@ -20,7 +20,7 @@ export class AnswersService {
   constructor(
     private readonly answersRepository: AnswersRepository,
     private readonly questionsRepository: QuestionsRepository,
-    private readonly notisService: NotisService,
+    private readonly alarmsService: AlarmsService,
     private readonly userRepository: UsersRepository,
     private readonly paymentService: PaymentService,
   ) {}
@@ -60,7 +60,7 @@ export class AnswersService {
       user,
     );
 
-    await this.notisService.addAnswerNoti(answer, user);
+    await this.alarmsService.addAnswerAlarm(answer, user);
     return true;
   }
 
@@ -87,7 +87,7 @@ export class AnswersService {
     answer.question = question;
     await this.answersRepository.save(answer);
     await this.questionsRepository.save(question);
-    await this.notisService.addAcceptNoti(answer, toUser);
+    await this.alarmsService.addAcceptAlarm(answer, toUser);
     await this.userRepository.update(user.id, {
       //채택한 수
       setAcceptCount: user.setAcceptCount + 1,

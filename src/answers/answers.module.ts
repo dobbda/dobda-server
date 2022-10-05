@@ -2,30 +2,30 @@ import { PaymentModule } from './../payment/payment.module';
 import { PaymentService } from './../payment/payment.service';
 import { PaymentsRepository } from '../payment/repositories/payment.repository';
 import { UsersRepository } from './../users/users.repository';
-import { NotisRepository } from 'src/noti/repositories/notis.repository';
+import { AlarmsRepository } from 'src/alarms/repositories/alarms.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { QuestionsRepository } from 'src/questions/repositories/questions.repository';
 import { AnswersController } from './answers.controller';
 import { AnswersService } from './answers.service';
 import { AnswersRepository } from './repositories/answers.repository';
-import { NotiModule } from 'src/noti/notis.module';
+import { AlarmModule } from 'src/alarms/alarms.module';
 
 @Module({
   imports: [
-    NotiModule,
+    AlarmModule,
     PaymentModule,
     TypeOrmModule.forFeature([
       AnswersRepository,
       QuestionsRepository,
-      NotisRepository,
+      AlarmsRepository,
       UsersRepository,
       PaymentsRepository,
     ]),
   ],
   controllers: [AnswersController],
-  providers: [AnswersService, NotisService, PaymentService],
+  providers: [AnswersService, AlarmsService, PaymentService],
   exports: [AnswersService, TypeOrmModule],
 })
 export class AnswersModule {}
