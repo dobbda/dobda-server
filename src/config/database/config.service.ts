@@ -14,6 +14,7 @@ import { Image } from 'src/images/entities/image.entity';
 import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
 import { Payment } from 'src/payment/entities/payments.entity';
+import { Noti } from 'src/notis/entities/noti.entity';
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -42,6 +43,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Image,
         Enquiry,
         Reply,
+        Noti,
       ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],

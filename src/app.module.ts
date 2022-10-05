@@ -34,6 +34,8 @@ import { Comment } from './comments/entities/comment.entity';
 import { AdminModule } from '@adminjs/nestjs';
 import AdminJS from 'admin-bro';
 import { Database, Resource } from 'admin-bro-typeorm';
+import { NotisModule } from './notis/notis.module';
+import { Noti } from './notis/entities/noti.entity';
 AdminJS.registerAdapter({ Database, Resource });
 
 const authenticate = async (email: string, password: string) => {
@@ -73,16 +75,6 @@ const authenticate = async (email: string, password: string) => {
       useClass: PostgresConfigService,
       inject: [PostgresConfigService],
     }),
-    UsersModule,
-    CommonModule,
-    QuestionsModule,
-    AnswersModule,
-    CommentsModule,
-    AuthModule,
-    OutSourcingModule,
-    EnquiriesModule,
-    RepliesModule,
-    PaymentModule,
 
     AdminModule.createAdmin({
       adminJsOptions: {
@@ -100,6 +92,7 @@ const authenticate = async (email: string, password: string) => {
           Payment,
           Enquiry,
           Reply,
+          Noti,
         ],
         branding: {
           companyName: 'DOBDA',
@@ -112,6 +105,18 @@ const authenticate = async (email: string, password: string) => {
         cookiePassword: process.env.ACCESS_TOKEN_SECRET_KEY,
       },
     }),
+
+    UsersModule,
+    CommonModule,
+    QuestionsModule,
+    AnswersModule,
+    CommentsModule,
+    AuthModule,
+    OutSourcingModule,
+    EnquiriesModule,
+    RepliesModule,
+    PaymentModule,
+    NotisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
