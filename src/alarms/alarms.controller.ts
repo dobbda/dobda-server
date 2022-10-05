@@ -19,38 +19,38 @@ import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { runInThisContext } from 'vm';
-import { GetNotisOutput } from './dtos/get-noti.dto';
-import { NotisService } from './notis.service';
+import { GetAlarmsOutput } from './dtos/get-alarm.dto';
+import { AlarmsService } from './alarms.service';
 
-@Controller('notis')
+@Controller('alarms')
 @ApiTags('알림 API')
-export class NotisController {
-  constructor(private readonly notisService: NotisService) {}
+export class AlarmsController {
+  constructor(private readonly alarmsService: AlarmsService) {}
 
   @Get()
   @ApiOperation({ summary: '알림 가져오기' })
-  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetNotisOutput })
+  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
-  async getNotis(@CurrentUser() user: User) {
-    return this.notisService.getNotis(user);
+  async getAlarms(@CurrentUser() user: User) {
+    return this.alarmsService.getAlarms(user);
   }
 
   @Get('/all')
   @ApiOperation({ summary: '모든 알림 가져오기' })
-  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetNotisOutput })
+  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
-  async getAllNotis(@CurrentUser() user: User) {
-    return this.notisService.getAllNotis(user);
+  async getAllAlarms(@CurrentUser() user: User) {
+    return this.alarmsService.getAllAlarms(user);
   }
 
   @Patch('/:id')
   @ApiOperation({ summary: '알림 체크' })
-  @ApiParam({ name: 'id', required: true, description: 'Noti Id' })
+  @ApiParam({ name: 'id', required: true, description: 'Alarm Id' })
   @ApiCreatedResponse({
     description: 'id에 해당하는 알림을 체크 상태로 변경한다',
   })
   @UseGuards(AccessTokenGuard)
-  async viewNoti(@Param('id') notiId: number, @CurrentUser() user: User) {
-    return this.notisService.viewNoti(notiId, user);
+  async viewAlarm(@Param('id') id: number, @CurrentUser() user: User) {
+    return this.alarmsService.viewAlarm(id, user);
   }
 }

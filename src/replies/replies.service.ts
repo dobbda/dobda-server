@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
 import { EnquiriesRepository } from 'src/enquiries/repositories/enquiries.repository';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateReplyDto } from './dtos/create-reply.dto';
 import { EditReplyDto } from './dtos/edit-reply.dto';
@@ -17,7 +17,7 @@ export class RepliesService {
   constructor(
     private readonly repliesRepository: RepliesRepository,
     private readonly enquiriesRepository: EnquiriesRepository,
-    private readonly notisService: NotisService,
+    private readonly alarmsService: AlarmsService,
   ) {}
 
   async getReplies(eid: number) {
@@ -53,7 +53,7 @@ export class RepliesService {
     await this.enquiriesRepository.update(enquiry.id, {
       repliesCount: enquiry.repliesCount + 1,
     });
-    await this.notisService.addReplyNoti(reply, user);
+    await this.alarmsService.addReplyAlarm(reply, user);
 
     return true;
   }

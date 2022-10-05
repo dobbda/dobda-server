@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { PaginationOuput } from 'src/common/dtos/pagination.dto';
-import { NotiType } from '../entities/noti.entity';
+import { AlarmType } from '../entities/alarm.entity';
 
-export class GetNoti {
+export class GetAlarm {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '아이디' })
@@ -12,7 +12,7 @@ export class GetNoti {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '타입' })
-  type: NotiType;
+  type: AlarmType;
 
   @IsString()
   @IsNotEmpty()
@@ -25,6 +25,6 @@ export class GetNoti {
   createdAt: Date;
 }
 
-export class GetNotisOutput {
-  notis: GetNoti[];
+export class GetAlarmsOutput {
+  alarms: GetAlarm[];
 }

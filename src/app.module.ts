@@ -20,7 +20,7 @@ import { PaymentModule } from './payment/payment.module';
 
 import { Answer } from './answers/entities/answer.entity';
 import { Enquiry } from './enquiries/entities/enquiry.entity';
-import { Noti } from './noti/entities/noti.entity';
+import { Alarm } from './alarms/entities/alarm.entity';
 import { OutSourcing } from './outSourcing/entities/outSourcing.entity';
 import { OutSourcingTag } from './outSourcing/entities/outSourcingTag.entity';
 import { Payment } from './payment/entities/payments.entity';
@@ -46,7 +46,6 @@ const authenticate = async (email: string, password: string) => {
   }
   return null;
 };
-
 
 @Module({
   imports: [
@@ -84,7 +83,7 @@ const authenticate = async (email: string, password: string) => {
     EnquiriesModule,
     RepliesModule,
     PaymentModule,
-    
+
     AdminModule.createAdmin({
       adminJsOptions: {
         rootPath: '/admin',
@@ -95,7 +94,7 @@ const authenticate = async (email: string, password: string) => {
           OutSourcingTag,
           Tag,
           QuestionTag,
-          Noti,
+          Alarm,
           Answer,
           Comment,
           Payment,

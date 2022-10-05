@@ -2,7 +2,7 @@ import { PaymentService } from './payment.service';
 import { Controller, Get, UseGuards, Param } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
-import { GetNotisOutput } from 'src/noti/dtos/get-noti.dto';
+import { GetAlarmsOutput } from 'src/alarms/dtos/get-alarm.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
 
@@ -13,7 +13,7 @@ export class PaymentController {
 
   @Get('/:page')
   @ApiOperation({ summary: '알림 가져오기' })
-  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetNotisOutput })
+  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
   async getPayments(@CurrentUser() user: User, @Param('page') page: number) {
     return this.paymentService.findAllPayments(user.id, page);

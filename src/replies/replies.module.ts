@@ -1,16 +1,23 @@
 import { EnquiriesRepository } from '../enquiries/repositories/enquiries.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { NotiModule } from 'src/noti/notis.module';
-import { NotisService } from 'src/noti/notis.service';
-import { NotisRepository } from 'src/noti/repositories/notis.repository';
-import {RepliesRepository } from './repositories/replies.repository';
+import { AlarmModule } from 'src/alarms/alarms.module';
+import { AlarmsService } from 'src/alarms/alarms.service';
+import { AlarmsRepository } from 'src/alarms/repositories/alarms.repository';
+import { RepliesRepository } from './repositories/replies.repository';
 import { RepliesController } from './replies.controller';
 import { RepliesService } from './replies.service';
 
 @Module({
-  imports: [NotiModule, TypeOrmModule.forFeature([RepliesRepository,EnquiriesRepository, NotisRepository])],
+  imports: [
+    AlarmModule,
+    TypeOrmModule.forFeature([
+      RepliesRepository,
+      EnquiriesRepository,
+      AlarmsRepository,
+    ]),
+  ],
   controllers: [RepliesController],
-  providers: [RepliesService, NotisService],
+  providers: [RepliesService, AlarmsService],
 })
 export class RepliesModule {}

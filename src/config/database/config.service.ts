@@ -11,7 +11,7 @@ import { Tag } from 'src/questions/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Image } from 'src/images/entities/image.entity';
-import { Noti } from 'src/noti/entities/noti.entity';
+import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
 import { Payment } from 'src/payment/entities/payments.entity';
 @Injectable()
@@ -35,7 +35,7 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Tag,
         Question,
         QuestionTag,
-        Noti,
+        Alarm,
         Answer,
         Comment,
         Payment,

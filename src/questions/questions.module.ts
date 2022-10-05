@@ -10,15 +10,15 @@ import { QuestionsService } from './questions.service';
 import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
-import { NotiModule } from 'src/noti/notis.module';
-import { NotisRepository } from 'src/noti/repositories/notis.repository';
-import { NotisService } from 'src/noti/notis.service';
+import { AlarmModule } from 'src/alarms/alarms.module';
+import { AlarmsRepository } from 'src/alarms/repositories/alarms.repository';
+import { AlarmsService } from 'src/alarms/alarms.service';
 import { PaymentModule } from 'src/payment/payment.module';
 
 @Module({
   imports: [
     AnswersModule,
-    NotiModule,
+    AlarmModule,
     PaymentModule,
     TypeOrmModule.forFeature([
       QuestionsRepository,
@@ -26,11 +26,11 @@ import { PaymentModule } from 'src/payment/payment.module';
       QuestionTagsRepository,
       ImagesRepository,
       UsersRepository,
-      NotisRepository,
+      AlarmsRepository,
       PaymentsRepository,
     ]),
   ],
   controllers: [QuestionController],
-  providers: [QuestionsService, AnswersService, NotisService],
+  providers: [QuestionsService, AnswersService, AlarmsService],
 })
 export class QuestionsModule {}

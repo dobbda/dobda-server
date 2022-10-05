@@ -12,7 +12,7 @@ import { Answer } from 'src/answers/entities/answer.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
-import { Noti } from 'src/noti/entities/noti.entity';
+import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
@@ -100,8 +100,8 @@ export class User extends CoreEntity {
   @OneToMany((type) => Payment, (Payment: Payment) => Payment.user)
   payments: Payment[];
 
-  @OneToMany((type) => Noti, (noti: Noti) => noti.to)
-  notis: Noti[];
+  @OneToMany((type) => Alarm, (alarm: Alarm) => alarm.to)
+  alarms: Alarm[];
 
   @OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
   enquiries: Enquiry[];
