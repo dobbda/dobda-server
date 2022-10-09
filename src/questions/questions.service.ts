@@ -111,21 +111,28 @@ export class QuestionsService {
     user: User,
   ) {
     const result = await this.findQuestionOrError(questionId);
+    console.log('결고: ', result);
     /*  question을 user가 만든게 맞는지 check */
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
+    console.log('newQuestion: ', 1);
+
     if (result.acceptedAnswerId) {
       throw new BadRequestException(
         '답변이 채택된 게시글은 수정이 불가능합니다.',
       );
     }
+    console.log('newQuestion: ', 2);
+
     const newQuestion = await this.questionsRepository.save([
       {
         id: result.id,
         ...editQuestion,
       },
     ]);
+
+    console.log('newQuestion: ', newQuestion);
 
     await this.questionTagsRepository.delete({ questionId });
     const tags = await this.tagsRepository.createNonExistTags(tagNames);

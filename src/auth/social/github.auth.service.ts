@@ -18,7 +18,10 @@ export class GithubAuthService {
   ) {}
 
   async getGithubInfo(socialCodeDto: SocialCodeDto): Promise<ResLoginUser> {
-    // 웹에서 query string으로 받은 code를 서버로 넘겨 받습니다.
+    const prod = process.env.NODE_ENV !== 'prod';
+    const redirectUri = prod
+      ? `${this.configService.get<string>('PROD_REDIR_URL')}/google`
+      : `${this.configService.get<string>('DEV_REDIR_URL')}/google`;
     try {
       const getTokenUrl: string = 'https://github.com/login/oauth/access_token'; // 깃허브 access token을 얻기위한 요청 API 주소
       const getUserUrl: string = 'https://api.github.com/user'; // 깃허브 유저 조회 API 주소
@@ -56,11 +59,11 @@ export class GithubAuthService {
       const githubInfo: UserRegisterDTO = {
         avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
         name,
-				nickname:name,
+        nickname: name,
         description: bio,
         email,
       };
-			
+
       return this.authService.verifyUserAndSignJWT(githubInfo);
     } catch (err) {
       console.log(err);
