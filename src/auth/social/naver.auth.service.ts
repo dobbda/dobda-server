@@ -17,7 +17,7 @@ export class NaverAuthService {
   ) {}
 
   async getNaverInfo(socialCodeDto: SocialCodeDto) {
-    const prod = process.env.NODE_ENV !== 'prod';
+    const prod = process.env.NODE_ENV == 'prod';
     const redirectUri = prod
       ? `${this.configService.get<string>('PROD_REDIR_URL')}/naver`
       : `${this.configService.get<string>('DEV_REDIR_URL')}/naver`;

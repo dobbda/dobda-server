@@ -17,7 +17,7 @@ export class GoogleAuthService {
   ) {}
 
   async getGoogleInfo(socialCodeDto: SocialCodeDto): Promise<any> {
-    const prod = process.env.NODE_ENV !== 'prod';
+    const prod = process.env.NODE_ENV == 'prod';
     const redirectUri = prod
       ? `${this.configService.get<string>('PROD_REDIR_URL')}/google`
       : `${this.configService.get<string>('DEV_REDIR_URL')}/google`;
