@@ -82,12 +82,12 @@ export class AnswersService {
     }
 
     answer.accepted = true;
-    question.acceptedAnswerId = answer.id;
-    question.acceptedAnswer = answer;
+    answer.accepted_question = question;
     answer.question = question;
+    answer.question.acceptedAnswer = answer;
     await this.answersRepository.save(answer);
-    await this.questionsRepository.save(question);
     await this.alarmsService.addAcceptAlarm(answer, toUser);
+
     await this.userRepository.update(user.id, {
       //채택한 수
       setAcceptCount: user.setAcceptCount + 1,
@@ -120,7 +120,6 @@ export class AnswersService {
     if (answer.accepted) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
-
     const newAnswer = await this.answersRepository.save({
       id: aid,
       content: content,

@@ -36,15 +36,14 @@ export class Enquiry extends CoreEntity {
   @OneToMany((type) => Reply, (reply) => reply.enquiry, {
     cascade: true,
   })
+  replies: Reply[];
+
   @RelationId((enquiry: Enquiry) => enquiry.outSourcing)
   outSourcingId: number;
 
   @Column({ default: 0 })
   repliesCount: number;
 
-  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.selectedEnquiry)
-  @JoinColumn()
-  selectedEnquiry: OutSourcing;
-
-  replies: Reply[];
+  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.pickEn)
+  pick_outSourcing: OutSourcing;
 }

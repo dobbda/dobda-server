@@ -69,15 +69,15 @@ export class Question extends CoreEntity {
   })
   questionTags: QuestionTag[];
 
-  @OneToOne((type) => Answer)
-  @JoinColumn()
-  acceptedAnswer: Answer;
-
   @ApiProperty({
     description: '질문 작성자 id',
   })
   @RelationId((question: Question) => question.author)
   authorId: number;
+
+  @OneToOne((type) => Answer, (answer) => answer.accepted_question)
+  @JoinColumn()
+  acceptedAnswer: Answer;
 
   @ApiProperty({
     description: '채택답변 id',

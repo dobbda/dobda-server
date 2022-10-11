@@ -20,7 +20,6 @@ export class EnquiriesService {
   ) {}
 
   async getEnquiries(oid: number) {
-    console.log(oid);
     const enquiries = await this.enquiryRepository
       .createQueryBuilder('enquiry')
       .where({ outSourcing: oid })
@@ -72,11 +71,8 @@ export class EnquiriesService {
     if (enquiry.selected) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
-
-    const newEnquiry = await this.enquiryRepository.save({
-      id: oid,
-      content: content,
-    });
+    enquiry.content = content;
+    const newEnquiry = await this.enquiryRepository.save(enquiry);
     return newEnquiry;
   }
 

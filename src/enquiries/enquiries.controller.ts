@@ -33,7 +33,6 @@ export class EnquiriesController {
     description: '문의 조회',
     type: GetEnquiriesOutput,
   })
-
   async getEnquiries(@Param('oid') oid: number) {
     return this.enquiriesService.getEnquiries(oid);
   }
@@ -70,11 +69,11 @@ export class EnquiriesController {
   @ApiCreatedResponse({ description: '문의을 등록한다' })
   @UseGuards(AccessTokenGuard)
   async editEnquiry(
-    @Param('id') aid: number,
+    @Param('id') eid: number,
     @Body('content') content: string,
     @CurrentUser() user: User,
   ) {
-    return this.enquiriesService.editEnquiry(content, aid, user);
+    return this.enquiriesService.editEnquiry(content, eid, user);
   }
 
   @Delete('/:id')

@@ -36,8 +36,9 @@ export class Answer extends CoreEntity {
   @Column({ default: 0 })
   commentsCount: number;
 
-  @OneToOne((type) => Question)
-  @JoinColumn()
+  @OneToOne((type) => Question, (question) => question.acceptedAnswer, {
+    cascade: ['update', 'insert'], //update insert
+  })
   accepted_question: Question;
 
   @OneToMany((type) => Comment, (comment) => comment.answer)

@@ -25,6 +25,9 @@ export class OutSourcing extends CoreEntity {
   @IsString()
   title: string;
 
+  @Column({ default: '' })
+  cardImage: string;
+
   @ApiProperty({
     description: '외주 내용',
     required: true,
@@ -73,16 +76,11 @@ export class OutSourcing extends CoreEntity {
   })
   enquiries: Enquiry[];
 
-  /* 채택답변 */
-  @OneToOne((type) => Enquiry)
-  @JoinColumn()
-  selectedEnquiry: Enquiry;
-
   @OneToMany(
     (type) => OutSourcingTag,
     (outSourcingTag) => outSourcingTag.outSourcingId,
     {
-      cascade: true,
+      onDelete: 'CASCADE',
     },
   )
   outSourcingTags: OutSourcingTag[];
@@ -96,9 +94,16 @@ export class OutSourcing extends CoreEntity {
   @Column({ default: 0 })
   enquiriesCount: number;
 
-  @Column({ default: '' })
-  cardImage: string;
+  @ApiProperty({
+    description: '선택된 답변',
+  })
+  @OneToOne((type) => Enquiry, (enquiry) => enquiry.pick_outSourcing)
+  @JoinColumn()
+  pickEn: Enquiry;
 
-  @RelationId((outSourcing: OutSourcing) => outSourcing.selectedEnquiry)
-  selectedEnquiryId: number;
+  @ApiProperty({
+    description: '선택된 답변id',
+  })
+  @RelationId((outSourcing: OutSourcing) => outSourcing.pickEn)
+  pickEnId: number;
 }
