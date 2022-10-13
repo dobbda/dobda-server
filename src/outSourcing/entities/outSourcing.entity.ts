@@ -80,7 +80,7 @@ export class OutSourcing extends CoreEntity {
     (type) => OutSourcingTag,
     (outSourcingTag) => outSourcingTag.outSourcingId,
     {
-      onDelete: 'CASCADE',
+      cascade: true,
     },
   )
   outSourcingTags: OutSourcingTag[];

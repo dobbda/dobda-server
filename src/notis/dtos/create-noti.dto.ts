@@ -17,4 +17,8 @@ export class CreateNotiDto {
   @IsNotEmpty()
   @ApiProperty({ description: '내용' })
   readonly title: string;
+
+  @IsString()
+  @ApiProperty({ description: '내용' })
+  readonly image: string;
 }

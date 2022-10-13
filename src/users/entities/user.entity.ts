@@ -118,4 +118,7 @@ export class User extends CoreEntity {
 
   @Column({ default: 0 })
   outSourcingCount: number;
+
+  @Column({ default: 0 })
+  role: number;
 }
