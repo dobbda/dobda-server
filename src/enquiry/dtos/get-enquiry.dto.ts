@@ -11,7 +11,7 @@ export class GetEnquiryDto {
   oid: number;
 }
 
-export class GetEnquiriesOutput {
+export class GetEnquiryOutput {
   @ApiProperty({ description: 'result' })
   result: Enquiry[];
 }

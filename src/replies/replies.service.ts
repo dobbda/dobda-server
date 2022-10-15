@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
-import { EnquiriesRepository } from 'src/enquiries/repositories/enquiries.repository';
+import { EnquiryRepository } from 'src/enquiry/repositories/enquiry.repository';
 import { AlarmsService } from 'src/alarms/alarms.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateReplyDto } from './dtos/create-reply.dto';
@@ -16,7 +16,7 @@ import { RepliesRepository } from './repositories/replies.repository';
 export class RepliesService {
   constructor(
     private readonly repliesRepository: RepliesRepository,
-    private readonly enquiriesRepository: EnquiriesRepository,
+    private readonly enquiryRepository: EnquiryRepository,
     private readonly alarmsService: AlarmsService,
   ) {}
 
@@ -40,7 +40,7 @@ export class RepliesService {
 
   async createReply({ eid, content }: CreateReplyDto, user: User) {
     /* Question 가져오기 */
-    const enquiry = await this.enquiriesRepository.findOne(eid);
+    const enquiry = await this.enquiryRepository.findOne(eid);
 
     if (!enquiry) return;
 
@@ -50,7 +50,7 @@ export class RepliesService {
       user,
     );
 
-    await this.enquiriesRepository.update(enquiry.id, {
+    await this.enquiryRepository.update(enquiry.id, {
       repliesCount: enquiry.repliesCount + 1,
     });
     await this.alarmsService.addReplyAlarm(reply, user);
@@ -101,7 +101,7 @@ export class RepliesService {
     if (result.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정이 가능합니다');
     }
-    await this.enquiriesRepository.update(rid, { repliesCount: () => '- 1' });
+    await this.enquiryRepository.update(rid, { repliesCount: () => '- 1' });
     await this.repliesRepository.delete({ id: rid });
     return true;
   }

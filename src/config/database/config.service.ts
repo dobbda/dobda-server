@@ -12,7 +12,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
 import { Image } from 'src/images/entities/image.entity';
 import { Alarm } from 'src/alarms/entities/alarm.entity';
-import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Payment } from 'src/payment/entities/payments.entity';
 import { Noti } from 'src/notis/entities/noti.entity';
 @Injectable()

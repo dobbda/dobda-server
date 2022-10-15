@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -13,28 +14,29 @@ import {
   ApiCreatedResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
-import { EnquiriesService } from './enquiries.service';
+import { EnquiryService } from './enquiry.service';
 import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
-import { GetEnquiryDto, GetEnquiriesOutput } from './dtos/get-enquiry.dto';
+import { GetEnquiryDto, GetEnquiryOutput } from './dtos/get-enquiry.dto';
 
-@Controller('enquiries')
+@Controller('enquiry')
 @ApiTags('outSourcing 문의 API<reply parents>')
-export class EnquiriesController {
-  constructor(private readonly enquiriesService: EnquiriesService) {}
+export class EnquiryController {
+  constructor(private readonly enquiryService: EnquiryService) {}
 
   @Get('/:oid')
   @ApiOperation({ summary: '문의 조회' })
   @ApiCreatedResponse({
     description: '문의 조회',
-    type: GetEnquiriesOutput,
+    type: GetEnquiryOutput,
   })
-  async getEnquiries(@Param('oid') oid: number) {
-    return this.enquiriesService.getEnquiries(oid);
+  async getEnquiry(@Param('oid') oid: number) {
+    return this.enquiryService.getEnquiry(oid);
   }
 
   @Post()
@@ -46,21 +48,7 @@ export class EnquiriesController {
     @Body() createEnquiryDto: CreateEnquiryDto,
     @CurrentUser() user: User,
   ) {
-    return this.enquiriesService.createEnquiry(createEnquiryDto, user);
-  }
-
-  @Get('/select/:id')
-  @ApiOperation({ summary: '문의 선택' })
-  @ApiParam({ name: 'id', required: true, description: 'enquiry Id' })
-  @ApiCreatedResponse({
-    description: 'id에 해당하는 문의 글에 결제프로세스를 진행한다',
-  })
-  @UseGuards(AccessTokenGuard)
-  async acceptEnquiry(
-    @Param('id') enquiryId: number,
-    @CurrentUser() user: User,
-  ) {
-    return this.enquiriesService.selectEnquiry(enquiryId, user);
+    return this.enquiryService.createEnquiry(createEnquiryDto, user);
   }
 
   @Patch('/:id')
@@ -73,7 +61,7 @@ export class EnquiriesController {
     @Body('content') content: string,
     @CurrentUser() user: User,
   ) {
-    return this.enquiriesService.editEnquiry(content, eid, user);
+    return this.enquiryService.editEnquiry(content, eid, user);
   }
 
   @Delete('/:id')
@@ -81,6 +69,21 @@ export class EnquiriesController {
   @ApiCreatedResponse({ description: '문의를 삭제한다' })
   @UseGuards(AccessTokenGuard)
   async deledteEnquiry(@Param('id') aid: number, @CurrentUser() user: User) {
-    return this.enquiriesService.deleteEnquiry(aid, user);
+    return this.enquiryService.deleteEnquiry(aid, user);
+  }
+
+  @Get('/pick')
+  @ApiOperation({ summary: '유저선택' })
+  @ApiQuery({ name: 'oid&eid', required: true, description: 'enquiry Id' })
+  @ApiCreatedResponse({
+    description: 'id에 해당하는 문의 글에 결제프로세스를 진행한다',
+  })
+  @UseGuards(AccessTokenGuard)
+  async acceptEnquiry(
+    @Query('oid') oid: number,
+    @Query('eid') eid: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.enquiryService.pickEnquiry(oid, eid, user);
   }
 }

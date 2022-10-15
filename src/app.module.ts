@@ -1,4 +1,4 @@
-import { EnquiriesModule } from './enquiries/enquiries.module';
+import { EnquiryModule } from './enquiry/enquiry.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -19,7 +19,7 @@ import { RepliesModule } from './replies/replies.module';
 import { PaymentModule } from './payment/payment.module';
 
 import { Answer } from './answers/entities/answer.entity';
-import { Enquiry } from './enquiries/entities/enquiry.entity';
+import { Enquiry } from './enquiry/entities/enquiry.entity';
 import { Alarm } from './alarms/entities/alarm.entity';
 import { OutSourcing } from './outSourcing/entities/outSourcing.entity';
 import { OutSourcingTag } from './outSourcing/entities/outSourcingTag.entity';
@@ -113,7 +113,7 @@ const authenticate = async (email: string, password: string) => {
     CommentsModule,
     AuthModule,
     OutSourcingModule,
-    EnquiriesModule,
+    EnquiryModule,
     RepliesModule,
     PaymentModule,
     NotisModule,

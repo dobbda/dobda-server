@@ -15,7 +15,7 @@ import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
 import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 
 export class SkillName {
@@ -104,7 +104,7 @@ export class User extends CoreEntity {
   alarms: Alarm[];
 
   @OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
-  enquiries: Enquiry[];
+  enquiry: Enquiry[];
 
   // //////////////////////////////////////////////////////////////////
   @Column({ default: 0 })

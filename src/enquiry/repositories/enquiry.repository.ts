@@ -5,8 +5,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Enquiry } from '../entities/enquiry.entity';
 
 @EntityRepository(Enquiry)
-export class EnquiriesRepository extends Repository<Enquiry> {
-
+export class EnquiryRepository extends Repository<Enquiry> {
   async createEnquiry(
     createEnquiry: { content: string },
     outSourcing: OutSourcing,

@@ -1,7 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 
 @EntityRepository(Reply)
 export class RepliesRepository extends Repository<Reply> {

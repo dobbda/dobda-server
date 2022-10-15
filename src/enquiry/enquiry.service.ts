@@ -9,18 +9,18 @@ import { AlarmsService } from 'src/alarms/alarms.service';
 import { User } from 'src/users/entities/user.entity';
 import { CreateEnquiryDto } from './dtos/create-enquiry.dto';
 import { GetEnquiryDto } from './dtos/get-enquiry.dto';
-import { EnquiriesRepository } from './repositories/enquiries.repository';
+import { EnquiryRepository } from './repositories/enquiry.repository';
 
 @Injectable()
-export class EnquiriesService {
+export class EnquiryService {
   constructor(
-    private readonly enquiryRepository: EnquiriesRepository,
+    private readonly enquiryRepository: EnquiryRepository,
     private readonly outSourceRepository: OutSourcingRepository,
     private readonly alarmsService: AlarmsService,
   ) {}
 
-  async getEnquiries(oid: number) {
-    const enquiries = await this.enquiryRepository
+  async getEnquiry(oid: number) {
+    const enquiry = await this.enquiryRepository
       .createQueryBuilder('enquiry')
       .where({ outSourcing: oid })
       .leftJoin('enquiry.author', 'author')
@@ -33,7 +33,7 @@ export class EnquiriesService {
       .orderBy('enquiry.updatedAt', 'DESC')
       .getMany();
     return {
-      enquiries,
+      enquiry,
     };
   }
 
@@ -52,13 +52,11 @@ export class EnquiriesService {
     );
 
     await this.outSourceRepository.update(oid, {
-      enquiriesCount: outSourcing.enquiriesCount + 1,
+      enquiryCount: outSourcing.enquiryCount + 1,
     });
     // await this.alarmsService.addEnquiryAlarm(enquiry, user);
     return true;
   }
-
-  async selectEnquiry(enquiryId: number, user: User) {}
 
   async editEnquiry(content: string, oid: number, user: User) {
     const enquiry = await this.enquiryRepository.findOne({ id: oid });
@@ -68,7 +66,7 @@ export class EnquiriesService {
     if (enquiry.repliesCount) {
       throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
     }
-    if (enquiry.selected) {
+    if (enquiry.picked) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
     enquiry.content = content;
@@ -88,19 +86,21 @@ export class EnquiriesService {
     if (enquiry.repliesCount) {
       throw new BadRequestException('댓글이 달린 답변은 수정이 불가능합니다.');
     }
-    if (enquiry.selected) {
+    if (enquiry.picked) {
       throw new BadRequestException('채택된 답변은 수정이 불가능합니다.');
     }
     await this.outSourceRepository.update(outSourcing.id, {
-      enquiriesCount: outSourcing.enquiriesCount - 1,
+      enquiryCount: outSourcing.enquiryCount - 1,
     });
 
     await this.enquiryRepository.delete({
       id: oid,
     });
 
-    await this.outSourceRepository.update(oid, { enquiriesCount: () => '- 1' });
+    await this.outSourceRepository.update(oid, { enquiryCount: () => '- 1' });
 
     return { success: true };
   }
+
+  async pickEnquiry(eid: number, oid: number, user: User) {}
 }
