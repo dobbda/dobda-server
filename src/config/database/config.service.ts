@@ -1,3 +1,4 @@
+import { CoinHistory } from '../../payment/entities/coinHistory.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +16,7 @@ import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Payment } from 'src/payment/entities/payments.entity';
 import { Noti } from 'src/notis/entities/noti.entity';
+import { CoinReserv } from 'src/payment/entities/coinReserv.entity';
 @Injectable()
 export class PostgresConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -44,6 +46,8 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
         Enquiry,
         Reply,
         Noti,
+        CoinHistory,
+        CoinReserv,
       ],
       migrations: ['src/migration/**/*.ts'],
       subscribers: ['src/subscriber/**/*.ts'],

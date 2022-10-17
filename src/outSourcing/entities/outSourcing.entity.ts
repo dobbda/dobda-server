@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
+import { CoinReserv } from 'src/payment/entities/coinReserv.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -106,4 +107,7 @@ export class OutSourcing extends CoreEntity {
   })
   @RelationId((outSourcing: OutSourcing) => outSourcing.pickEn)
   pickEnId: number;
+
+  @OneToOne(() => CoinReserv, (coinReserv: CoinReserv) => coinReserv.question)
+  coinReserv: CoinReserv; // 외주
 }

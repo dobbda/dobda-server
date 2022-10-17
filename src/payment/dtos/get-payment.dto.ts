@@ -12,7 +12,3 @@ export class GetPaymentDto extends PaginationDto {
   @ApiProperty({ description: '아이디' })
   userId: number;
 }
-
-export class OutPayments extends PaginationOuput {
-  payments: Payment[];
-}

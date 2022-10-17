@@ -24,13 +24,12 @@ export class UsersService {
   }
 
   async getUserInfo(userId: number) {
-    const { refreshToken, ...res } = await this.usersRepository.findOne({
-      id: userId,
-    });
+    const { refreshToken, coin, createdAt, updatedAt, ...res } =
+      await this.usersRepository.findOne({
+        id: userId,
+      });
     if (!res) {
-      throw new NotFoundException(
-        ` <ID: ${userId}>를 가진 유저가 존재하지 않습니다`,
-      );
+      throw new NotFoundException(` 존재하지 않는 유저입니다 `);
     }
     return res;
   }

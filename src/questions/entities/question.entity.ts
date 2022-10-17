@@ -3,6 +3,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { Answer } from 'src/answers/entities/answer.entity';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { Image } from 'src/images/entities/image.entity';
+import { CoinReserv } from 'src/payment/entities/coinReserv.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -84,4 +85,7 @@ export class Question extends CoreEntity {
   })
   @RelationId((question: Question) => question.acceptedAnswer)
   acceptedAnswerId: number;
+
+  @OneToOne(() => CoinReserv, (coinReserv: CoinReserv) => coinReserv.question)
+  coinReserv: CoinReserv; // 외주
 }

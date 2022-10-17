@@ -1,3 +1,5 @@
+import { CoinReserv } from './payment/entities/coinReserv.entity';
+import { CoinHistory } from './payment/entities/coinHistory.entity';
 import { EnquiryModule } from './enquiry/enquiry.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -89,10 +91,12 @@ const authenticate = async (email: string, password: string) => {
           Alarm,
           Answer,
           Comment,
-          Payment,
           Enquiry,
           Reply,
           Noti,
+          Payment,
+          CoinHistory,
+          CoinReserv,
         ],
         branding: {
           companyName: 'DOBDA',

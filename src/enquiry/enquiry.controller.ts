@@ -29,6 +29,17 @@ import { GetEnquiryDto, GetEnquiryOutput } from './dtos/get-enquiry.dto';
 export class EnquiryController {
   constructor(private readonly enquiryService: EnquiryService) {}
 
+  @Patch('/pick')
+  @ApiOperation({ summary: '유저선택' })
+  @UseGuards(AccessTokenGuard)
+  async acceptEnquiry(
+    @CurrentUser() user: User,
+    @Query('oid') oid: number,
+    @Query('eid') eid: number,
+  ) {
+    return this.enquiryService.pickEnquiry(oid, eid, user);
+  }
+
   @Get('/:oid')
   @ApiOperation({ summary: '문의 조회' })
   @ApiCreatedResponse({
@@ -70,20 +81,5 @@ export class EnquiryController {
   @UseGuards(AccessTokenGuard)
   async deledteEnquiry(@Param('id') aid: number, @CurrentUser() user: User) {
     return this.enquiryService.deleteEnquiry(aid, user);
-  }
-
-  @Get('/pick')
-  @ApiOperation({ summary: '유저선택' })
-  @ApiQuery({ name: 'oid&eid', required: true, description: 'enquiry Id' })
-  @ApiCreatedResponse({
-    description: 'id에 해당하는 문의 글에 결제프로세스를 진행한다',
-  })
-  @UseGuards(AccessTokenGuard)
-  async acceptEnquiry(
-    @Query('oid') oid: number,
-    @Query('eid') eid: number,
-    @CurrentUser() user: User,
-  ) {
-    return this.enquiryService.pickEnquiry(oid, eid, user);
   }
 }

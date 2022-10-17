@@ -1,3 +1,5 @@
+import { PaymentService } from 'src/payment/payment.service';
+import { CoinReservsRepository } from './../payment/repositories/coinReserv.repository';
 import {
   BadRequestException,
   Injectable,
@@ -12,6 +14,7 @@ import { QuestionsRepository } from './repositories/questions.repository';
 import { QuestionTagsRepository } from './repositories/questionTags.repository';
 import { TagsRepository } from './repositories/tags.repository';
 import { AnswersService } from 'src/answers/answers.service';
+import { PayType } from 'src/payment/entities/payments.entity';
 
 @Injectable()
 export class QuestionsService {
@@ -21,6 +24,7 @@ export class QuestionsService {
     private readonly questionTagsRepository: QuestionTagsRepository,
     private readonly usersRepository: UsersRepository,
     private readonly answersService: AnswersService,
+    private readonly paymentsService: PaymentService,
   ) {}
 
   async findQuestionOrError(questionId: number, getAuthor?: boolean) {
@@ -76,11 +80,25 @@ export class QuestionsService {
     { tagNames, content, ...rest }: CreateQuestionDto,
     user: User,
   ) {
+    if (rest.coin > user.coin) {
+      throw new BadRequestException('보유한 코인보다 많습니다.');
+    }
+
     /* question생성 */
     const question = await this.questionsRepository.createQuestion(
       { content: content, ...rest },
       user,
     );
+
+    /* 코인 있을시 유저코인에서 => 임시저장소 */
+    if (question.coin > 0) {
+      await this.paymentsService.userToReserv({
+        coin: question.coin,
+        type: PayType.QUESTION,
+        user,
+        question,
+      });
+    }
     /* tag생성 */
     const tags = await this.tagsRepository.createNonExistTags(tagNames);
     /* questionTag 생성 */

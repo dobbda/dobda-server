@@ -8,6 +8,7 @@ import { EnquiryController } from './enquiry.controller';
 import { EnquiryService } from './enquiry.service';
 import { EnquiryRepository } from './repositories/enquiry.repository';
 import { AlarmModule } from 'src/alarms/alarms.module';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AlarmModule } from 'src/alarms/alarms.module';
       EnquiryRepository,
       OutSourcingRepository,
       AlarmsRepository,
+      UsersRepository,
     ]),
   ],
   controllers: [EnquiryController],

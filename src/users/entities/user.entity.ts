@@ -1,3 +1,5 @@
+import { CoinReserv } from './../../payment/entities/coinReserv.entity';
+import { CoinHistory } from './../../payment/entities/coinHistory.entity';
 import { Payment } from '../../payment/entities/payments.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
@@ -97,8 +99,11 @@ export class User extends CoreEntity {
   @OneToMany((type) => Reply, (reply: Reply) => reply.author)
   replies: Reply[];
 
-  @OneToMany((type) => Payment, (Payment: Payment) => Payment.user)
-  payments: Payment[];
+  @OneToMany((type) => CoinHistory, (hist: CoinHistory) => hist.user)
+  coinHistory: CoinHistory[];
+
+  @OneToMany((type) => CoinReserv, (reserv: CoinReserv) => reserv.user)
+  coinReservs: CoinReserv[];
 
   @OneToMany((type) => Alarm, (alarm: Alarm) => alarm.to)
   alarms: Alarm[];

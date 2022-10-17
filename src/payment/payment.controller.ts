@@ -11,11 +11,18 @@ import { User } from 'src/users/entities/user.entity';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Get('/:page')
+  @Get('history/:page')
   @ApiOperation({ summary: '알림 가져오기' })
   @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
-  async getPayments(@CurrentUser() user: User, @Param('page') page: number) {
-    return this.paymentService.findAllPayments(user.id, page);
+  async getCoinHistory(@CurrentUser() user: User, @Param('page') page: number) {
+    return this.paymentService.findAllCoinHistory(user, page);
+  }
+  @Get('reserv/:page')
+  @ApiOperation({ summary: '알림 가져오기' })
+  @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
+  @UseGuards(AccessTokenGuard)
+  async getCoinReserv(@CurrentUser() user: User, @Param('page') page: number) {
+    return this.paymentService.findAllCoinReserv(user, page);
   }
 }

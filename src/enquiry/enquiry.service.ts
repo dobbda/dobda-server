@@ -102,5 +102,7 @@ export class EnquiryService {
     return { success: true };
   }
 
-  async pickEnquiry(eid: number, oid: number, user: User) {}
+  async pickEnquiry(eid: number | string, oid: number | string, user: User) {
+    console.log('선택', user, eid, oid);
+  }
 }

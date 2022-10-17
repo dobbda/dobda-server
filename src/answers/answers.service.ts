@@ -97,12 +97,12 @@ export class AnswersService {
       getAcceptCount: toUser.getAcceptCount + 1,
     });
 
-    if (question.coin > 0 && user.coin >= question.coin) {
+    if (question.coin > 0) {
       this.paymentService.tossCoin(
         user,
         answer.authorId,
-        question.coin,
         PayType.QUESTION,
+        question,
       );
     }
 
