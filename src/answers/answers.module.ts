@@ -1,3 +1,6 @@
+import { UsersModule } from './../users/users.module';
+import { QuestionsModule } from './../questions/questions.module';
+import { CoinHistorysRepository } from './../payment/repositories/coinHistory.repository';
 import { PaymentModule } from './../payment/payment.module';
 import { PaymentService } from './../payment/payment.service';
 import { PaymentsRepository } from '../payment/repositories/payment.repository';
@@ -14,15 +17,14 @@ import { AlarmModule } from 'src/alarms/alarms.module';
 
 @Module({
   imports: [
-    AlarmModule,
-    PaymentModule,
     TypeOrmModule.forFeature([
       AnswersRepository,
       QuestionsRepository,
-      AlarmsRepository,
       UsersRepository,
-      PaymentsRepository,
     ]),
+    AlarmModule,
+    PaymentModule,
+    UsersModule,
   ],
   controllers: [AnswersController],
   providers: [AnswersService, AlarmsService, PaymentService],

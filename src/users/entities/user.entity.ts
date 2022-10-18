@@ -1,3 +1,5 @@
+import { CoinReserv } from './../../payment/entities/coinReserv.entity';
+import { CoinHistory } from './../../payment/entities/coinHistory.entity';
 import { Payment } from '../../payment/entities/payments.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
@@ -15,7 +17,7 @@ import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
 import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Question } from 'src/questions/entities/question.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 
 export class SkillName {
@@ -97,14 +99,17 @@ export class User extends CoreEntity {
   @OneToMany((type) => Reply, (reply: Reply) => reply.author)
   replies: Reply[];
 
-  @OneToMany((type) => Payment, (Payment: Payment) => Payment.user)
-  payments: Payment[];
+  @OneToMany((type) => CoinHistory, (hist: CoinHistory) => hist.user)
+  coinHistory: CoinHistory[];
+
+  @OneToMany((type) => CoinReserv, (reserv: CoinReserv) => reserv.user)
+  coinReservs: CoinReserv[];
 
   @OneToMany((type) => Alarm, (alarm: Alarm) => alarm.to)
   alarms: Alarm[];
 
   @OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
-  enquiries: Enquiry[];
+  enquiry: Enquiry[];
 
   // //////////////////////////////////////////////////////////////////
   @Column({ default: 0 })
@@ -118,4 +123,7 @@ export class User extends CoreEntity {
 
   @Column({ default: 0 })
   outSourcingCount: number;
+
+  @Column({ default: 0 })
+  role: number;
 }

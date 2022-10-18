@@ -1,3 +1,5 @@
+import { UsersRepository } from './../users/users.repository';
+import { QuestionsRepository } from './../questions/repositories/questions.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswersRepository } from 'src/answers/repositories/answers.repository';
@@ -15,6 +17,8 @@ import { CommentsRepository } from './repositories/comments.repository';
       CommentsRepository,
       AnswersRepository,
       AlarmsRepository,
+      QuestionsRepository,
+      UsersRepository,
     ]),
   ],
   controllers: [CommentsController],

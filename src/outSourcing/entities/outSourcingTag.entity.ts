@@ -13,9 +13,7 @@ export class OutSourcingTag extends CoreEntity {
   @JoinColumn({ name: 'outSourcingId' })
   outSourcingId: number;
 
-  @ManyToOne((type) => Tag, (tag) => tag.outSourcingTags, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne((type) => Tag, (tag) => tag.outSourcingTags)
   @JoinColumn({ name: 'tagId' })
   tagId: number;
 }

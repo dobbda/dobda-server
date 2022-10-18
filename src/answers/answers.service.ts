@@ -46,6 +46,7 @@ export class AnswersService {
   async createAnswer({ content, qid }: CreateAnswerDto, user: User) {
     /* question 가져오기 */
     const question = await this.questionsRepository.findOne(qid);
+    const alarmUser = await this.userRepository.findOne(question.authorId);
 
     if (question === null) {
       throw new NotFoundException('잘못된 접근입니다.');
@@ -60,7 +61,7 @@ export class AnswersService {
       user,
     );
 
-    await this.alarmsService.addAnswerAlarm(answer, user);
+    await this.alarmsService.addAnswerAlarm(answer, question, alarmUser);
     return true;
   }
 
@@ -86,7 +87,7 @@ export class AnswersService {
     answer.question = question;
     answer.question.acceptedAnswer = answer;
     await this.answersRepository.save(answer);
-    await this.alarmsService.addAcceptAlarm(answer, toUser);
+    await this.alarmsService.addAcceptAlarm(answer, question, toUser);
 
     await this.userRepository.update(user.id, {
       //채택한 수
@@ -97,12 +98,12 @@ export class AnswersService {
       getAcceptCount: toUser.getAcceptCount + 1,
     });
 
-    if (question.coin > 0 && user.coin >= question.coin) {
+    if (question.coin > 0) {
       this.paymentService.tossCoin(
         user,
         answer.authorId,
-        question.coin,
         PayType.QUESTION,
+        question,
       );
     }
 

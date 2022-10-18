@@ -18,17 +18,13 @@ export class Enquiry extends CoreEntity {
   @Column()
   content: string;
 
-  // 채택 여부
-  @Column({ default: false })
-  selected: boolean;
-
-  @ManyToOne((type) => User, (user) => user.enquiries)
+  @ManyToOne((type) => User, (user) => user.enquiry)
   author: User;
 
   @RelationId((enquiry: Enquiry) => enquiry.author)
   authorId: number;
 
-  @ManyToOne((type) => OutSourcing, (outSourcing) => outSourcing.enquiries, {
+  @ManyToOne((type) => OutSourcing, (outSourcing) => outSourcing.enquiry, {
     onDelete: 'CASCADE',
   })
   outSourcing: OutSourcing;
@@ -44,6 +40,10 @@ export class Enquiry extends CoreEntity {
   @Column({ default: 0 })
   repliesCount: number;
 
-  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.pickEn)
+  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.pickEnquiry)
   pick_outSourcing: OutSourcing;
+
+  // 채택 여부
+  @Column({ default: false })
+  picked: boolean;
 }

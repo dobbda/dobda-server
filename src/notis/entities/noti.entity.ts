@@ -7,13 +7,6 @@ import { ApiProperty } from '@nestjs/swagger';
 @Entity()
 export class Noti extends CoreEntity {
   @ApiProperty({
-    description: '메인 등록 여부',
-  })
-  @Column({ default: false })
-  @IsBoolean()
-  main: boolean;
-
-  @ApiProperty({
     description: 'title',
   })
   @Column()
@@ -28,9 +21,9 @@ export class Noti extends CoreEntity {
   content: string;
 
   @ApiProperty({
-    description: 'main image url',
+    description: 'notion link? ',
   })
   @Column({ nullable: true })
   @IsUrl()
-  image: string;
+  link?: string;
 }

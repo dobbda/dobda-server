@@ -1,3 +1,6 @@
+import { Question } from './../questions/entities/question.entity';
+import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 import {
   ForbiddenException,
@@ -20,40 +23,22 @@ export class AlarmsService {
     await this.alarmsRepository.createAlarm(dto);
   }
 
-  async getAlarms(user: User): Promise<GetAlarmsOutput> {
+  async getAlarms(user: User, all?: boolean): Promise<GetAlarmsOutput> {
     const result = await this.alarmsRepository.find({
       where: {
         to: user,
       },
-      take: 5,
+      take: all ? 100 : 10,
     });
 
     return {
-      alarms: result.map((x) => {
+      result: result.map((x) => {
         return {
           id: x.id,
+          checked: x.checked,
           type: x.type,
           createdAt: x.createdAt,
-          content: x.content,
-        };
-      }),
-    };
-  }
-
-  async getAllAlarms(user: User): Promise<GetAlarmsOutput> {
-    const result = await this.alarmsRepository.find({
-      where: {
-        to: user,
-      },
-    });
-
-    return {
-      alarms: result.map((x) => {
-        return {
-          id: x.id,
-          type: x.type,
-          createdAt: x.createdAt,
-          content: x.content,
+          content: JSON.parse(x.content),
         };
       }),
     };
@@ -61,6 +46,7 @@ export class AlarmsService {
 
   async viewAlarm(id: number, user: User) {
     const alarm = await this.alarmsRepository.findOneAlarmWithId(id);
+    console.log('알람: ', id, alarm);
 
     if (!alarm) {
       throw new NotFoundException('id에 해당하는 noti가 없습니다.');
@@ -74,53 +60,103 @@ export class AlarmsService {
 
     this.alarmsRepository.save(alarm);
 
-    return null;
+    return true;
   }
 
-  async addAnswerAlarm(answer: Answer, to: User) {
+  async addAnswerAlarm(answer: Answer, question: Question, to: User) {
     this.createAlarm({
       type: AlarmType.ANSWER,
       content: JSON.stringify({
         questionId: answer.question.id,
-        content: answer.content.substring(0, 20),
+        answerId: answer.id,
+        content: `[${question.title.substring(
+          0,
+          10,
+        )}...]글에 답글이 달렸습니다.`,
       }),
       to: to,
     });
   }
 
-  async addCommentAlarm(comment: Comment, to: User) {
+  async addCommentAlarm(comment: Comment, question: Question, to: User) {
     //question 댓글
     this.createAlarm({
       type: AlarmType.COMMENT,
       content: JSON.stringify({
         questionId: comment.answer.questionId,
-        answerId: comment.answer.id,
-        content: comment.content.substring(0, 20),
+        answerId: comment.answerId,
+        commentId: comment.id,
+        content: `[${question.title.substring(
+          0,
+          10,
+        )}...]에 남긴 답변에 답글이달렸습니다`,
+      }),
+      to: to,
+    });
+  }
+  async addAcceptAlarm(answer: Answer, question: Question, to: User) {
+    this.createAlarm({
+      type: AlarmType.ACCEPT,
+      content: JSON.stringify({
+        questionId: answer.question.id,
+        answerId: answer.id,
+        content: `[${question.title.substring(
+          0,
+          10,
+        )}...] 에남긴 답변이 채택되었습니다.`,
       }),
       to: to,
     });
   }
 
-  async addReplyAlarm(reply: Reply, to: User) {
+  /* sourcing */
+  async addReplyAlarm(reply: Reply, sourcing: OutSourcing, to: User) {
     //outSourcing 댓글
     console.log(reply);
     this.createAlarm({
       type: AlarmType.COMMENT,
       content: JSON.stringify({
-        outSourcingId: reply.enquiry.outSourcingId,
+        outSourcingId: sourcing.id,
         enquiryId: reply.enquiryId,
-        content: reply.content.substring(0, 20),
+        replyId: reply.id,
+        content: `[${sourcing.title.substring(
+          0,
+          10,
+        )}...]에 남긴 글에 답글이달렸습니다.`,
       }),
       to: to,
     });
   }
 
-  async addAcceptAlarm(answer: Answer, to: User) {
+  async addEnquiryAlarm(enquiry: Enquiry, outSourcing: OutSourcing, to: User) {
     this.createAlarm({
-      type: AlarmType.ACCEPT,
+      type: AlarmType.EN_PICK,
       content: JSON.stringify({
-        questionId: answer.question.id,
-        content: `${answer.content.substring(0, 20)} 답변이 채택되었습니다.`,
+        outSourcingId: outSourcing.id,
+        enquiryId: enquiry.id,
+        content: `[${outSourcing.title.substring(
+          0,
+          10,
+        )}...]소싱글에 답글이 달렸습니다`,
+      }),
+      to: to,
+    });
+  }
+
+  async addPickEnquiryAlarm(
+    enquiry: Enquiry,
+    outSourcing: OutSourcing,
+    to: User,
+  ) {
+    this.createAlarm({
+      type: AlarmType.EN_PICK,
+      content: JSON.stringify({
+        outSourcingId: outSourcing.id,
+        enquiryId: enquiry.id,
+        content: `[${outSourcing.title.substring(
+          0,
+          10,
+        )}...]소싱에 선택되었습니다. 거래를 계속 진행해주세요`,
       }),
       to: to,
     });

@@ -1,4 +1,6 @@
-import { EnquiriesRepository } from '../enquiries/repositories/enquiries.repository';
+import { UsersRepository } from './../users/users.repository';
+import { OutSourcingRepository } from './../outSourcing/repositiories/outSourcing.repository';
+import { EnquiryRepository } from '../enquiry/repositories/enquiry.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlarmModule } from 'src/alarms/alarms.module';
@@ -13,8 +15,10 @@ import { RepliesService } from './replies.service';
     AlarmModule,
     TypeOrmModule.forFeature([
       RepliesRepository,
-      EnquiriesRepository,
+      EnquiryRepository,
+      OutSourcingRepository,
       AlarmsRepository,
+      UsersRepository,
     ]),
   ],
   controllers: [RepliesController],

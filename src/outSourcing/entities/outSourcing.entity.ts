@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
-import { Enquiry } from 'src/enquiries/entities/enquiry.entity';
+import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
+import { CoinReserv } from 'src/payment/entities/coinReserv.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
@@ -74,13 +75,13 @@ export class OutSourcing extends CoreEntity {
   @OneToMany((type) => Enquiry, (enquiry) => enquiry.outSourcing, {
     cascade: true,
   })
-  enquiries: Enquiry[];
+  enquiry: Enquiry[];
 
   @OneToMany(
     (type) => OutSourcingTag,
     (outSourcingTag) => outSourcingTag.outSourcingId,
     {
-      onDelete: 'CASCADE',
+      cascade: true,
     },
   )
   outSourcingTags: OutSourcingTag[];
@@ -92,18 +93,23 @@ export class OutSourcing extends CoreEntity {
   authorId: number;
 
   @Column({ default: 0 })
-  enquiriesCount: number;
+  enquiryCount: number;
 
   @ApiProperty({
     description: '선택된 답변',
   })
-  @OneToOne((type) => Enquiry, (enquiry) => enquiry.pick_outSourcing)
+  @OneToOne((type) => Enquiry, (enquiry) => enquiry.pick_outSourcing, {
+    eager: true,
+  })
   @JoinColumn()
-  pickEn: Enquiry;
+  pickEnquiry: Enquiry;
 
   @ApiProperty({
     description: '선택된 답변id',
   })
-  @RelationId((outSourcing: OutSourcing) => outSourcing.pickEn)
-  pickEnId: number;
+  @RelationId((outSourcing: OutSourcing) => outSourcing.pickEnquiry)
+  pickEnquiryId: number;
+
+  @OneToOne(() => CoinReserv, (coinReserv: CoinReserv) => coinReserv.question)
+  coinReserv: CoinReserv; // 외주
 }
