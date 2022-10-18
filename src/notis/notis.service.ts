@@ -14,7 +14,6 @@ export class NotisService {
     return this.notisRepository.findOne(id);
   }
   async createNoti(createNoti: CreateNotiDto) {
-    console.log(createNoti);
     this.notisRepository.createNoti(createNoti);
     return true;
   }

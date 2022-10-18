@@ -17,13 +17,12 @@ import { AlarmModule } from 'src/alarms/alarms.module';
 
 @Module({
   imports: [
-    AlarmModule,
-    // PaymentModule,
     TypeOrmModule.forFeature([
       AnswersRepository,
       QuestionsRepository,
       UsersRepository,
     ]),
+    AlarmModule,
     PaymentModule,
     UsersModule,
   ],

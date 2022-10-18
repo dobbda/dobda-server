@@ -1,3 +1,5 @@
+import { UsersRepository } from './../users/users.repository';
+import { QuestionsRepository } from './../questions/repositories/questions.repository';
 import {
   BadRequestException,
   Injectable,
@@ -16,6 +18,8 @@ export class CommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
     private readonly answersRepository: AnswersRepository,
+    private readonly questionsRepository: QuestionsRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly alarmsService: AlarmsService,
   ) {}
 
@@ -40,6 +44,7 @@ export class CommentsService {
   async createComment({ aid, content }: CreateCommentDto, user: User) {
     /* Question 가져오기 */
     const answer = await this.answersRepository.findOne(aid);
+    const question = await this.questionsRepository.findOne(answer.questionId);
 
     if (!answer) return;
     await this.answersRepository.update(answer.id, {
@@ -52,7 +57,10 @@ export class CommentsService {
       user,
     );
 
-    await this.alarmsService.addCommentAlarm(comment, user);
+    if (answer.authorId !== user.id) {
+      const toUser = await this.usersRepository.findOne(answer.authorId);
+      await this.alarmsService.addCommentAlarm(comment, question, toUser);
+    }
 
     return true;
   }

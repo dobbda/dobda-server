@@ -13,13 +13,13 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum AlarmType {
-  ANSWER = 0, //답변
-  COMMENT, // 댓글
-  REPLY,
-  ACCEPT, // 채택
-  INCOME, // 출금
-  OUTCOME, // 입금
-  // SELECT, // 외주 거래시작 (거래할 유저 선택함)
+  ANSWER = 'ANSWER', //답변
+  COMMENT = 'COMMENT', // 댓글
+  REPLY = 'REPLY',
+  ACCEPT = 'ACCEPT', // 채택
+  INCOME = 'INCOME', // 출금
+  OUTCOME = 'OUTCOME', // 입금
+  EN_PICK = 'EN_PICK', // 외주 거래시작 (거래할 유저 선택함)
   // C2BPAY, // 유저가 금액 결제 완료 (결제 금액은 웹계좌에 저장))
   // B2CPAY, // 웹이 프리랜서에게 지급 완료 (웹계좌에서 프리랜서에게 지불))
 }

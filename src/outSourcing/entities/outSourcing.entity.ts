@@ -98,15 +98,17 @@ export class OutSourcing extends CoreEntity {
   @ApiProperty({
     description: '선택된 답변',
   })
-  @OneToOne((type) => Enquiry, (enquiry) => enquiry.pick_outSourcing)
+  @OneToOne((type) => Enquiry, (enquiry) => enquiry.pick_outSourcing, {
+    eager: true,
+  })
   @JoinColumn()
-  pickEn: Enquiry;
+  pickEnquiry: Enquiry;
 
   @ApiProperty({
     description: '선택된 답변id',
   })
-  @RelationId((outSourcing: OutSourcing) => outSourcing.pickEn)
-  pickEnId: number;
+  @RelationId((outSourcing: OutSourcing) => outSourcing.pickEnquiry)
+  pickEnquiryId: number;
 
   @OneToOne(() => CoinReserv, (coinReserv: CoinReserv) => coinReserv.question)
   coinReserv: CoinReserv; // 외주

@@ -1,3 +1,5 @@
+import { UsersRepository } from './../users/users.repository';
+import { OutSourcingRepository } from './../outSourcing/repositiories/outSourcing.repository';
 import { EnquiryRepository } from '../enquiry/repositories/enquiry.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +16,9 @@ import { RepliesService } from './replies.service';
     TypeOrmModule.forFeature([
       RepliesRepository,
       EnquiryRepository,
+      OutSourcingRepository,
       AlarmsRepository,
+      UsersRepository,
     ]),
   ],
   controllers: [RepliesController],

@@ -1,3 +1,5 @@
+import { OutSourcingRepository } from './../outSourcing/repositiories/outSourcing.repository';
+import { OutSourcing } from './../outSourcing/entities/outSourcing.entity';
 import {
   BadRequestException,
   Injectable,
@@ -11,12 +13,15 @@ import { CreateReplyDto } from './dtos/create-reply.dto';
 import { EditReplyDto } from './dtos/edit-reply.dto';
 import { GetReplyDto } from './dtos/get-reply.dto';
 import { RepliesRepository } from './repositories/replies.repository';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class RepliesService {
   constructor(
     private readonly repliesRepository: RepliesRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly enquiryRepository: EnquiryRepository,
+    private readonly outSourcingRepository: OutSourcingRepository,
     private readonly alarmsService: AlarmsService,
   ) {}
 
@@ -41,6 +46,9 @@ export class RepliesService {
   async createReply({ eid, content }: CreateReplyDto, user: User) {
     /* Question 가져오기 */
     const enquiry = await this.enquiryRepository.findOne(eid);
+    const outSourcing = await this.outSourcingRepository.findOne(
+      enquiry.outSourcingId,
+    );
 
     if (!enquiry) return;
 
@@ -53,7 +61,11 @@ export class RepliesService {
     await this.enquiryRepository.update(enquiry.id, {
       repliesCount: enquiry.repliesCount + 1,
     });
-    await this.alarmsService.addReplyAlarm(reply, user);
+
+    if (user.id !== enquiry.authorId) {
+      const toUser = await this.usersRepository.findOne(enquiry.authorId);
+      await this.alarmsService.addReplyAlarm(reply, outSourcing, toUser);
+    }
 
     return true;
   }

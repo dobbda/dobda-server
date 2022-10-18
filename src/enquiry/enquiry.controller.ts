@@ -37,7 +37,7 @@ export class EnquiryController {
     @Query('oid') oid: number,
     @Query('eid') eid: number,
   ) {
-    return this.enquiryService.pickEnquiry(oid, eid, user);
+    return this.enquiryService.pickEnquiry(eid, oid, user);
   }
 
   @Get('/:oid')

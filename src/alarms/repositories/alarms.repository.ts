@@ -18,6 +18,9 @@ export class AlarmsRepository extends Repository<Alarm> {
         alarmId,
       },
     );
+    alarm
+      .leftJoin('alarm.to', 'to')
+      .addSelect(['to.email', 'to.nickname', 'to.id', 'to.avatar']);
     return alarm.getOne();
   }
 }

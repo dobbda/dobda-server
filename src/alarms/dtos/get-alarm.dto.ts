@@ -26,5 +26,5 @@ export class GetAlarm {
 }
 
 export class GetAlarmsOutput {
-  alarms: GetAlarm[];
+  result: GetAlarm[];
 }

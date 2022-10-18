@@ -76,7 +76,9 @@ export class Question extends CoreEntity {
   @RelationId((question: Question) => question.author)
   authorId: number;
 
-  @OneToOne((type) => Answer, (answer) => answer.accepted_question)
+  @OneToOne((type) => Answer, (answer) => answer.accepted_question, {
+    eager: true,
+  })
   @JoinColumn()
   acceptedAnswer: Answer;
 

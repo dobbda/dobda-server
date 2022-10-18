@@ -40,7 +40,7 @@ export class Enquiry extends CoreEntity {
   @Column({ default: 0 })
   repliesCount: number;
 
-  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.pickEn)
+  @OneToOne((type) => OutSourcing, (outSourcing) => outSourcing.pickEnquiry)
   pick_outSourcing: OutSourcing;
 
   // 채택 여부

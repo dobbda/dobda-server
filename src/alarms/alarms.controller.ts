@@ -40,7 +40,7 @@ export class AlarmsController {
   @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
   async getAllAlarms(@CurrentUser() user: User) {
-    return this.alarmsService.getAllAlarms(user);
+    return this.alarmsService.getAlarms(user, true);
   }
 
   @Patch('/:id')

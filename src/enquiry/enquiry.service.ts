@@ -1,3 +1,5 @@
+import { Progress } from './../outSourcing/types/progressType';
+import { UsersRepository } from './../users/users.repository';
 import { OutSourcingRepository } from '../outSourcing/repositiories/outSourcing.repository';
 import {
   BadRequestException,
@@ -17,6 +19,7 @@ export class EnquiryService {
     private readonly enquiryRepository: EnquiryRepository,
     private readonly outSourceRepository: OutSourcingRepository,
     private readonly alarmsService: AlarmsService,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async getEnquiry(oid: number) {
@@ -54,7 +57,12 @@ export class EnquiryService {
     await this.outSourceRepository.update(oid, {
       enquiryCount: outSourcing.enquiryCount + 1,
     });
-    // await this.alarmsService.addEnquiryAlarm(enquiry, user);
+
+    if (user.id !== outSourcing.authorId) {
+      /**알람 */
+      const toUsser = await this.usersRepository.findOne(outSourcing.authorId);
+      await this.alarmsService.addEnquiryAlarm(enquiry, outSourcing, toUsser);
+    }
     return true;
   }
 
@@ -103,6 +111,19 @@ export class EnquiryService {
   }
 
   async pickEnquiry(eid: number | string, oid: number | string, user: User) {
-    console.log('선택', user, eid, oid);
+    const enquiry = await this.enquiryRepository.findOne(eid);
+    if (enquiry.picked) {
+      throw new BadRequestException('이미 선택한 유저가 있습니다.');
+    }
+
+    const outSourcing = await this.outSourceRepository.findOne(oid);
+    const toUsser = await this.usersRepository.findOne(enquiry.authorId);
+    enquiry.picked = true;
+    outSourcing.pickEnquiry = enquiry;
+    outSourcing.progress = Progress.Pick;
+    await this.enquiryRepository.save(enquiry);
+    await this.outSourceRepository.save(outSourcing);
+    await this.alarmsService.addPickEnquiryAlarm(enquiry, outSourcing, toUsser);
+    return true;
   }
 }
