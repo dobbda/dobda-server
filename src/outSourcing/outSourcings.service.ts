@@ -55,6 +55,25 @@ export class OutSourcingService {
       totalPages: Math.ceil(total / 20),
     };
   }
+  async getUserOutSourcings(user: User, page) {
+    const { total, outSourcings } =
+      await this.outSourcingRepository.findAllWithUserId(user.id, page);
+
+    /* outSourcing이 가지고있는 tag 넣기 */
+    const result = await Promise.all(
+      outSourcings.map(async (outSourcing) => {
+        const tags = await this.tagsRepository.allTagsInOutSourcing(
+          outSourcing.id,
+        );
+        return { ...outSourcing, tagNames: tags };
+      }),
+    );
+
+    return {
+      result,
+      totalPages: Math.ceil(total / 20),
+    };
+  }
 
   async createOutSourcing(
     { tagNames, ...rest }: CreateOutSourcingDto,

@@ -13,8 +13,8 @@ export class CoinReservsRepository extends Repository<CoinReserv> {
 
   async findAll(userId: number, page: number) {
     const history = this.createQueryBuilder('coinReserv')
-      .take(50)
-      .skip((page - 1) * 50)
+      .take(30)
+      .skip((page - 1) * 30)
       .where('coinReserv.user.id = :userId', {
         userId,
       });

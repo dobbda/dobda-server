@@ -37,15 +37,28 @@ export class QuestionController {
     url: questions?page=${page}&title=${title} 
     url: questions?page=${page}&tag=${tag}
   */
+  @ApiOperation({ summary: '질문 조회' })
+  @ApiCreatedResponse({
+    description: '로그인 유저의 질문 조회',
+    type: GetQuestionsOutput,
+  })
+  @Get('/user')
+  @UseGuards(AccessTokenGuard)
+  async getUserQuestions(
+    @Query('page') page: number = 1,
+    @CurrentUser() user: User,
+  ) {
+    return this.questionsService.getUserQuestions(user, page);
+  }
+
+  //////////////////////////////////////////////////
   @Get()
   @ApiOperation({ summary: '질문 조회' })
   @ApiCreatedResponse({
     description: '질문여러개를 조회한다',
     type: GetQuestionsOutput,
   })
-  async getQuestions(
-    @Query() getQuestionsDto: GetQuestionsDto,
-  ) {
+  async getQuestions(@Query() getQuestionsDto: GetQuestionsDto) {
     return this.questionsService.getQuestions(getQuestionsDto);
   }
 
@@ -115,17 +128,16 @@ export class QuestionController {
     return this.questionsService.deleteQuestion(questionId, user);
   }
 
-
-	//   /* 
+  //   /*
   //   질문 조회수 수정 API
   //   url: questions/:id/watch (PATCH)
   // */
-	// 	@Patch('/:id/watch')
-	// 	@ApiOperation({ summary: '질문 조회수 업데이트 API' })
-	// 	@ApiParam({ name: 'id', required: true, description: '질문 Id' })
-	// 	@ApiCreatedResponse({ description: '질문 게시글의 조회수를 1 올려준다.' })
-	// 	// @UseGuards(AccessTokenGuard)
-	// 	async updateQuestionWatch(@Param('id') questionId: number) {
-	// 		return this.questionsService.updateQuestionWatch(questionId);
-	// 	}
+  // 	@Patch('/:id/watch')
+  // 	@ApiOperation({ summary: '질문 조회수 업데이트 API' })
+  // 	@ApiParam({ name: 'id', required: true, description: '질문 Id' })
+  // 	@ApiCreatedResponse({ description: '질문 게시글의 조회수를 1 올려준다.' })
+  // 	// @UseGuards(AccessTokenGuard)
+  // 	async updateQuestionWatch(@Param('id') questionId: number) {
+  // 		return this.questionsService.updateQuestionWatch(questionId);
+  // 	}
 }

@@ -23,12 +23,34 @@ export class AlarmsService {
     await this.alarmsRepository.createAlarm(dto);
   }
 
-  async getAlarms(user: User, all?: boolean): Promise<GetAlarmsOutput> {
+  async getAlarm(user: User): Promise<GetAlarmsOutput> {
+    const result = await this.alarmsRepository.find({
+      where: {
+        to: user,
+        checked: false,
+      },
+      take: 10,
+    });
+
+    return {
+      result: result.map((x) => {
+        return {
+          id: x.id,
+          checked: x.checked,
+          type: x.type,
+          createdAt: x.createdAt,
+          content: JSON.parse(x.content),
+        };
+      }),
+    };
+  }
+
+  async getAlarms(user: User): Promise<GetAlarmsOutput> {
     const result = await this.alarmsRepository.find({
       where: {
         to: user,
       },
-      take: all ? 100 : 10,
+      take: 100,
     });
 
     return {

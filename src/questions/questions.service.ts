@@ -56,6 +56,24 @@ export class QuestionsService {
       totalPages: Math.ceil(total / 20),
     };
   }
+  async getUserQuestions(user: User, page: number) {
+    const { total, questions } =
+      await this.questionsRepository.findAllWithUserId(user.id, page);
+    console.log(user, questions);
+
+    const result = await Promise.all(
+      questions.map(async (question) => {
+        const tags = await this.tagsRepository.allTagsInQuestion(question.id);
+        const { content, ...reset } = question;
+        return { ...reset, tagNames: tags };
+      }),
+    );
+    return {
+      result,
+      totalLength: total,
+      totalPages: Math.ceil(total / 10),
+    };
+  }
 
   async getOneQuestion(questionId: number) {
     // 상세조회 // + Answer // comment?

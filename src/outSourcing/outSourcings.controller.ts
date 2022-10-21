@@ -39,6 +39,16 @@ export class OutSourcingController {
     url: questions?page=${page}&title=${title} 
     url: questions?page=${page}&tag=${tag}
   */
+
+  @Get('/user')
+  @UseGuards(AccessTokenGuard)
+  async getUserQuestions(
+    @CurrentUser() user: User,
+    @Query('page') page: number = 1,
+  ) {
+    return this.outSourcingService.getUserOutSourcings(user, page);
+  }
+
   @Get()
   @ApiOperation({ summary: '외주 조회' })
   @ApiCreatedResponse({ description: '외주여러개를 조회한다' })

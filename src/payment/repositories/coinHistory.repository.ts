@@ -12,8 +12,8 @@ export class CoinHistorysRepository extends Repository<CoinHistory> {
 
   async findAll(userId: number, page: number) {
     const history = this.createQueryBuilder('coinHistory')
-      .take(50)
-      .skip((page - 1) * 50)
+      .take(30)
+      .skip((page - 1) * 30)
       .where('coinHistory.user.id = :userId', {
         userId,
       });

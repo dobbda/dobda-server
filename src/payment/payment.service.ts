@@ -21,17 +21,14 @@ export class PaymentService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async findAllCoinHistory(user: User, page: number): Promise<CoinReservOut> {
+  async findAllCoinHistory(user: User, page: number): Promise<CoinHistoryOut> {
     /**
      * 코인 히스토리[] 조회
      */
-    const { hists, total } = await this.reservsRepository.findAll(
-      user.id,
-      page,
-    );
+    const { hists, total } = await this.histRepository.findAll(user.id, page);
     return {
       result: hists,
-      totalPages: Math.ceil(total / 20),
+      totalPages: Math.ceil(total / 30),
     };
   }
 
@@ -46,7 +43,7 @@ export class PaymentService {
 
     return {
       result: hists,
-      totalPages: Math.ceil(total / 20),
+      totalPages: Math.ceil(total / 30),
     };
   }
 

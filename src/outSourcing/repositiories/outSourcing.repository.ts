@@ -64,4 +64,23 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
       outSourcings,
     };
   }
+  async findAllWithUserId(userId: number, page: number) {
+    const outSourcingQuery = this.createQueryBuilder('outSourcing')
+      .where('outSourcing.author.id = :userId', { userId })
+      .take(20)
+      .skip((page - 1) * 20)
+      .leftJoin('outSourcing.author', 'author')
+      .addSelect([
+        'author.email',
+        'author.nickname',
+        'author.id',
+        'author.avatar',
+      ])
+      .orderBy('outSourcing.updatedAt', 'DESC');
+    const [outSourcings, total] = await outSourcingQuery.getManyAndCount();
+    return {
+      total,
+      outSourcings,
+    };
+  }
 }
