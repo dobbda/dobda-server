@@ -52,6 +52,7 @@ export class OutSourcingService {
 
     return {
       result,
+      total,
       totalPages: Math.ceil(total / 20),
     };
   }
@@ -70,6 +71,7 @@ export class OutSourcingService {
     );
 
     return {
+      total,
       result,
       totalPages: Math.ceil(total / 20),
     };

@@ -24,4 +24,10 @@ export class CoinHistory extends CoreEntity {
   @Column({ default: null })
   @IsNumber()
   toUserId?: number;
+
+  @Column({ default: null })
+  questionId?: number;
+
+  @Column({ default: null })
+  outSourcingId?: number;
 }

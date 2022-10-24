@@ -27,7 +27,7 @@ export class AlarmsService {
     const result = await this.alarmsRepository.find({
       where: {
         to: user,
-        checked: false,
+        // checked: false,
       },
       take: 10,
     });
@@ -93,7 +93,7 @@ export class AlarmsService {
         answerId: answer.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...]글에 답글이 달렸습니다.`,
       }),
       to: to,
@@ -110,7 +110,7 @@ export class AlarmsService {
         commentId: comment.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...]에 남긴 답변에 답글이달렸습니다`,
       }),
       to: to,
@@ -124,7 +124,7 @@ export class AlarmsService {
         answerId: answer.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...] 에남긴 답변이 채택되었습니다.`,
       }),
       to: to,
@@ -143,7 +143,7 @@ export class AlarmsService {
         replyId: reply.id,
         content: `[${sourcing.title.substring(
           0,
-          10,
+          20,
         )}...]에 남긴 글에 답글이달렸습니다.`,
       }),
       to: to,
@@ -158,7 +158,7 @@ export class AlarmsService {
         enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
-          10,
+          20,
         )}...]소싱글에 답글이 달렸습니다`,
       }),
       to: to,
@@ -177,7 +177,7 @@ export class AlarmsService {
         enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
-          10,
+          20,
         )}...]소싱에 선택되었습니다. 거래를 계속 진행해주세요`,
       }),
       to: to,

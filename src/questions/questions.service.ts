@@ -53,6 +53,7 @@ export class QuestionsService {
     );
     return {
       result,
+      total: total,
       totalPages: Math.ceil(total / 20),
     };
   }
@@ -70,7 +71,7 @@ export class QuestionsService {
     );
     return {
       result,
-      totalLength: total,
+      total: total,
       totalPages: Math.ceil(total / 10),
     };
   }

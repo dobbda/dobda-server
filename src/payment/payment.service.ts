@@ -27,8 +27,9 @@ export class PaymentService {
      */
     const { hists, total } = await this.histRepository.findAll(user.id, page);
     return {
+      total,
       result: hists,
-      totalPages: Math.ceil(total / 30),
+      totalPages: Math.ceil(total / 10),
     };
   }
 
@@ -36,14 +37,15 @@ export class PaymentService {
     /**
      * 임시 저장된 코인 정보 조회
      */
-    const { hists, total } = await this.reservsRepository.findAll(
+    const { reservs, total } = await this.reservsRepository.findAll(
       user.id,
       page,
     );
 
     return {
-      result: hists,
-      totalPages: Math.ceil(total / 30),
+      total,
+      result: reservs,
+      totalPages: Math.ceil(total / 10),
     };
   }
 
@@ -93,12 +95,16 @@ export class PaymentService {
       toUserId: toUserId,
       type: type,
       coin: -reserv.coin,
+      questionId: reserv.questionId,
+      outSourcingId: reserv.outSourcingId,
     });
     await this.histRepository.createCoinHistory({
       user: toUser,
       toUserId: user.id,
       type: type,
       coin: reserv.coin,
+      questionId: reserv.questionId,
+      outSourcingId: reserv.outSourcingId,
     });
 
     return true;
