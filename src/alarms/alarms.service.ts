@@ -152,14 +152,14 @@ export class AlarmsService {
 
   async addEnquiryAlarm(enquiry: Enquiry, outSourcing: OutSourcing, to: User) {
     this.createAlarm({
-      type: AlarmType.EN_PICK,
+      type: AlarmType.ENQUIRY,
       content: JSON.stringify({
         outSourcingId: outSourcing.id,
         enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
           20,
-        )}...]소싱글에 답글이 달렸습니다`,
+        )}...]소싱글에 새로운 답글이 달렸습니다`,
       }),
       to: to,
     });

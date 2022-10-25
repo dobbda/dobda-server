@@ -57,6 +57,10 @@ export class CommentsService {
       user,
     );
 
+    if (question.authorId !== user.id) {
+      const toUser = await this.usersRepository.findOne(question.authorId);
+      await this.alarmsService.addCommentAlarm(comment, question, toUser);
+    }
     if (answer.authorId !== user.id) {
       const toUser = await this.usersRepository.findOne(answer.authorId);
       await this.alarmsService.addCommentAlarm(comment, question, toUser);

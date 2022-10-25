@@ -62,6 +62,10 @@ export class RepliesService {
       repliesCount: enquiry.repliesCount + 1,
     });
 
+    if (user.id !== outSourcing.authorId) {
+      const toUser = await this.usersRepository.findOne(outSourcing.authorId);
+      await this.alarmsService.addReplyAlarm(reply, outSourcing, toUser);
+    }
     if (user.id !== enquiry.authorId) {
       const toUser = await this.usersRepository.findOne(enquiry.authorId);
       await this.alarmsService.addReplyAlarm(reply, outSourcing, toUser);
