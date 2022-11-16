@@ -1,4 +1,4 @@
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import {
   BadRequestException,
   Injectable,
@@ -46,7 +46,8 @@ export class OutSourcingService {
         const tags = await this.tagsRepository.allTagsInOutSourcing(
           outSourcing.id,
         );
-        return { ...outSourcing, tagNames: tags };
+        const { content, ...v } = outSourcing;
+        return { ...v, tagNames: tags };
       }),
     );
 

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import axios, { AxiosResponse } from 'axios';
 import { UserRegisterDTO } from 'src/users/dtos/user-register.dto';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { AuthService } from '../auth.service';
 import { SocialCodeDto } from '../dtos/social-code.dto';
 
@@ -52,14 +52,12 @@ export class NaverAuthService {
         },
       });
       const { access_token } = response.data;
-      console.log('네이버 token', access_token);
 
       const { data } = await axios.get(getUserUrl, {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
       });
-      console.log('네이버 유저데이터', data);
 
       const { name, profile_image, email, nickname } = data.response;
       const naver: UserRegisterDTO = {
@@ -68,7 +66,9 @@ export class NaverAuthService {
         email: email,
         avatar:
           profile_image ||
-          `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
+          `https://avatars.dicebear.com/api/adventurer-neutral/${
+            nickname || name
+          }.svg`,
       };
       return this.authService.verifyUserAndSignJWT(naver);
     } catch (err) {

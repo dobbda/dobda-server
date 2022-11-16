@@ -1,4 +1,4 @@
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TagsRepository } from 'src/questions/repositories/tags.repository';
@@ -13,7 +13,7 @@ import { OutSourcingTagRepository } from './repositiories/outSourcingTag.reposit
       TagsRepository,
       OutSourcingRepository,
       OutSourcingTagRepository,
-			UsersRepository,
+      UsersRepository,
     ]),
   ],
   controllers: [OutSourcingController],

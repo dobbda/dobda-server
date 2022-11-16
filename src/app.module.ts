@@ -1,5 +1,4 @@
-import { CoinReserv } from './payment/entities/coinReserv.entity';
-import { CoinHistory } from './payment/entities/coinHistory.entity';
+import { entityList } from './config/entityList';
 import { EnquiryModule } from './enquiry/enquiry.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -19,19 +18,6 @@ import * as Joi from 'joi';
 import { CommentsModule } from './comments/comments.module';
 import { RepliesModule } from './replies/replies.module';
 import { PaymentModule } from './payment/payment.module';
-
-import { Answer } from './answers/entities/answer.entity';
-import { Enquiry } from './enquiry/entities/enquiry.entity';
-import { Alarm } from './alarms/entities/alarm.entity';
-import { OutSourcing } from './outSourcing/entities/outSourcing.entity';
-import { OutSourcingTag } from './outSourcing/entities/outSourcingTag.entity';
-import { Payment } from './payment/entities/payments.entity';
-import { Question } from './questions/entities/question.entity';
-import { QuestionTag } from './questions/entities/questionTag.entity';
-import { Tag } from './questions/entities/tag.entity';
-import { Reply } from './replies/entities/reply.entity';
-import { User } from './users/entities/user.entity';
-import { Comment } from './comments/entities/comment.entity';
 
 import { AdminModule } from '@adminjs/nestjs';
 import AdminJS from 'admin-bro';
@@ -81,23 +67,7 @@ const authenticate = async (email: string, password: string) => {
     AdminModule.createAdmin({
       adminJsOptions: {
         rootPath: '/admin',
-        resources: [
-          User,
-          OutSourcing,
-          Question,
-          OutSourcingTag,
-          Tag,
-          QuestionTag,
-          Alarm,
-          Answer,
-          Comment,
-          Enquiry,
-          Reply,
-          Noti,
-          Payment,
-          CoinHistory,
-          CoinReserv,
-        ],
+        resources: entityList,
         branding: {
           companyName: 'DOBDA',
           logo: 'https://dobda.s3.ap-northeast-2.amazonaws.com/logo.svg',

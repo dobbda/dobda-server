@@ -1,4 +1,4 @@
-import { UsersRepository } from '../../users/users.repository';
+import { UsersRepository } from '../../users/repositories/users.repository';
 import { JwtPayload } from './types/jwt.payload';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';

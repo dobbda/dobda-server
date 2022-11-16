@@ -27,7 +27,9 @@ export class CoinReserv extends CoreEntity {
   @IsNumber()
   coin: number;
 
-  @OneToOne((type) => Question, (question: Question) => question.coinReserv)
+  @OneToOne((type) => Question, (question: Question) => question.coinReserv, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   question: Question; // 질문
 

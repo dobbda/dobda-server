@@ -1,11 +1,7 @@
 import { UsersModule } from './../users/users.module';
-import { QuestionsModule } from './../questions/questions.module';
-import { CoinHistorysRepository } from './../payment/repositories/coinHistory.repository';
 import { PaymentModule } from './../payment/payment.module';
 import { PaymentService } from './../payment/payment.service';
-import { PaymentsRepository } from '../payment/repositories/payment.repository';
-import { UsersRepository } from './../users/users.repository';
-import { AlarmsRepository } from 'src/alarms/repositories/alarms.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlarmsService } from 'src/alarms/alarms.service';

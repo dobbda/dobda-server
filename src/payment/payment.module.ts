@@ -1,5 +1,5 @@
 import { CoinHistorysRepository } from './repositories/coinHistory.repository';
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 import { PaymentController } from './payment.controller';

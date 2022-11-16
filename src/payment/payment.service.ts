@@ -5,7 +5,7 @@ import { CoinHistorysRepository } from './repositories/coinHistory.repository';
 import { User } from 'src/users/entities/user.entity';
 import { PaymentsRepository } from './repositories/payment.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { CreatePaymentDto } from './dtos/payment.dto';
 import { PayType } from './entities/payments.entity';
 import { CoinReservsRepository } from './repositories/coinReserv.repository';
@@ -61,7 +61,6 @@ export class PaymentService {
      * 유저의 코인을  금액만큼 reserv로
      * reserv코인은 확정된것이 아니므로 코인 기록은 남기지 않는다.
      */
-    console.log('userToresv 쪽', reservDto);
     const { coin, user, type, question, outSourcing } = reservDto;
     user.coin -= coin;
     await this.usersRepository.save(user);
@@ -78,15 +77,12 @@ export class PaymentService {
     /** question or outSourcing이 완료시
      * reserv에 저장된 coin을 유저코인에 적용
      */
-    console.log('reserv확인1 :');
 
     const toUser = await this.usersRepository.findUserByAuthorId(toUserId);
-    console.log(type == PayType.QUESTION, toUser);
 
     const reserv = await this.reservsRepository.findOne(
       type === PayType.QUESTION ? { question } : { outSourcing },
     );
-    console.log('reserv확인3: ', reserv);
     await this.reservToUser(toUser, reserv); // toUser에게 전달후 reserv 삭제
 
     // 기록 남기기
