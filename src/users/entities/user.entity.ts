@@ -115,6 +115,9 @@ export class User extends CoreEntity {
   @OneToOne((type) => Portfolio, (portfolio: Portfolio) => portfolio.user)
   portfolio: Portfolio;
 
+  @Column({ nullable: true })
+  sign: string;
+
   // //////////////////////////////////////////////////////////////////
   @Column({ default: 0 })
   questionsCount: number;

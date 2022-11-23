@@ -18,15 +18,15 @@ export class Portfolio extends CoreEntity {
     type: JSON.stringify,
     description: 'MAIN CARD CONTENTS',
   })
-  @Column()
+  @Column({ nullable: true, type: 'json' })
   @IsString()
   card: string;
-
+	
   @ApiProperty({
     type: JSON.stringify,
     description: 'content',
   })
-  @Column()
+  @Column({ nullable: true, type: 'json' })
   @IsString()
   content: string;
 
@@ -36,4 +36,11 @@ export class Portfolio extends CoreEntity {
 
   @RelationId((portfolio: Portfolio) => portfolio.user)
   userId: number;
+}
+
+export class Image {
+  uid?: string;
+  name?: string;
+  url?: string;
+  fileName?: string;
 }

@@ -44,11 +44,13 @@ export class GoogleAuthService {
       const { data } = await axios.get(`${getUserUrl}=${access_token}`);
 
       const { name, picture, email } = data;
+      console.log('로그인: ', data);
       const googleInfo: UserRegisterDTO = {
-        name, //실명은 웹내에서 추가로 인증예정
-        nickname: name,
+        name: name || 'user_' + Math.floor(Math.random() * 10000), //실명은 웹내에서 추가로 인증예정
+        nickname: name || 'user_' + Math.floor(Math.random() * 10000),
         email,
         avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
+        sign: 'google',
       };
       return this.authService.verifyUserAndSignJWT(googleInfo);
     } catch (err) {

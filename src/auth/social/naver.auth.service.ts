@@ -69,6 +69,7 @@ export class NaverAuthService {
           `https://avatars.dicebear.com/api/adventurer-neutral/${
             nickname || name
           }.svg`,
+        sign: 'naver',
       };
       return this.authService.verifyUserAndSignJWT(naver);
     } catch (err) {

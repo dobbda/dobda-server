@@ -63,6 +63,7 @@ export class GithubAuthService {
         nickname: name,
         description: bio,
         email,
+        sign: 'github',
       };
 
       return this.authService.verifyUserAndSignJWT(githubInfo);
