@@ -45,42 +45,56 @@ export class UsersService {
   }
 
   //////////// portfolio /////////////////////
-  async createPortfolio(data: CreatePortfolio, user: User): Promise<Portfolio> {
-    return this.pfRepository.createPortfolio(data, user);
-  }
 
-  async updatePortfolio(
-    data: CreatePortfolio,
-    id: number,
-    user: User,
-  ): Promise<Portfolio> {
-    const pf = this.pfRepository.findOne({ id });
+  async updatePortfolio(data: CreatePortfolio, user: User) {
+    const pf = await this.pfRepository.findOne({ user });
     if (!pf) {
-      throw new BadRequestException('존재하지않는 글입니다.');
+      // 없을시 생성
+      return await this.pfRepository.createPortfolio(
+        {
+          content: JSON.stringify(data?.content),
+          card: JSON.stringify(data?.card),
+          public: data.public,
+        },
+        user,
+      );
     }
-    this.pfRepository.save({
-      id,
-      ...data,
-    });
-    return {
-      ...pf,
-      ...data,
-    };
+
+    await this.pfRepository.save([
+      {
+        id: pf.id,
+        content: JSON.stringify(data?.content),
+        card: JSON.stringify(data?.card),
+        public: data.public,
+      },
+    ]);
+
+    return true;
   }
 
   async getOnePortfolio(userId: number) {
-    return this.pfRepository.find({ userId });
+    const { card, content, ...res } = await this.pfRepository.findOne({
+      user: { id: userId },
+    });
+    return {
+      card: JSON.parse(card),
+      content: JSON.parse(content),
+      ...res,
+    };
   }
 
-  async getAllPortfolio(page: number) {
+  async getManyPortfolio(page: number) {
     const { portfolio, total } = await this.pfRepository.findAll(page);
+    console.log('a: ', portfolio);
     return {
       total,
-      result: portfolio.map(({ content, ...v }) => {
+      result: portfolio.map(({ card, content, ...res }) => {
+        console.log('b: ', card, content);
+
         return {
-          ...v,
-          // card: JSON.parse(card),
-          // content:JSON.parse(content)
+          card: JSON.parse(card) || card,
+          content: JSON.parse(content) || content,
+          ...res,
         };
       }),
       totalPages: Math.ceil(total / 10),

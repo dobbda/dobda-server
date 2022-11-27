@@ -22,25 +22,13 @@ import { UserUpdateDTO } from './dtos/user-update.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   // portfolio ///////////////////////////////////////////////////////
-  @Post('pf')
-  @ApiOperation({ summary: '현재 로그인 되어 있는 유저 정보 조회' })
-  @UseGuards(AccessTokenGuard)
-  async createPortfolio(
-    @Body() pfData: CreatePortfolio,
-    @CurrentUser() user: User,
-  ) {
-    return await this.usersService.createPortfolio(pfData, user);
-  }
 
-  @Patch('pf/:id')
+  @Patch('/pf')
   @ApiOperation({ summary: '현재 로그인 되어 있는 유저 정보 조회' })
   @UseGuards(AccessTokenGuard)
-  async updatePortfolio(
-    @Body() pfData: CreatePortfolio,
-    @CurrentUser() user: User,
-    @Param('id') id: number,
-  ) {
-    return await this.usersService.updatePortfolio(pfData, id, user);
+  async updatePortfolio(@Body() pfData: any, @CurrentUser() user: User) {
+    console.log('컨트롤: ', pfData);
+    return await this.usersService.updatePortfolio(pfData, user);
   }
 
   @Get('/pf')
@@ -52,7 +40,7 @@ export class UsersController {
   @Get('pfs')
   @ApiOperation({ summary: 'portfolio list' })
   async findAll(@Query('page') page: number) {
-    return this.usersService.getAllPortfolio(page);
+    return this.usersService.getManyPortfolio(page);
   }
 
   //로그인 되어있는 유저 정보 조회

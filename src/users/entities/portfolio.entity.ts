@@ -21,7 +21,7 @@ export class Portfolio extends CoreEntity {
   @Column({ nullable: true, type: 'json' })
   @IsString()
   card: string;
-	
+
   @ApiProperty({
     type: JSON.stringify,
     description: 'content',
@@ -31,7 +31,7 @@ export class Portfolio extends CoreEntity {
   content: string;
 
   @OneToOne((type) => User, (user: User) => user.portfolio)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @RelationId((portfolio: Portfolio) => portfolio.user)

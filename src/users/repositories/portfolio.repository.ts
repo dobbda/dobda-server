@@ -6,7 +6,7 @@ import { CreatePortfolio } from '../dtos/portfolio.dto';
 @EntityRepository(Portfolio)
 export class PortfolioRepository extends Repository<Portfolio> {
   async createPortfolio(
-    createPortfolioDto: CreatePortfolio,
+    createPortfolioDto: { card: string; content: string; public?: boolean },
     user: User,
   ): Promise<Portfolio> {
     // const portfolio = this.create({ ...createPortfolioDto, user });
