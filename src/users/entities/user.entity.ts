@@ -1,3 +1,4 @@
+import { Portfolio } from './portfolio.entity';
 import { CoinReserv } from './../../payment/entities/coinReserv.entity';
 import { CoinHistory } from './../../payment/entities/coinHistory.entity';
 import { Payment } from '../../payment/entities/payments.entity';
@@ -16,7 +17,7 @@ import { CoreEntity } from 'src/common/entites/core.entity';
 import { OutSourcing } from 'src/outSourcing/entities/outSourcing.entity';
 import { Alarm } from 'src/alarms/entities/alarm.entity';
 import { Question } from 'src/questions/entities/question.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Enquiry } from 'src/enquiry/entities/enquiry.entity';
 import { Reply } from 'src/replies/entities/reply.entity';
 
@@ -110,6 +111,12 @@ export class User extends CoreEntity {
 
   @OneToMany((type) => Enquiry, (enquiry: Enquiry) => enquiry.author)
   enquiry: Enquiry[];
+
+  @OneToOne((type) => Portfolio, (portfolio: Portfolio) => portfolio.user)
+  portfolio: Portfolio;
+
+  @Column({ nullable: true })
+  sign: string;
 
   // //////////////////////////////////////////////////////////////////
   @Column({ default: 0 })

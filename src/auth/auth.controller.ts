@@ -50,30 +50,30 @@ export class AuthController {
     return currentUser;
   }
 
-  //로컬 회원가입
-  @Post('local/new')
-  @ApiOperation({ summary: '로컬 회원가입' })
-  async signUp(@Body() userRegisterDto: UserRegisterDTO): Promise<User> {
-    return await this.authService.registerUser(userRegisterDto);
-  }
+  // //로컬 회원가입
+  // @Post('local/new')
+  // @ApiOperation({ summary: '로컬 회원가입' })
+  // async signUp(@Body() userRegisterDto: UserRegisterDTO): Promise<User> {
+  //   return await this.authService.registerUser(userRegisterDto);
+  // }
 
-  //로컬 환경 로그인 (테스트용) postman ///////////////
-  @Post('/local')
-  @ApiOperation({ summary: '로컬 로그인' })
-  @ApiCreatedResponse({ description: 'JWT 토큰', type: Tokens })
-  async logIn(
-    //데코레이터 Body와 express의 Res를 같이 사용하기 위해 passthrough : true
-    @Body() userRegisterDTO: UserRegisterDTO,
-    @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
-    //로그인 처리, jwt 발급 (AccessToken, RefreshToken)
-    const { tokens, user } = await this.authService.verifyUserAndSignJWT(
-      userRegisterDTO,
-    );
+  // //로컬 환경 로그인 (테스트용) postman ///////////////
+  // @Post('/local')
+  // @ApiOperation({ summary: '로컬 로그인' })
+  // @ApiCreatedResponse({ description: 'JWT 토큰', type: Tokens })
+  // async logIn(
+  //   //데코레이터 Body와 express의 Res를 같이 사용하기 위해 passthrough : true
+  //   @Body() userRegisterDTO: UserRegisterDTO,
+  //   @Res({ passthrough: true }) response: Response,
+  // ): Promise<void> {
+  //   //로그인 처리, jwt 발급 (AccessToken, RefreshToken)
+  //   const { tokens, user } = await this.authService.verifyUserAndSignJWT(
+  //     userRegisterDTO,
+  //   );
 
-    response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
-    response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
-  }
+  //   response.cookie('jwt-access', tokens.accessToken, { httpOnly: true });
+  //   response.cookie('jwt-refresh', tokens.refreshToken, { httpOnly: true });
+  // }
 
   //리프레시 토큰 재발급
   @Get('refresh')

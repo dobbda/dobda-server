@@ -1,8 +1,6 @@
-import { CoinHistorysRepository } from './../payment/repositories/coinHistory.repository';
-import { PaymentsRepository } from '../payment/repositories/payment.repository';
 import { AnswersModule } from './../answers/answers.module';
 import { AnswersService } from './../answers/answers.service';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionController } from './questions.controller';

@@ -1,4 +1,4 @@
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { QuestionsRepository } from './../questions/repositories/questions.repository';
 import {
   BadRequestException,

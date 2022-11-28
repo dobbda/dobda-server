@@ -8,7 +8,7 @@ import { EnquiryController } from './enquiry.controller';
 import { EnquiryService } from './enquiry.service';
 import { EnquiryRepository } from './repositories/enquiry.repository';
 import { AlarmModule } from 'src/alarms/alarms.module';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 
 @Module({
   imports: [

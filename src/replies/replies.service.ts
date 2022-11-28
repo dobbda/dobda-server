@@ -13,7 +13,7 @@ import { CreateReplyDto } from './dtos/create-reply.dto';
 import { EditReplyDto } from './dtos/edit-reply.dto';
 import { GetReplyDto } from './dtos/get-reply.dto';
 import { RepliesRepository } from './repositories/replies.repository';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 
 @Injectable()
 export class RepliesService {

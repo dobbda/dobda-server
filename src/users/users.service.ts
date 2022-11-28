@@ -1,6 +1,8 @@
+import { CreatePortfolio } from './dtos/portfolio.dto';
+import { PortfolioRepository } from './repositories/portfolio.repository';
 import { UserUpdateDTO } from './dtos/user-update.dto';
 import { User } from './entities/user.entity';
-import { UsersRepository } from './users.repository';
+import { UsersRepository } from './repositories/users.repository';
 import {
   Injectable,
   BadRequestException,
@@ -8,10 +10,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
+import { Portfolio } from './entities/portfolio.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private pfRepository: PortfolioRepository,
+  ) {}
 
   async getMyInfo(userUpdate: UserUpdateDTO, user: User): Promise<User> {
     const found = await this.usersRepository.findOne(user.id);
@@ -36,5 +42,62 @@ export class UsersService {
   //개발용 모든 유저 목록
   list() {
     return this.usersRepository.list();
+  }
+
+  //////////// portfolio /////////////////////
+
+  async updatePortfolio(data: CreatePortfolio, user: User) {
+    const pf = await this.pfRepository.findOne({ user });
+    if (!pf) {
+      // 없을시 생성
+      return await this.pfRepository.createPortfolio(
+        {
+          content: JSON.stringify(data?.content),
+          card: JSON.stringify(data?.card),
+          public: data.public,
+        },
+        user,
+      );
+    }
+
+    await this.pfRepository.save([
+      {
+        id: pf.id,
+        content: JSON.stringify(data?.content),
+        card: JSON.stringify(data?.card),
+        public: data.public,
+      },
+    ]);
+
+    return true;
+  }
+
+  async getOnePortfolio(userId: number) {
+    const { card, content, ...res } = await this.pfRepository.findOne({
+      user: { id: userId },
+    });
+    return {
+      card: JSON.parse(card),
+      content: JSON.parse(content),
+      ...res,
+    };
+  }
+
+  async getManyPortfolio(page: number) {
+    const { portfolio, total } = await this.pfRepository.findAll(page);
+    console.log('a: ', portfolio);
+    return {
+      total,
+      result: portfolio.map(({ card, content, ...res }) => {
+        console.log('b: ', card, content);
+
+        return {
+          card: JSON.parse(card) || card,
+          content: JSON.parse(content) || content,
+          ...res,
+        };
+      }),
+      totalPages: Math.ceil(total / 10),
+    };
   }
 }
