@@ -23,12 +23,34 @@ export class AlarmsService {
     await this.alarmsRepository.createAlarm(dto);
   }
 
-  async getAlarms(user: User, all?: boolean): Promise<GetAlarmsOutput> {
+  async getAlarm(user: User): Promise<GetAlarmsOutput> {
+    const result = await this.alarmsRepository.find({
+      where: {
+        to: user,
+        // checked: false,
+      },
+      take: 10,
+    });
+
+    return {
+      result: result.map((x) => {
+        return {
+          id: x.id,
+          checked: x.checked,
+          type: x.type,
+          createdAt: x.createdAt,
+          content: JSON.parse(x.content),
+        };
+      }),
+    };
+  }
+
+  async getAlarms(user: User): Promise<GetAlarmsOutput> {
     const result = await this.alarmsRepository.find({
       where: {
         to: user,
       },
-      take: all ? 100 : 10,
+      take: 100,
     });
 
     return {
@@ -71,7 +93,7 @@ export class AlarmsService {
         answerId: answer.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...]글에 답글이 달렸습니다.`,
       }),
       to: to,
@@ -88,7 +110,7 @@ export class AlarmsService {
         commentId: comment.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...]에 남긴 답변에 답글이달렸습니다`,
       }),
       to: to,
@@ -102,7 +124,7 @@ export class AlarmsService {
         answerId: answer.id,
         content: `[${question.title.substring(
           0,
-          10,
+          20,
         )}...] 에남긴 답변이 채택되었습니다.`,
       }),
       to: to,
@@ -121,7 +143,7 @@ export class AlarmsService {
         replyId: reply.id,
         content: `[${sourcing.title.substring(
           0,
-          10,
+          20,
         )}...]에 남긴 글에 답글이달렸습니다.`,
       }),
       to: to,
@@ -130,14 +152,14 @@ export class AlarmsService {
 
   async addEnquiryAlarm(enquiry: Enquiry, outSourcing: OutSourcing, to: User) {
     this.createAlarm({
-      type: AlarmType.EN_PICK,
+      type: AlarmType.ENQUIRY,
       content: JSON.stringify({
         outSourcingId: outSourcing.id,
         enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
-          10,
-        )}...]소싱글에 답글이 달렸습니다`,
+          20,
+        )}...]소싱글에 새로운 답글이 달렸습니다`,
       }),
       to: to,
     });
@@ -155,7 +177,7 @@ export class AlarmsService {
         enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
-          10,
+          20,
         )}...]소싱에 선택되었습니다. 거래를 계속 진행해주세요`,
       }),
       to: to,

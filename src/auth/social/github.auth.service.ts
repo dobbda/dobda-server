@@ -4,7 +4,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import axios, { AxiosResponse } from 'axios';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { ResLoginUser } from '../dtos/response-login-user';
 import { UserRegisterDTO } from 'src/users/dtos/user-register.dto';
 
@@ -56,12 +56,14 @@ export class GithubAuthService {
       );
 
       const { avatar_url, name, bio } = data;
+      console.log('github: ', data);
       const githubInfo: UserRegisterDTO = {
         avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
         name,
         nickname: name,
         description: bio,
         email,
+        sign: 'github',
       };
 
       return this.authService.verifyUserAndSignJWT(githubInfo);

@@ -1,5 +1,5 @@
 import { Progress } from './../outSourcing/types/progressType';
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { OutSourcingRepository } from '../outSourcing/repositiories/outSourcing.repository';
 import {
   BadRequestException,

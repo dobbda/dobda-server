@@ -16,9 +16,8 @@ export class AppController {
   }
 
   @Get('redirect/admin')
-  @Redirect('http://52.79.237.3:8080/admin', 302)
+  @Redirect('http://15.164.39.106:8080/admin', 302)
   getDocs() {
-    console.log(process.env.ADMIN_URL, adm);
-    return { url: 'http://52.79.237.3:8080/admin' };
+    return { url: 'http://15.164.39.106:8080/admin' };
   }
 }

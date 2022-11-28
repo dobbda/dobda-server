@@ -1,4 +1,4 @@
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import {
   BadRequestException,
   Injectable,
@@ -46,11 +46,33 @@ export class OutSourcingService {
         const tags = await this.tagsRepository.allTagsInOutSourcing(
           outSourcing.id,
         );
+        const { content, ...v } = outSourcing;
+        return { ...v, tagNames: tags };
+      }),
+    );
+
+    return {
+      result,
+      total,
+      totalPages: Math.ceil(total / 20),
+    };
+  }
+  async getUserOutSourcings(user: User, page) {
+    const { total, outSourcings } =
+      await this.outSourcingRepository.findAllWithUserId(user.id, page);
+
+    /* outSourcing이 가지고있는 tag 넣기 */
+    const result = await Promise.all(
+      outSourcings.map(async (outSourcing) => {
+        const tags = await this.tagsRepository.allTagsInOutSourcing(
+          outSourcing.id,
+        );
         return { ...outSourcing, tagNames: tags };
       }),
     );
 
     return {
+      total,
       result,
       totalPages: Math.ceil(total / 20),
     };

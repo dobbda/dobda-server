@@ -5,7 +5,7 @@ import { CoinHistorysRepository } from './repositories/coinHistory.repository';
 import { User } from 'src/users/entities/user.entity';
 import { PaymentsRepository } from './repositories/payment.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { CreatePaymentDto } from './dtos/payment.dto';
 import { PayType } from './entities/payments.entity';
 import { CoinReservsRepository } from './repositories/coinReserv.repository';
@@ -21,17 +21,15 @@ export class PaymentService {
     private readonly usersRepository: UsersRepository,
   ) {}
 
-  async findAllCoinHistory(user: User, page: number): Promise<CoinReservOut> {
+  async findAllCoinHistory(user: User, page: number): Promise<CoinHistoryOut> {
     /**
      * 코인 히스토리[] 조회
      */
-    const { hists, total } = await this.reservsRepository.findAll(
-      user.id,
-      page,
-    );
+    const { hists, total } = await this.histRepository.findAll(user.id, page);
     return {
+      total,
       result: hists,
-      totalPages: Math.ceil(total / 20),
+      totalPages: Math.ceil(total / 10),
     };
   }
 
@@ -39,14 +37,15 @@ export class PaymentService {
     /**
      * 임시 저장된 코인 정보 조회
      */
-    const { hists, total } = await this.reservsRepository.findAll(
+    const { reservs, total } = await this.reservsRepository.findAll(
       user.id,
       page,
     );
 
     return {
-      result: hists,
-      totalPages: Math.ceil(total / 20),
+      total,
+      result: reservs,
+      totalPages: Math.ceil(total / 10),
     };
   }
 
@@ -62,7 +61,6 @@ export class PaymentService {
      * 유저의 코인을  금액만큼 reserv로
      * reserv코인은 확정된것이 아니므로 코인 기록은 남기지 않는다.
      */
-    console.log('userToresv 쪽', reservDto);
     const { coin, user, type, question, outSourcing } = reservDto;
     user.coin -= coin;
     await this.usersRepository.save(user);
@@ -79,15 +77,12 @@ export class PaymentService {
     /** question or outSourcing이 완료시
      * reserv에 저장된 coin을 유저코인에 적용
      */
-    console.log('reserv확인1 :');
 
     const toUser = await this.usersRepository.findUserByAuthorId(toUserId);
-    console.log(type == PayType.QUESTION, toUser);
 
     const reserv = await this.reservsRepository.findOne(
       type === PayType.QUESTION ? { question } : { outSourcing },
     );
-    console.log('reserv확인3: ', reserv);
     await this.reservToUser(toUser, reserv); // toUser에게 전달후 reserv 삭제
 
     // 기록 남기기
@@ -96,12 +91,16 @@ export class PaymentService {
       toUserId: toUserId,
       type: type,
       coin: -reserv.coin,
+      questionId: reserv.questionId,
+      outSourcingId: reserv.outSourcingId,
     });
     await this.histRepository.createCoinHistory({
       user: toUser,
       toUserId: user.id,
       type: type,
       coin: reserv.coin,
+      questionId: reserv.questionId,
+      outSourcingId: reserv.outSourcingId,
     });
 
     return true;

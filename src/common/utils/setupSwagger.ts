@@ -9,7 +9,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
     .setTitle('QQnAA API 문서')
-    .setDescription('Swagger를 사용해 만든 QQnAA의 API 문서')
+    .setDescription('Swagger를 사용해 만든 dobda App의 API 문서')
     .setVersion('1.0.0')
     .build();
 

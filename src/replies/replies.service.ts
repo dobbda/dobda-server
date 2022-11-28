@@ -13,7 +13,7 @@ import { CreateReplyDto } from './dtos/create-reply.dto';
 import { EditReplyDto } from './dtos/edit-reply.dto';
 import { GetReplyDto } from './dtos/get-reply.dto';
 import { RepliesRepository } from './repositories/replies.repository';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 
 @Injectable()
 export class RepliesService {
@@ -62,6 +62,10 @@ export class RepliesService {
       repliesCount: enquiry.repliesCount + 1,
     });
 
+    if (user.id !== outSourcing.authorId) {
+      const toUser = await this.usersRepository.findOne(outSourcing.authorId);
+      await this.alarmsService.addReplyAlarm(reply, outSourcing, toUser);
+    }
     if (user.id !== enquiry.authorId) {
       const toUser = await this.usersRepository.findOne(enquiry.authorId);
       await this.alarmsService.addReplyAlarm(reply, outSourcing, toUser);

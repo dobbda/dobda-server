@@ -31,6 +31,26 @@ export class QuestionsRepository extends Repository<Question> {
     return question.getOne();
   }
 
+  async findAllWithUserId(userId: number, page: number) {
+    const questionQuery = this.createQueryBuilder('question')
+      .where('question.author.id = :userId', { userId })
+      .take(10)
+      .skip((page - 1) * 10)
+      .leftJoin('question.author', 'author')
+      .addSelect([
+        'author.email',
+        'author.nickname',
+        'author.id',
+        'author.avatar',
+      ])
+      .orderBy('question.createdAt', 'DESC');
+
+    const [questions, total] = await questionQuery.getManyAndCount();
+    return {
+      total,
+      questions,
+    };
+  }
   async findAll(page: number, title?: string, tagId?: number) {
     const questionQuery = this.createQueryBuilder('question')
       .take(20)

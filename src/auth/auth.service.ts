@@ -3,7 +3,7 @@ import { UserRegisterDTO } from './../users/dtos/user-register.dto';
 import { Tokens } from './jwt/types/jwt.token';
 import { UserLogInDTO } from './../users/dtos/user-login.dto';
 import { ConfigService } from '@nestjs/config';
-import { UsersRepository } from './../users/users.repository';
+import { UsersRepository } from '../users/repositories/users.repository';
 import {
   Injectable,
   BadRequestException,

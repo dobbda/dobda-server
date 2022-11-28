@@ -4,7 +4,14 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entites/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  RelationId,
+} from 'typeorm';
 import { PayType } from './payments.entity';
 
 // 코인 임시 저장소
@@ -20,9 +27,14 @@ export class CoinReserv extends CoreEntity {
   @IsNumber()
   coin: number;
 
-  @OneToOne((type) => Question, (question: Question) => question.coinReserv)
+  @OneToOne((type) => Question, (question: Question) => question.coinReserv, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   question: Question; // 질문
+
+  @RelationId((reserv: CoinReserv) => reserv.question)
+  questionId: number;
 
   @OneToOne(
     (type) => OutSourcing,
@@ -30,4 +42,7 @@ export class CoinReserv extends CoreEntity {
   )
   @JoinColumn()
   outSourcing: OutSourcing; // 외주
+
+  @RelationId((reserv: CoinReserv) => reserv.outSourcing)
+  outSourcingId: number;
 }

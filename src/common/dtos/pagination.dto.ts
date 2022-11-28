@@ -12,4 +12,5 @@ export class PaginationDto {
 
 export class PaginationOuput {
   totalPages: number;
+  total?: number;
 }

@@ -12,16 +12,17 @@ export class CoinReservsRepository extends Repository<CoinReserv> {
   }
 
   async findAll(userId: number, page: number) {
-    const history = this.createQueryBuilder('coinReserv')
-      .take(50)
-      .skip((page - 1) * 50)
+    const reserv = this.createQueryBuilder('coinReserv')
+      .take(10)
+      .skip((page - 1) * 10)
+      .orderBy('coinReserv.createdAt', 'DESC')
       .where('coinReserv.user.id = :userId', {
         userId,
       });
-    const [hists, total] = await history.getManyAndCount();
+    const [reservs, total] = await reserv.getManyAndCount();
 
     return {
-      hists,
+      reservs,
       total,
     };
   }

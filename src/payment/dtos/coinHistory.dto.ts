@@ -19,6 +19,9 @@ export class CreateHistoryDto {
 
   @ApiProperty({ description: 'if user to user ' })
   readonly toUserId?: number;
+
+  readonly questionId?: number;
+  readonly outSourcingId?: number;
 }
 
 export class CoinHistoryOut extends PaginationOuput {

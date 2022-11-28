@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UsersRepository } from 'src/users/users.repository';
+import { UsersRepository } from 'src/users/repositories/users.repository';
 import { User } from 'src/users/entities/user.entity';
 import { CreateQuestionDto } from './dtos/create-question.dto';
 import { EditQuestionDto } from './dtos/edit-question.dto';
@@ -53,7 +53,26 @@ export class QuestionsService {
     );
     return {
       result,
+      total: total,
       totalPages: Math.ceil(total / 20),
+    };
+  }
+  async getUserQuestions(user: User, page: number) {
+    const { total, questions } =
+      await this.questionsRepository.findAllWithUserId(user.id, page);
+    console.log(user, questions);
+
+    const result = await Promise.all(
+      questions.map(async (question) => {
+        const tags = await this.tagsRepository.allTagsInQuestion(question.id);
+        const { content, ...reset } = question;
+        return { ...reset, tagNames: tags };
+      }),
+    );
+    return {
+      result,
+      total: total,
+      totalPages: Math.ceil(total / 10),
     };
   }
 

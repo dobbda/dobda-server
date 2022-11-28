@@ -32,7 +32,7 @@ export class AlarmsController {
   @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
   async getAlarms(@CurrentUser() user: User) {
-    return this.alarmsService.getAlarms(user);
+    return this.alarmsService.getAlarm(user);
   }
 
   @Get('/all')
@@ -40,7 +40,7 @@ export class AlarmsController {
   @ApiCreatedResponse({ description: '알림을 가져온다', type: GetAlarmsOutput })
   @UseGuards(AccessTokenGuard)
   async getAllAlarms(@CurrentUser() user: User) {
-    return this.alarmsService.getAlarms(user, true);
+    return this.alarmsService.getAlarms(user);
   }
 
   @Patch('/:id')

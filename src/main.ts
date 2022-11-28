@@ -8,6 +8,8 @@ import * as cookieParser from 'cookie-parser';
 import { setupSwagger } from './common/utils/setupSwagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const dev = process.env.NODE_ENV === 'dev';
+
   app.enableCors({
     origin: [process.env.CLIENT_URL],
     credentials: true,
@@ -29,7 +31,9 @@ async function bootstrap() {
   app.use(cookieParser(process.env.ACCESS_TOKEN_SECRET_KEY));
 
   //Swagger 관련 셋업
-  setupSwagger(app);
+  if (dev) {
+    setupSwagger(app);
+  }
 
   await app.listen(process.env.SERVER_PORT);
 }

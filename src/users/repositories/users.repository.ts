@@ -1,5 +1,5 @@
-import { UserRegisterDTO } from './dtos/user-register.dto';
-import { User } from './entities/user.entity';
+import { UserRegisterDTO } from '../dtos/user-register.dto';
+import { User } from '../entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
