@@ -73,9 +73,11 @@ export class UsersService {
   }
 
   async getOnePortfolio(userId: number) {
-    const { card, content, ...res } = await this.pfRepository.findOne({
+    const find = await this.pfRepository.findOne({
       user: { id: userId },
     });
+    if (!find) return find;
+    const { card, content, ...res } = find;
     return {
       card: JSON.parse(card),
       content: JSON.parse(content),
@@ -84,8 +86,9 @@ export class UsersService {
   }
 
   async getManyPortfolio(page: number) {
-    const { portfolio, total } = await this.pfRepository.findAll(page);
-    console.log('a: ', portfolio);
+    const find = await this.pfRepository.findAll(page);
+    if (!find) return find;
+    const { portfolio, total } = find;
     return {
       total,
       result: portfolio.map(({ card, content, ...res }) => {
