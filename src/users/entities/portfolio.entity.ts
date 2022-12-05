@@ -36,6 +36,17 @@ export class Portfolio extends CoreEntity {
 
   @RelationId((portfolio: Portfolio) => portfolio.user)
   userId: number;
+
+  @ApiProperty({ description: '분야' })
+  @Column({ nullable: true, type: 'json' })
+  workField: string[];
+
+  @ApiProperty({ description: '스킬' })
+  @Column({ type: 'json', nullable: true })
+  skill: string[];
+
+  @Column({ nullable: true })
+  job: string;
 }
 
 export class Image {

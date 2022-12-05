@@ -56,7 +56,6 @@ export class GithubAuthService {
       );
 
       const { avatar_url, name, bio } = data;
-      console.log('github: ', data);
       const githubInfo: UserRegisterDTO = {
         avatar: `https://avatars.dicebear.com/api/adventurer-neutral/${name}.svg`,
         name,
@@ -68,7 +67,6 @@ export class GithubAuthService {
 
       return this.authService.verifyUserAndSignJWT(githubInfo);
     } catch (err) {
-      console.log(err);
       throw new HttpException('Github 인증을 실패', 401);
     }
   }

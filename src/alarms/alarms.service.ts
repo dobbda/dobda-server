@@ -68,7 +68,6 @@ export class AlarmsService {
 
   async viewAlarm(id: number, user: User) {
     const alarm = await this.alarmsRepository.findOneAlarmWithId(id);
-    console.log('알람: ', id, alarm);
 
     if (!alarm) {
       throw new NotFoundException('id에 해당하는 noti가 없습니다.');
@@ -134,7 +133,6 @@ export class AlarmsService {
   /* sourcing */
   async addReplyAlarm(reply: Reply, sourcing: OutSourcing, to: User) {
     //outSourcing 댓글
-    console.log(reply);
     this.createAlarm({
       type: AlarmType.COMMENT,
       content: JSON.stringify({

@@ -27,7 +27,6 @@ export class UsersController {
   @ApiOperation({ summary: '현재 로그인 되어 있는 유저 정보 조회' })
   @UseGuards(AccessTokenGuard)
   async updatePortfolio(@Body() pfData: any, @CurrentUser() user: User) {
-    console.log('컨트롤: ', pfData);
     return await this.usersService.updatePortfolio(pfData, user);
   }
 
@@ -61,7 +60,6 @@ export class UsersController {
     @Body() userUpdateDto: UserUpdateDTO,
     @CurrentUser() currentUser: User,
   ) {
-    console.log(userUpdateDto);
     return await this.usersService.userUpdate(userUpdateDto, currentUser);
   }
 

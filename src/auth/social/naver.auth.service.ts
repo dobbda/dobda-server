@@ -73,7 +73,6 @@ export class NaverAuthService {
       };
       return this.authService.verifyUserAndSignJWT(naver);
     } catch (err) {
-      console.log(err);
       throw new HttpException('Google 인증실패.', 401);
     }
   }

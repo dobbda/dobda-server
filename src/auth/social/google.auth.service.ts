@@ -44,7 +44,6 @@ export class GoogleAuthService {
       const { data } = await axios.get(`${getUserUrl}=${access_token}`);
 
       const { name, picture, email } = data;
-      console.log('로그인: ', data);
       const googleInfo: UserRegisterDTO = {
         name: name || 'user_' + Math.floor(Math.random() * 10000), //실명은 웹내에서 추가로 인증예정
         nickname: name || 'user_' + Math.floor(Math.random() * 10000),
@@ -54,7 +53,6 @@ export class GoogleAuthService {
       };
       return this.authService.verifyUserAndSignJWT(googleInfo);
     } catch (err) {
-      console.log(err);
       throw new HttpException('Google 인증실패.', 401);
     }
   }

@@ -48,24 +48,29 @@ export class UsersService {
 
   async updatePortfolio(data: CreatePortfolio, user: User) {
     const pf = await this.pfRepository.findOne({ user });
+    const { content, card, ...res } = data;
     if (!pf) {
       // 없을시 생성
       return await this.pfRepository.createPortfolio(
         {
           content: JSON.stringify(data?.content),
           card: JSON.stringify(data?.card),
-          public: data.public,
+          ...res,
         },
         user,
       );
     }
 
+    const newData = {
+      content: JSON.stringify(content),
+      card: JSON.stringify(card),
+      ...res,
+    };
+
     await this.pfRepository.save([
       {
         id: pf.id,
-        content: JSON.stringify(data?.content),
-        card: JSON.stringify(data?.card),
-        public: data.public,
+        ...newData,
       },
     ]);
 
@@ -76,7 +81,7 @@ export class UsersService {
     const find = await this.pfRepository.findOne({
       user: { id: userId },
     });
-    if (!find) return find;
+    if (!find) return {};
     const { card, content, ...res } = find;
     return {
       card: JSON.parse(card),
@@ -92,11 +97,9 @@ export class UsersService {
     return {
       total,
       result: portfolio.map(({ card, content, ...res }) => {
-        console.log('b: ', card, content);
-
         return {
           card: JSON.parse(card) || card,
-          content: JSON.parse(content) || content,
+          // content: JSON.parse(content) || content,
           ...res,
         };
       }),

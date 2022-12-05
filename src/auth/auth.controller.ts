@@ -85,7 +85,6 @@ export class AuthController {
     const resRefreshData = await this.authService.refreshTokens(
       req.cookies['jwt-refresh'],
     );
-    console.log(resRefreshData);
     response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
       expires: new Date(
         Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
