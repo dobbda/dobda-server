@@ -38,11 +38,11 @@ export class Portfolio extends CoreEntity {
   userId: number;
 
   @ApiProperty({ description: '분야' })
-  @Column({ nullable: true, type: 'json' })
+  @Column('text', { array: true, nullable: true })
   workField: string[];
 
   @ApiProperty({ description: '스킬' })
-  @Column({ type: 'json', nullable: true })
+  @Column('text', { array: true, nullable: true })
   skill: string[];
 
   @Column({ nullable: true })

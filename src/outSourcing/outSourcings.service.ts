@@ -33,11 +33,16 @@ export class OutSourcingService {
     return outSourcing;
   }
 
-  async getOutSourcings({ page, title, tagId }: GetOutSourcingsDto) {
+  async getOutSourcings({ page, keyword }: GetOutSourcingsDto) {
+    let keywordId = null;
+    // 키워드로 금색시
+    if (keyword) {
+      keywordId = (await this.tagsRepository.findOne({ name: keyword }))?.id;
+    }
     const { total, outSourcings } = await this.outSourcingRepository.findAll(
       page,
-      title,
-      tagId,
+      keywordId,
+      keyword,
     );
 
     /* outSourcing이 가지고있는 tag 넣기 */
@@ -57,7 +62,7 @@ export class OutSourcingService {
       totalPages: Math.ceil(total / 20),
     };
   }
-  async getUserOutSourcings(user: User, page) {
+  async getUserOutSourcings(user: User, page: number) {
     const { total, outSourcings } =
       await this.outSourcingRepository.findAllWithUserId(user.id, page);
 

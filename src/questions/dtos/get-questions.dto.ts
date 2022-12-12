@@ -9,13 +9,7 @@ export class GetQuestionsDto extends PaginationDto {
   @IsString()
   @IsOptional()
   @ApiProperty({ description: 'title', required: false })
-  title: string;
-
-  @Type(() => Number)
-  @IsNumber()
-  @IsOptional()
-  @ApiProperty({ description: 'tagId', required: false })
-  tagId: number;
+  keyword: string;
 }
 
 export class GetQuestionsOutput extends PaginationOuput {

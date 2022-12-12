@@ -36,7 +36,7 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
     return outSourcing.getOne();
   }
 
-  async findAll(page: number, title?: string, tagId?: number) {
+  async findAll(page: number, tagId?: number, keyword?: string) {
     const outSourcingQuery = this.createQueryBuilder('outSourcing')
       .take(20)
       .skip((page - 1) * 20)
@@ -48,16 +48,18 @@ export class OutSourcingRepository extends Repository<OutSourcing> {
         'author.avatar',
       ])
       .orderBy('outSourcing.updatedAt', 'DESC');
-    if (title && title !== 'undefined') {
-      outSourcingQuery.where('outSourcing.title like :title', {
-        title: `%${title}%`,
+    if (keyword) {
+      outSourcingQuery.where('LOWER(outSourcing.title) like LOWER(:title)', {
+        title: `%${keyword}%`,
       });
     }
+
     if (tagId) {
       outSourcingQuery
         .leftJoin('outSourcing.outSourcingTags', 'outSourcingTag')
-        .andWhere('outSourcingTag.tagId = :tagId', { tagId });
+        .orWhere('outSourcingTag.tagId = :tagId', { tagId });
     }
+
     const [outSourcings, total] = await outSourcingQuery.getManyAndCount();
     return {
       total,

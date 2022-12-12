@@ -27,7 +27,7 @@ import { EditOutSourcingDto } from './dtos/edit-outSourcing.dto';
 import { GetOutSourcingsDto } from './dtos/get-outSourcings.dto';
 import { OutSourcingService } from './outSourcings.service';
 
-@Controller('outsource')
+@Controller('sourcing')
 @ApiTags('외주 API')
 export class OutSourcingController {
   constructor(private readonly outSourcingService: OutSourcingService) {}

@@ -6,6 +6,7 @@ import { Tag } from '../entities/tag.entity';
 export class TagsRepository extends Repository<Tag> {
   async createNonExistTags(tagNames: string[]) {
     //현재 존재하는 tags 찾기
+    tagNames = tagNames.map((v) => v.toLowerCase());
     const existTags = await this.existTags(tagNames);
     //parameter로 받은 names중 존재하지 않는 tag name 찾기
     const newTageNames = [];
@@ -41,7 +42,7 @@ export class TagsRepository extends Repository<Tag> {
 
   async allTagsInQuestion(questionId: number) {
     return this.createQueryBuilder('tag')
-      .select(['tag.name',"tag.id"])
+      .select(['tag.name', 'tag.id'])
       .leftJoin('tag.questionTags', 'questionTags')
       .where('questionTags.questionId = :questionId', { questionId })
       .getMany();
@@ -49,7 +50,7 @@ export class TagsRepository extends Repository<Tag> {
 
   async allTagsInOutSourcing(outSourcingId: number) {
     return this.createQueryBuilder('tag')
-      .select(['tag.name',"tag.id"])
+      .select(['tag.name', 'tag.id'])
       .leftJoin('tag.outSourcingTags', 'outSourcingTags')
       .where('outSourcingTags.outSourcingId = :outSourcingId', {
         outSourcingId,

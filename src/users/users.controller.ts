@@ -1,4 +1,4 @@
-import { CreatePortfolio } from './dtos/portfolio.dto';
+import { CreatePortfolio, OutPortfolioDto } from './dtos/portfolio.dto';
 import { Portfolio } from './entities/portfolio.entity';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -38,8 +38,8 @@ export class UsersController {
 
   @Get('pfs')
   @ApiOperation({ summary: 'portfolio list' })
-  async findAll(@Query('page') page: number) {
-    return this.usersService.getManyPortfolio(page);
+  async findAll(@Query() outDto: OutPortfolioDto) {
+    return this.usersService.getManyPortfolio(outDto);
   }
 
   //로그인 되어있는 유저 정보 조회

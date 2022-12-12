@@ -38,11 +38,16 @@ export class QuestionsService {
     return question;
   }
 
-  async getQuestions({ page, title, tagId }: GetQuestionsDto) {
+  async getQuestions({ page, keyword }: GetQuestionsDto) {
+    let keywordId = null;
+
+    if (keyword) {
+      keywordId = (await this.tagsRepository.findOne({ name: keyword }))?.id;
+    }
     const { total, questions } = await this.questionsRepository.findAll(
       page,
-      title,
-      tagId,
+      keywordId,
+      keyword,
     );
     const result = await Promise.all(
       questions.map(async (question) => {

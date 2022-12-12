@@ -1,4 +1,4 @@
-import { CreatePortfolio } from './dtos/portfolio.dto';
+import { CreatePortfolio, OutPortfolioDto } from './dtos/portfolio.dto';
 import { PortfolioRepository } from './repositories/portfolio.repository';
 import { UserUpdateDTO } from './dtos/user-update.dto';
 import { User } from './entities/user.entity';
@@ -48,61 +48,37 @@ export class UsersService {
 
   async updatePortfolio(data: CreatePortfolio, user: User) {
     const pf = await this.pfRepository.findOne({ user });
-    const { content, card, ...res } = data;
     if (!pf) {
       // 없을시 생성
-      return await this.pfRepository.createPortfolio(
-        {
-          content: JSON.stringify(data?.content),
-          card: JSON.stringify(data?.card),
-          ...res,
-        },
-        user,
-      );
+      return await this.pfRepository.createPortfolio(data, user);
     }
-
-    const newData = {
-      content: JSON.stringify(content),
-      card: JSON.stringify(card),
-      ...res,
-    };
 
     await this.pfRepository.save([
       {
         id: pf.id,
-        ...newData,
+        ...data,
       },
     ]);
 
     return true;
   }
 
-  async getOnePortfolio(userId: number) {
+  async getOnePortfolio(userId: number): Promise<Portfolio> {
     const find = await this.pfRepository.findOne({
       user: { id: userId },
     });
-    if (!find) return {};
-    const { card, content, ...res } = find;
-    return {
-      card: JSON.parse(card),
-      content: JSON.parse(content),
-      ...res,
-    };
+    if (!find) return null;
+
+    return find;
   }
 
-  async getManyPortfolio(page: number) {
-    const find = await this.pfRepository.findAll(page);
+  async getManyPortfolio({ page, keyword }: OutPortfolioDto) {
+    const find = await this.pfRepository.findAll(page, keyword);
     if (!find) return find;
     const { portfolio, total } = find;
     return {
       total,
-      result: portfolio.map(({ card, content, ...res }) => {
-        return {
-          card: JSON.parse(card) || card,
-          // content: JSON.parse(content) || content,
-          ...res,
-        };
-      }),
+      result: portfolio,
       totalPages: Math.ceil(total / 10),
     };
   }

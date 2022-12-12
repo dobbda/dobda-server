@@ -51,7 +51,7 @@ export class QuestionsRepository extends Repository<Question> {
       questions,
     };
   }
-  async findAll(page: number, title?: string, tagId?: number) {
+  async findAll(page: number, tagId?: number, keyword?: string) {
     const questionQuery = this.createQueryBuilder('question')
       .take(20)
       .skip((page - 1) * 20)
@@ -63,16 +63,15 @@ export class QuestionsRepository extends Repository<Question> {
         'author.avatar',
       ])
       .orderBy('question.updatedAt', 'DESC');
-
-    if (title && title !== 'undefined') {
-      questionQuery.where('question.title like :title', {
-        title: `%${title}%`,
+    if (keyword) {
+      questionQuery.where('LOWER(question.title) like LOWER(:title)', {
+        title: `%${keyword}%`,
       });
     }
     if (tagId) {
       questionQuery
         .leftJoin('question.questionTags', 'questionTag')
-        .andWhere('questionTag.tagId = :tagId', { tagId });
+        .orWhere('questionTag.tagId = :tagId', { tagId });
     }
     const [questions, total] = await questionQuery.getManyAndCount();
     return {
