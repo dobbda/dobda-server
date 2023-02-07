@@ -19,8 +19,8 @@ export class PortfolioRepository extends Repository<Portfolio> {
     const userQuery = this.createQueryBuilder('portfolio');
     if (keyword) {
       userQuery.where(':skill = ANY (portfolio.skill)', { skill: keyword });
-      userQuery.orWhere(':workField = ANY (portfolio.workField)', {
-        workField: keyword,
+      userQuery.orWhere(':position = ANY (portfolio.position)', {
+        position: keyword,
       });
     }
     userQuery

@@ -39,7 +39,7 @@ export class Portfolio extends CoreEntity {
 
   @ApiProperty({ description: '분야' })
   @Column('text', { array: true, nullable: true })
-  workField: string[];
+  position: string[];
 
   @ApiProperty({ description: '스킬' })
   @Column('text', { array: true, nullable: true })

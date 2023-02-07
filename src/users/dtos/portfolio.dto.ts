@@ -7,7 +7,7 @@ export class CreatePortfolio {
   card?: any;
   public?: boolean;
   skill?: string[];
-  workField?: string[];
+  position?: string[];
   job?: string;
 }
 
