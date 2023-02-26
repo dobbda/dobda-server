@@ -86,15 +86,12 @@ export class AuthController {
       req.cookies['jwt-refresh'],
     );
     response.cookie('jwt-access', resRefreshData.tokens.accessToken, {
-      expires: new Date(
-        Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
-      ),
+      maxAge: Number(this.configService.get<string>('ACCESS_EXPIRES')),
+
       httpOnly: true,
     });
     response.cookie('jwt-refresh', resRefreshData.tokens.refreshToken, {
-      expires: new Date(
-        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
-      ),
+      maxAge: Number(this.configService.get<string>('REFRESH_EXPIRES')),
       httpOnly: true,
       // signed:true    //쿠키보안 적용시 postman에서  해석못함
     });
@@ -124,16 +121,13 @@ export class AuthController {
         (await this.naverAuthService.getNaverInfo(socialCodeDto)));
 
     response.cookie('jwt-access', tokens.accessToken, {
-      expires: new Date(
+      maxAge:
         Date.now() + Number(this.configService.get<string>('ACCESS_EXPIRES')),
-      ),
       httpOnly: true,
       // signed: true
     });
     response.cookie('jwt-refresh', tokens.refreshToken, {
-      expires: new Date(
-        Date.now() + Number(this.configService.get<string>('REFRESH_EXPIRES')),
-      ),
+      maxAge: Number(this.configService.get<string>('REFRESH_EXPIRES')),
       httpOnly: true,
       // signed:true
     });
@@ -149,6 +143,6 @@ export class AuthController {
     await this.authService.deleteRefreshToken(email);
     response.clearCookie('jwt-access');
     response.clearCookie('jwt-refresh');
-    response.send();
+    response.send({ success: true });
   }
 }
