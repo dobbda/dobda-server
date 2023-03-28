@@ -84,37 +84,39 @@ export class AlarmsService {
     return true;
   }
 
+	// 댓글
   async addAnswerAlarm(answer: Answer, question: Question, to: User) {
     this.createAlarm({
       type: AlarmType.ANSWER,
       content: JSON.stringify({
-        questionId: answer.question.id,
+        questionId: question.id,
         answerId: answer.id,
         content: `[${question.title.substring(
           0,
           20,
-        )}...]글에 답글이 달렸습니다.`,
+        )}...]글에 댓글이 달렸습니다.`,
       }),
       to: to,
     });
   }
-
+// 대댓글
   async addCommentAlarm(comment: Comment, question: Question, to: User) {
     //question 댓글
     this.createAlarm({
       type: AlarmType.COMMENT,
       content: JSON.stringify({
-        questionId: comment.answer.questionId,
+        questionId: question.id,
         answerId: comment.answerId,
         commentId: comment.id,
         content: `[${question.title.substring(
           0,
           20,
-        )}...]에 남긴 답변에 답글이달렸습니다`,
+        )}...]에 남긴 답변에 댓글이달렸습니다`,
       }),
       to: to,
     });
-  }
+	}
+	// 채택
   async addAcceptAlarm(answer: Answer, question: Question, to: User) {
     this.createAlarm({
       type: AlarmType.ACCEPT,
@@ -130,39 +132,43 @@ export class AlarmsService {
     });
   }
 
-  /* sourcing */
-  async addReplyAlarm(reply: Reply, sourcing: OutSourcing, to: User) {
+//댓글
+	async addEnquiryAlarm(enquiry: Enquiry, outSourcing: OutSourcing, to: User) {
+
+		this.createAlarm({
+			type: AlarmType.ENQUIRY,
+			content: JSON.stringify({
+				outSourcingId: outSourcing.id,
+				enquiryId: enquiry.id,
+				content: `[${outSourcing.title.substring(
+					0,
+					20,
+				)}...]소싱글에 새로운 댓글이 달렸습니다`,
+			}),
+			to: to,
+		});
+	}
+
+	/* sourcing */
+	//대댓글
+  async addReplyAlarm(reply: Reply, outSourcing: OutSourcing, to: User) {
     //outSourcing 댓글
     this.createAlarm({
       type: AlarmType.COMMENT,
       content: JSON.stringify({
-        outSourcingId: sourcing.id,
+        outSourcingId: outSourcing.id,
         enquiryId: reply.enquiryId,
         replyId: reply.id,
-        content: `[${sourcing.title.substring(
-          0,
-          20,
-        )}...]에 남긴 글에 답글이달렸습니다.`,
-      }),
-      to: to,
-    });
-  }
-
-  async addEnquiryAlarm(enquiry: Enquiry, outSourcing: OutSourcing, to: User) {
-    this.createAlarm({
-      type: AlarmType.ENQUIRY,
-      content: JSON.stringify({
-        outSourcingId: outSourcing.id,
-        enquiryId: enquiry.id,
         content: `[${outSourcing.title.substring(
           0,
           20,
-        )}...]소싱글에 새로운 답글이 달렸습니다`,
+        )}...]에 남긴 글에 댓글이 달렸습니다.`,
       }),
       to: to,
     });
   }
 
+	// 소싱선택
   async addPickEnquiryAlarm(
     enquiry: Enquiry,
     outSourcing: OutSourcing,
